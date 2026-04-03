@@ -4,7 +4,6 @@ import 'package:projectfile/screens/login_screen.dart';
 import 'package:projectfile/screens/register_screen.dart';
 import 'package:projectfile/screens/splash_screen.dart';
 import 'package:projectfile/routes/auth_middleware.dart';
-import 'package:get_storage/get_storage.dart';
 
 class AppRoutes {
   static const String splash = '/';
