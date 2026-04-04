@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../constants/colors.dart';
 import '../widgets/animation_widgets.dart';
 import '../widgets/common_widgets.dart';
@@ -10,6 +11,7 @@ class HeroSection extends StatelessWidget {
   final AnimationController orbitController;
 
   const HeroSection({
+    super.key,
     required this.fadeAnimations,
     required this.slideAnimations,
     required this.orbitController,
@@ -185,7 +187,9 @@ class HeroSection extends StatelessWidget {
       runSpacing: 12,
       children: [
         ElevatedButton(
-          onPressed: () {},
+          onPressed: () {
+            Get.toNamed('/login');
+          },
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.teal,
             foregroundColor: Colors.white,
@@ -201,7 +205,9 @@ class HeroSection extends StatelessWidget {
           ),
         ),
         OutlinedButton(
-          onPressed: () {},
+          onPressed: () {
+            Get.toNamed('/register');
+          },
           style: OutlinedButton.styleFrom(
             foregroundColor: AppColors.teal,
             side: const BorderSide(color: AppColors.teal),

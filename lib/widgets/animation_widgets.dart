@@ -5,7 +5,7 @@ import '../constants/colors.dart';
 /// DashedRing - Draws a dashed circular ring
 class DashedRing extends StatelessWidget {
   final double size, opacity;
-  const DashedRing({required this.size, required this.opacity});
+  const DashedRing({super.key, required this.size, required this.opacity});
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +33,7 @@ class _RingPainter extends CustomPainter {
     final radius = size.width / 2;
     const segmentCount = 44;
     const step = math.pi * 2 / segmentCount;
-    
+
     for (int i = 0; i < segmentCount; i += 2) {
       canvas.drawArc(
         Rect.fromCircle(center: center, radius: radius),
@@ -70,17 +70,15 @@ class OrbitIcon extends StatelessWidget {
   final AnimationController controller;
   final OrbitEntry entry;
 
-  const OrbitIcon({
-    required this.controller,
-    required this.entry,
-  });
+  const OrbitIcon({super.key, required this.controller, required this.entry});
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: controller,
       builder: (_, child) {
-        final angle = entry.startAngle +
+        final angle =
+            entry.startAngle +
             (entry.reverse ? -1 : 1) *
                 controller.value *
                 math.pi *
@@ -106,7 +104,7 @@ class OrbitIcon extends StatelessWidget {
               color: Colors.black.withOpacity(0.08),
               blurRadius: 16,
               offset: const Offset(0, 4),
-            )
+            ),
           ],
         ),
         child: Column(

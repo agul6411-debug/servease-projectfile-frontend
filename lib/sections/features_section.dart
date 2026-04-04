@@ -38,7 +38,7 @@ class FeaturesSection extends StatelessWidget {
     ),
   ];
 
-  const FeaturesSection();
+  const FeaturesSection({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +68,10 @@ class FeaturesSection extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SectionTag(label: 'Platform Capabilities', dark: true),
+                    const SectionTag(
+                      label: 'Platform Capabilities',
+                      dark: true,
+                    ),
                     const SizedBox(height: 16),
                     RichText(
                       text: const TextSpan(

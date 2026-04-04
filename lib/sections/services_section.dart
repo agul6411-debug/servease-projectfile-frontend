@@ -6,26 +6,49 @@ import '../widgets/common_widgets.dart';
 /// ServicesSection - Section displaying all available services
 class ServicesSection extends StatelessWidget {
   static const _servicesList = [
-    ServiceData('🔧', 'Plumbing',
-        'Leaks, repairs & drainage by licensed plumbers — on your schedule.'),
-    ServiceData('⚡', 'Electrician',
-        'Wiring, fuse boxes & appliance fitting by certified electricians.'),
-    ServiceData('🧹', 'Cleaning',
-        'Deep cleans, housekeeping & post-construction — spotless results.'),
-    ServiceData('📚', 'Tutoring',
-        'Home tutors for all subjects — qualified & results-driven.'),
-    ServiceData('💅', 'Beautician',
-        'Hair, skincare & makeup by beauty professionals at your door.'),
-    ServiceData('🪵', 'Carpentry',
-        'Custom furniture, installations & woodwork with precision.'),
-    ServiceData('🎨', 'Painting',
-        'Interior & exterior painting — flawless wall finishes every time.'),
     ServiceData(
-        '➕', 'And More', 
-        'New categories continuously added. If you need it home, we find the expert.'),
+      '🔧',
+      'Plumbing',
+      'Leaks, repairs & drainage by licensed plumbers — on your schedule.',
+    ),
+    ServiceData(
+      '⚡',
+      'Electrician',
+      'Wiring, fuse boxes & appliance fitting by certified electricians.',
+    ),
+    ServiceData(
+      '🧹',
+      'Cleaning',
+      'Deep cleans, housekeeping & post-construction — spotless results.',
+    ),
+    ServiceData(
+      '📚',
+      'Tutoring',
+      'Home tutors for all subjects — qualified & results-driven.',
+    ),
+    ServiceData(
+      '💅',
+      'Beautician',
+      'Hair, skincare & makeup by beauty professionals at your door.',
+    ),
+    ServiceData(
+      '🪵',
+      'Carpentry',
+      'Custom furniture, installations & woodwork with precision.',
+    ),
+    ServiceData(
+      '🎨',
+      'Painting',
+      'Interior & exterior painting — flawless wall finishes every time.',
+    ),
+    ServiceData(
+      '➕',
+      'And More',
+      'New categories continuously added. If you need it home, we find the expert.',
+    ),
   ];
 
-  const ServicesSection();
+  const ServicesSection({super.key});
 
   @override
   Widget build(BuildContext context) {

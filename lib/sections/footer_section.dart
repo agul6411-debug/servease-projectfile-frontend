@@ -4,7 +4,7 @@ import '../widgets/user_footer_widgets.dart';
 
 /// FooterSection - Footer with company info and links
 class FooterSection extends StatelessWidget {
-  const FooterSection();
+  const FooterSection({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -62,22 +62,12 @@ class FooterSection extends StatelessWidget {
               const SizedBox(width: 40),
               const FooterColumn(
                 title: 'Services',
-                links: [
-                  'Plumbing',
-                  'Electrician',
-                  'Cleaning',
-                  'Tutoring',
-                ],
+                links: ['Plumbing', 'Electrician', 'Cleaning', 'Tutoring'],
               ),
               const SizedBox(width: 32),
               const FooterColumn(
                 title: 'More',
-                links: [
-                  'Beautician',
-                  'Carpentry',
-                  'Painting',
-                  'And More →',
-                ],
+                links: ['Beautician', 'Carpentry', 'Painting', 'And More →'],
               ),
               const SizedBox(width: 32),
               const FooterColumn(

@@ -5,7 +5,7 @@ import '../widgets/user_footer_widgets.dart';
 
 /// UserTypesSection - Section showing different user types
 class UserTypesSection extends StatelessWidget {
-  const UserTypesSection();
+  const UserTypesSection({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +46,8 @@ class UserTypesSection extends StatelessWidget {
                   emoji: '👤',
                   role: 'Customer',
                   title: 'The Homeowner',
-                  description: 'Book any service, anytime. Your home is your sanctuary — we help you keep it that way.',
+                  description:
+                      'Book any service, anytime. Your home is your sanctuary — we help you keep it that way.',
                   features: [
                     'Search & book instantly',
                     'Track bookings in real-time',
@@ -61,7 +62,8 @@ class UserTypesSection extends StatelessWidget {
                   emoji: '🔨',
                   role: 'Service Provider',
                   title: 'The Professional',
-                  description: 'Grow your client base, manage your schedule, and build your reputation.',
+                  description:
+                      'Grow your client base, manage your schedule, and build your reputation.',
                   features: [
                     'Create a verified profile',
                     'Accept or decline requests',
@@ -77,7 +79,8 @@ class UserTypesSection extends StatelessWidget {
                   emoji: '⚙️',
                   role: 'Administrator',
                   title: 'The Overseer',
-                  description: 'Full platform control — verify providers, manage disputes, keep things running.',
+                  description:
+                      'Full platform control — verify providers, manage disputes, keep things running.',
                   features: [
                     'Verify & approve providers',
                     'Monitor platform activity',

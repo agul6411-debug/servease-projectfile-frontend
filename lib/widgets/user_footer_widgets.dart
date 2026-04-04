@@ -8,6 +8,7 @@ class UserCard extends StatefulWidget {
   final bool highlight;
 
   const UserCard({
+    super.key,
     required this.emoji,
     required this.role,
     required this.title,
@@ -47,7 +48,7 @@ class _UserCardState extends State<UserCard> {
                     color: AppColors.teal.withOpacity(0.12),
                     blurRadius: 40,
                     offset: const Offset(0, 16),
-                  )
+                  ),
                 ]
               : [],
         ),
@@ -64,10 +65,7 @@ class _UserCardState extends State<UserCard> {
                 shape: BoxShape.circle,
               ),
               child: Center(
-                child: Text(
-                  widget.emoji,
-                  style: const TextStyle(fontSize: 28),
-                ),
+                child: Text(widget.emoji, style: const TextStyle(fontSize: 28)),
               ),
             ),
             const SizedBox(height: 20),
@@ -126,7 +124,7 @@ class _UserCardState extends State<UserCard> {
                   ],
                 ),
               );
-            }).toList(),
+            }),
           ],
         ),
       ),
@@ -139,10 +137,7 @@ class FooterColumn extends StatelessWidget {
   final String title;
   final List<String> links;
 
-  const FooterColumn({
-    required this.title,
-    required this.links,
-  });
+  const FooterColumn({super.key, required this.title, required this.links});
 
   @override
   Widget build(BuildContext context) {
@@ -171,7 +166,7 @@ class FooterColumn extends StatelessWidget {
               ),
             ),
           );
-        }).toList(),
+        }),
       ],
     );
   }

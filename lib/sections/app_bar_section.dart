@@ -1,39 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../constants/colors.dart';
 import '../widgets/common_widgets.dart';
 
 /// AppBarSection - Custom app bar for the home page
 class AppBarSection extends SliverAppBar {
-  AppBarSection({Key? key})
-      : super(
-          key: key,
-          pinned: true,
-          elevation: 0,
-          backgroundColor: AppColors.cream.withOpacity(0.96),
-          surfaceTintColor: Colors.transparent,
-          toolbarHeight: 68,
-          title: _buildTitle(),
-          actions: _buildActions(),
-          bottom: _buildBottom(),
-        );
+  AppBarSection({super.key, VoidCallback? onLoginPressed})
+    : super(
+        pinned: true,
+        elevation: 0,
+        backgroundColor: AppColors.cream.withOpacity(0.96),
+        surfaceTintColor: Colors.transparent,
+        toolbarHeight: 68,
+        title: _buildTitle(),
+        actions: _buildActions(onLoginPressed),
+        bottom: _buildBottom(),
+      );
 
   static Widget _buildTitle() {
     return Row(
       children: [
         Container(
-          width: 34,
-          height: 34,
+          width: 50,
+          height: 50,
           decoration: BoxDecoration(
-            color: AppColors.teal,
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: const Icon(
-            Icons.home_repair_service,
             color: Colors.white,
-            size: 18,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.green.withOpacity(0.15),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.all(8),
+            child: Image.asset('assets/home_logo.jpeg', fit: BoxFit.contain),
           ),
         ),
-        const SizedBox(width: 10),
+        const SizedBox(width: 12),
         RichText(
           text: const TextSpan(
             children: [
@@ -62,41 +68,18 @@ class AppBarSection extends SliverAppBar {
     );
   }
 
-  static List<Widget> _buildActions() {
+  static List<Widget> _buildActions(VoidCallback? onLoginPressed) {
     return [
-      const NavBtn('Services'),
-      const NavBtn('How It Works'),
-      const NavBtn('Features'),
-      const SizedBox(width: 8),
       OutlinedButton(
-        onPressed: () {},
+        onPressed: onLoginPressed,
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.teal,
           side: const BorderSide(color: AppColors.teal),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(6),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
         ),
         child: const Text(
           'Log In',
-          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
-        ),
-      ),
-      const SizedBox(width: 10),
-      ElevatedButton(
-        onPressed: () {},
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.teal,
-          foregroundColor: Colors.white,
-          elevation: 0,
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(6),
-          ),
-        ),
-        child: const Text(
-          'Get Started →',
           style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
         ),
       ),
@@ -107,10 +90,7 @@ class AppBarSection extends SliverAppBar {
   static PreferredSize? _buildBottom() {
     return PreferredSize(
       preferredSize: const Size.fromHeight(1),
-      child: Container(
-        height: 1,
-        color: AppColors.teal.withOpacity(0.1),
-      ),
+      child: Container(height: 1, color: AppColors.teal.withOpacity(0.1)),
     );
   }
 }

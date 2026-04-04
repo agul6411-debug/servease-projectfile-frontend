@@ -10,7 +10,7 @@ class ServiceData {
 /// ServiceCard - Card displaying a single service
 class ServiceCard extends StatefulWidget {
   final ServiceData service;
-  const ServiceCard({required this.service});
+  const ServiceCard({super.key, required this.service});
 
   @override
   State<ServiceCard> createState() => _ServiceCardState();
@@ -89,7 +89,7 @@ class StepData {
 /// StepCard - Card showing a single process step
 class StepCard extends StatefulWidget {
   final StepData step;
-  const StepCard({required this.step});
+  const StepCard({super.key, required this.step});
 
   @override
   State<StepCard> createState() => _StepCardState();
@@ -175,7 +175,7 @@ class FeatureData {
 /// FeatureCard - Card displaying a platform feature
 class FeatureCard extends StatefulWidget {
   final FeatureData feature;
-  const FeatureCard({required this.feature});
+  const FeatureCard({super.key, required this.feature});
 
   @override
   State<FeatureCard> createState() => _FeatureCardState();

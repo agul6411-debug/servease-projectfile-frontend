@@ -3,7 +3,7 @@ import '../constants/colors.dart';
 
 /// CtaSection - Call-to-action section
 class CtaSection extends StatelessWidget {
-  const CtaSection();
+  const CtaSection({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -72,20 +72,14 @@ class CtaSection extends StatelessWidget {
                 ),
                 child: const Text(
                   'Get Started Free →',
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                  ),
+                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
                 ),
               ),
               OutlinedButton(
                 onPressed: () {},
                 style: OutlinedButton.styleFrom(
                   foregroundColor: Colors.white,
-                  side: const BorderSide(
-                    color: Colors.white38,
-                    width: 1.5,
-                  ),
+                  side: const BorderSide(color: Colors.white38, width: 1.5),
                   padding: const EdgeInsets.symmetric(
                     horizontal: 32,
                     vertical: 18,

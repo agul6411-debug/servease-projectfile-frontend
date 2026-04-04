@@ -4,7 +4,7 @@ import '../constants/colors.dart';
 /// NavBtn - Navigation button in the app bar
 class NavBtn extends StatefulWidget {
   final String label;
-  const NavBtn(this.label);
+  const NavBtn(this.label, {super.key});
 
   @override
   State<NavBtn> createState() => _NavBtnState();
@@ -36,7 +36,7 @@ class _NavBtnState extends State<NavBtn> {
 class SectionTag extends StatelessWidget {
   final String label;
   final bool dark;
-  const SectionTag({required this.label, this.dark = false});
+  const SectionTag({super.key, required this.label, this.dark = false});
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +63,7 @@ class SectionTag extends StatelessWidget {
 /// StatCard - Shows statistics (number + label)
 class StatCard extends StatelessWidget {
   final String number, label;
-  const StatCard({required this.number, required this.label});
+  const StatCard({super.key, required this.number, required this.label});
 
   @override
   Widget build(BuildContext context) {
