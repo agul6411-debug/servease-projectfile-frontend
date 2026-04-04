@@ -12,7 +12,7 @@ import 'package:projectfile/screens/splash_screen.dart';
 void main() {
   testWidgets('Splash screen displays correctly', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const SplashScreen());
+    await tester.pumpWidget(SplashScreen());
 
     // Verify that splash screen is displayed
     expect(find.byType(SplashScreen), findsOneWidget);

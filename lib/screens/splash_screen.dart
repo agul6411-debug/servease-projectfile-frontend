@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'login_screen.dart'; // make sure this exists
+import 'package:get/get.dart';
+import 'package:projectfile/routes/app_routes.dart';
 
 class SplashScreen extends StatefulWidget {
   @override
@@ -32,10 +33,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     Future.delayed(const Duration(seconds: 3), () {
       if (!mounted) return;
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => LoginScreen()),
-      );
+      Get.offNamed(AppRoutes.home);
     });
   }
 
