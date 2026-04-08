@@ -38,14 +38,14 @@ class _UserCardState extends State<UserCard> {
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: widget.highlight
-                ? AppColors.orange.withOpacity(0.3)
-                : AppColors.teal.withOpacity(0.1),
+                ? AppColors.orange.withAlpha(77)
+                : AppColors.teal.withAlpha(26),
             width: widget.highlight ? 1.5 : 1,
           ),
           boxShadow: _isHovered
               ? [
                   BoxShadow(
-                    color: AppColors.teal.withOpacity(0.12),
+                    color: AppColors.teal.withAlpha(31),
                     blurRadius: 40,
                     offset: const Offset(0, 16),
                   ),
@@ -60,8 +60,8 @@ class _UserCardState extends State<UserCard> {
               height: 62,
               decoration: BoxDecoration(
                 color: widget.highlight
-                    ? AppColors.orange.withOpacity(0.1)
-                    : AppColors.teal.withOpacity(0.08),
+                    ? AppColors.orange.withAlpha(26)
+                    : AppColors.teal.withAlpha(20),
                 shape: BoxShape.circle,
               ),
               child: Center(

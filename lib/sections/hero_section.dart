@@ -108,8 +108,8 @@ class HeroSection extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
       decoration: BoxDecoration(
-        color: AppColors.teal.withOpacity(0.08),
-        border: Border.all(color: AppColors.teal.withOpacity(0.2)),
+        color: AppColors.teal.withAlpha(20),
+        border: Border.all(color: AppColors.teal.withAlpha(51)),
         borderRadius: BorderRadius.circular(100),
       ),
       child: Row(
@@ -188,7 +188,7 @@ class HeroSection extends StatelessWidget {
       children: [
         ElevatedButton(
           onPressed: () {
-            Get.toNamed('/login');
+            Get.toNamed('/register');
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: AppColors.teal,
@@ -262,7 +262,7 @@ class HeroSection extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.teal.withOpacity(0.4),
+                  color: AppColors.teal.withAlpha(102),
                   blurRadius: 40,
                   offset: const Offset(0, 14),
                 ),

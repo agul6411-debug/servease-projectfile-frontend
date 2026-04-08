@@ -1,335 +1,437 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import '../core/services/auth_service.dart';
-import '../routes/app_routes.dart';
 
-class RegisterScreen extends StatefulWidget {
+// ─────────────────────────────────────────────
+// Full Page
+// ─────────────────────────────────────────────
+class RegisterScreen extends StatelessWidget {
   const RegisterScreen({super.key});
-
-  @override
-  State<RegisterScreen> createState() => _RegisterScreenState();
-}
-
-class _RegisterScreenState extends State<RegisterScreen> {
-  final _nameController = TextEditingController();
-  final _ageController = TextEditingController();
-  final _heightController = TextEditingController();
-  final _weightController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
-
-  String _selectedGender = 'Male';
-  bool _isDiabetic = false;
-  bool _hasBP = false;
-  bool _isLoading = false;
-
-  Future<void> _register() async {
-    if (_nameController.text.isEmpty ||
-        _ageController.text.isEmpty ||
-        _heightController.text.isEmpty ||
-        _weightController.text.isEmpty ||
-        _emailController.text.isEmpty ||
-        _passwordController.text.isEmpty) {
-      Get.snackbar('Error', 'Please fill all fields');
-      return;
-    }
-
-    setState(() => _isLoading = true);
-
-    final result = await AuthService.register({
-      'name': _nameController.text,
-      'age': _ageController.text,
-      'height': _heightController.text,
-      'weight': _weightController.text,
-      'gender': _selectedGender,
-      'is_diabetic': _isDiabetic,
-      'has_bp': _hasBP,
-      'email': _emailController.text,
-      'password': _passwordController.text,
-    });
-
-    setState(() => _isLoading = false);
-
-    if (result['success'] == true) {
-      Get.snackbar('Success', 'Registration successful! Please login');
-      Get.offNamed(AppRoutes.login);
-    } else {
-      Get.snackbar('Error', result['message'] ?? 'Registration failed');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFEEF5E8),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Column(
+      backgroundColor: const Color(0xFFF2F2F0),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            // ── Hero Section ──
+            const _HeroSection(),
+
+            // ── Features Strip ──
+            const _FeaturesStrip(),
+
+            // ── CTA Banner ──
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 32),
+              child: const _CTABanner(),
+            ),
+
+            // ── Footer ──
+            const _Footer(),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────
+// Hero Section
+// ─────────────────────────────────────────────
+class _HeroSection extends StatelessWidget {
+  const _HeroSection();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 56),
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Color(0xFF1A5C35), Color(0xFF2D8A50)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      child: Column(
+        children: [
+          const Text(
+            'Your Trusted Home\nService Platform',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 42,
+              fontWeight: FontWeight.bold,
+              height: 1.2,
+            ),
+          ),
+          const SizedBox(height: 16),
+          const Text(
+            'Connect with verified professionals for all your home service needs.\nFast, reliable, and transparent.',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.white70, fontSize: 16, height: 1.6),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────
+// Features Strip
+// ─────────────────────────────────────────────
+class _FeaturesStrip extends StatelessWidget {
+  const _FeaturesStrip();
+
+  static const _features = [
+    {'icon': Icons.bolt_rounded, 'label': 'Fast Booking'},
+    {'icon': Icons.verified_rounded, 'label': 'Verified Pros'},
+    {'icon': Icons.star_rounded, 'label': 'Top Rated'},
+    {'icon': Icons.shield_rounded, 'label': 'Secure & Safe'},
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 40),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: _features.map((f) {
+          return Row(
             children: [
-              const SizedBox(height: 20),
-              const Text(
-                'Create Account',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Join us for a healthier lifestyle',
-                style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
-              ),
-              const SizedBox(height: 30),
               Container(
-                padding: const EdgeInsets.all(20),
+                width: 40,
+                height: 40,
                 decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 5),
-                    ),
-                  ],
+                  color: const Color(0xFFF5A623).withAlpha(31),
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Full Name', style: _labelStyle()),
-                    const SizedBox(height: 8),
-                    TextField(
-                      controller: _nameController,
-                      decoration: _inputDecoration('Ahmad Khan', Icons.person_outline),
-                    ),
-                    const SizedBox(height: 20),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Age', style: _labelStyle()),
-                              const SizedBox(height: 8),
-                              TextField(
-                                controller: _ageController,
-                                keyboardType: TextInputType.number,
-                                decoration: _inputDecoration('25', Icons.calendar_today),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Height (cm)', style: _labelStyle()),
-                              const SizedBox(height: 8),
-                              TextField(
-                                controller: _heightController,
-                                keyboardType: TextInputType.number,
-                                decoration: _inputDecoration('170', Icons.height),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Weight (kg)', style: _labelStyle()),
-                              const SizedBox(height: 8),
-                              TextField(
-                                controller: _weightController,
-                                keyboardType: TextInputType.number,
-                                decoration: _inputDecoration('70', Icons.monitor_weight_outlined),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    Text('Gender', style: _labelStyle()),
-                    const SizedBox(height: 12),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () => setState(() => _selectedGender = 'Male'),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              decoration: BoxDecoration(
-                                color: _selectedGender == 'Male'
-                                    ? const Color(0xFF5DB075)
-                                    : const Color(0xFFF5F5F5),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  'Male',
-                                  style: TextStyle(
-                                    color: _selectedGender == 'Male'
-                                        ? Colors.white
-                                        : Colors.grey.shade700,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () => setState(() => _selectedGender = 'Female'),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              decoration: BoxDecoration(
-                                color: _selectedGender == 'Female'
-                                    ? const Color(0xFF5DB075)
-                                    : const Color(0xFFF5F5F5),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  'Female',
-                                  style: TextStyle(
-                                    color: _selectedGender == 'Female'
-                                        ? Colors.white
-                                        : Colors.grey.shade700,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    Text('Health Conditions', style: _labelStyle()),
-                    const SizedBox(height: 12),
-                    CheckboxListTile(
-                      title: const Text('I am Diabetic'),
-                      value: _isDiabetic,
-                      onChanged: (value) => setState(() => _isDiabetic = value ?? false),
-                      activeColor: const Color(0xFF5DB075),
-                      contentPadding: EdgeInsets.zero,
-                    ),
-                    CheckboxListTile(
-                      title: const Text('I have Blood Pressure issues'),
-                      value: _hasBP,
-                      onChanged: (value) => setState(() => _hasBP = value ?? false),
-                      activeColor: const Color(0xFF5DB075),
-                      contentPadding: EdgeInsets.zero,
-                    ),
-                    const SizedBox(height: 20),
-                    Text('Email', style: _labelStyle()),
-                    const SizedBox(height: 8),
-                    TextField(
-                      controller: _emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: _inputDecoration('your@email.com', Icons.email_outlined),
-                    ),
-                    const SizedBox(height: 20),
-                    Text('Password', style: _labelStyle()),
-                    const SizedBox(height: 8),
-                    TextField(
-                      controller: _passwordController,
-                      obscureText: true,
-                      decoration: _inputDecoration('Create a password', Icons.lock_outline),
-                    ),
-                    const SizedBox(height: 30),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 56,
-                      child: ElevatedButton(
-                        onPressed: _isLoading ? null : _register,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF5DB075),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(28),
-                          ),
-                          elevation: 0,
-                        ),
-                        child: _isLoading
-                            ? const CircularProgressIndicator(color: Colors.white)
-                            : const Text(
-                                'Create Account',
-                                style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.white,
-                                ),
-                              ),
-                      ),
-                    ),
-                  ],
+                child: Icon(f['icon'] as IconData,
+                    color: const Color(0xFFF5A623), size: 22),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                f['label'] as String,
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF1A1A1A),
                 ),
               ),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    'Already have an account? ',
-                    style: TextStyle(color: Colors.grey.shade600),
-                  ),
-                  GestureDetector(
-                    onTap: Get.back,
-                    child: const Text(
-                      'Login',
-                      style: TextStyle(
-                        color: Color(0xFF5DB075),
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 30),
             ],
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────
+// CTA Banner (main focus - exact match)
+// ─────────────────────────────────────────────
+class _CTABanner extends StatefulWidget {
+  const _CTABanner();
+
+  @override
+  State<_CTABanner> createState() => _CTABannerState();
+}
+
+class _CTABannerState extends State<_CTABanner>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 6),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _navigate(String type) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(type == 'customer'
+            ? 'Navigating to Customer Signup...'
+            : 'Navigating to Service Provider Signup...'),
+        backgroundColor: const Color(0xFF1A5C35),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  void _signIn() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Navigating to Sign In...'),
+        backgroundColor: Color(0xFF1A5C35),
+        behavior: SnackBarBehavior.floating,
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(24),
+      child: Stack(
+        children: [
+          // ── Gradient background ──
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 56, horizontal: 32),
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Color(0xFF1A5C35), // deep green
+                  Color(0xFF2DAA55), // mid green
+                  Color(0xFFF5A623), // orange
+                ],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+              ),
+            ),
+
+          ),
+
+          // ── Animated + pattern overlay ──
+          Positioned.fill(
+            child: AnimatedBuilder(
+              animation: _controller,
+              builder: (_, _) {
+                return CustomPaint(
+                  painter: _CrossPatternPainter(
+                      offset: _controller.value * 60),
+                );
+              },
+            ),
+          ),
+
+          // ── Content ──
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 52, horizontal: 40),
+            child: Column(
+              children: [
+                const Text(
+                  "Let's Get You Started!",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  'Join thousands of satisfied customers and service providers on our platform',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white70,
+                    fontSize: 15,
+                    height: 1.5,
+                  ),
+                ),
+                const SizedBox(height: 36),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // Signup as Customer — white outlined
+                    _CTAButton(
+                      label: 'Signup as Customer',
+                      filled: false,
+                      onTap: () => _navigate('customer'),
+                    ),
+                    const SizedBox(width: 20),
+                    // Signup as Service Provider — orange filled
+                    _CTAButton(
+                      label: 'Signup as Service Provider',
+                      filled: true,
+                      onTap: () => _navigate('provider'),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                // Sign In link
+                GestureDetector(
+                  onTap: _signIn,
+                  child: RichText(
+                    text: const TextSpan(
+                      style: TextStyle(
+                          color: Colors.white70, fontSize: 13),
+                      children: [
+                        TextSpan(text: 'Already have an account? '),
+                        TextSpan(
+                          text: 'Sign In',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                            decoration: TextDecoration.underline,
+                            decorationColor: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────
+// CTA Button
+// ─────────────────────────────────────────────
+class _CTAButton extends StatefulWidget {
+  final String label;
+  final bool filled;
+  final VoidCallback onTap;
+
+  const _CTAButton(
+      {required this.label, required this.filled, required this.onTap});
+
+  @override
+  State<_CTAButton> createState() => _CTAButtonState();
+}
+
+class _CTAButtonState extends State<_CTAButton> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          transform: Matrix4.diagonal3Values(
+            _hovered ? 1.04 : 1.0,
+            _hovered ? 1.04 : 1.0,
+            1.0,
+          ),
+          transformAlignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 15),
+          decoration: BoxDecoration(
+            color: widget.filled
+                ? (_hovered
+                    ? const Color(0xFFE09010)
+                    : const Color(0xFFF5A623))
+                : (_hovered
+                    ? Colors.white.withAlpha(38)
+                    : Colors.white),
+            borderRadius: BorderRadius.circular(30),
+            border: widget.filled
+                ? null
+                : Border.all(color: Colors.white, width: 1.5),
+            boxShadow: _hovered
+                ? [
+                    BoxShadow(
+                      color: Colors.black.withAlpha(46),
+                      blurRadius: 16,
+                      offset: const Offset(0, 4),
+                    )
+                  ]
+                : [],
+          ),
+          child: Text(
+            widget.label,
+            style: TextStyle(
+              color: widget.filled ? Colors.white : const Color(0xFF1A5C35),
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.2,
+            ),
           ),
         ),
       ),
     );
   }
+}
 
-  TextStyle _labelStyle() {
-    return const TextStyle(
-      fontSize: 14,
-      fontWeight: FontWeight.w600,
-      color: Colors.black87,
-    );
-  }
+// ─────────────────────────────────────────────
+// Cross Pattern Painter (animated + dots)
+// ─────────────────────────────────────────────
+class _CrossPatternPainter extends CustomPainter {
+  final double offset;
+  _CrossPatternPainter({required this.offset});
 
-  InputDecoration _inputDecoration(String hint, IconData icon) {
-    return InputDecoration(
-      hintText: hint,
-      prefixIcon: Icon(icon, color: Colors.grey),
-      filled: true,
-      fillColor: const Color(0xFFF5F5F5),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide.none,
-      ),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-    );
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.white.withAlpha(18)
+      ..strokeWidth = 1.2
+      ..strokeCap = StrokeCap.round;
+
+    const spacing = 36.0;
+    const armLen = 8.0;
+
+    final cols = (size.width / spacing).ceil() + 2;
+    final rows = (size.height / spacing).ceil() + 2;
+    final dx = offset % spacing;
+
+    for (int r = -1; r < rows; r++) {
+      for (int c = -1; c < cols; c++) {
+        final cx = c * spacing + dx;
+        final cy = r * spacing;
+        canvas.drawLine(
+            Offset(cx - armLen, cy), Offset(cx + armLen, cy), paint);
+        canvas.drawLine(
+            Offset(cx, cy - armLen), Offset(cx, cy + armLen), paint);
+      }
+    }
   }
 
   @override
-  void dispose() {
-    _nameController.dispose();
-    _ageController.dispose();
-    _heightController.dispose();
-    _weightController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    super.dispose();
+  bool shouldRepaint(_CrossPatternPainter old) => old.offset != offset;
+}
+
+// ─────────────────────────────────────────────
+// Footer
+// ─────────────────────────────────────────────
+class _Footer extends StatelessWidget {
+  const _Footer();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: const Color(0xFF1A1A1A),
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 28),
+      child: Row(
+        children: [
+          const Icon(Icons.home_rounded, color: Color(0xFFF5A623), size: 20),
+          const SizedBox(width: 8),
+          const Text(
+            'ServEase',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const Spacer(),
+          const Text(
+            '© 2026 ServEase. All rights reserved.',
+            style: TextStyle(color: Colors.white38, fontSize: 12),
+          ),
+        ],
+      ),
+    );
   }
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import '../core/services/auth_service.dart';
 import 'app_routes.dart';
 
 class AuthMiddleware extends GetMiddleware {
@@ -22,15 +21,5 @@ class AuthMiddleware extends GetMiddleware {
     // _verifyToken();
 
     return null;
-  }
-
-  /// Optional: Verify token with backend
-  void _verifyToken() async {
-    final isValid = await AuthService.verifyToken();
-    if (!isValid) {
-      // Token is invalid, clear it and redirect to login
-      await AuthService.logout();
-      Get.offNamed(AppRoutes.login);
-    }
   }
 }
