@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import '../constants/colors.dart';
 import '../core/services/auth_service.dart';
 import '../sections/app_bar_section.dart';
@@ -138,7 +137,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
+                    color: Colors.black.withAlpha(20),
                     blurRadius: 20,
                     offset: const Offset(0, 10),
                   ),

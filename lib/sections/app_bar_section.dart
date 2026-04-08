@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import '../constants/colors.dart';
-import '../widgets/common_widgets.dart';
 
 /// AppBarSection - Custom app bar for the home page
 class AppBarSection extends SliverAppBar {
@@ -9,7 +7,7 @@ class AppBarSection extends SliverAppBar {
     : super(
         pinned: true,
         elevation: 0,
-        backgroundColor: AppColors.cream.withOpacity(0.96),
+        backgroundColor: AppColors.cream.withAlpha(245),
         surfaceTintColor: Colors.transparent,
         toolbarHeight: 68,
         title: _buildTitle(),
@@ -28,7 +26,7 @@ class AppBarSection extends SliverAppBar {
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.green.withOpacity(0.15),
+                color: Colors.green.withAlpha(38),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -90,7 +88,7 @@ class AppBarSection extends SliverAppBar {
   static PreferredSize? _buildBottom() {
     return PreferredSize(
       preferredSize: const Size.fromHeight(1),
-      child: Container(height: 1, color: AppColors.teal.withOpacity(0.1)),
+      child: Container(height: 1, color: AppColors.teal.withAlpha(26)),
     );
   }
 }

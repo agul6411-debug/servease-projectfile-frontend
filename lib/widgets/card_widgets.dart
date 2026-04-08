@@ -28,7 +28,7 @@ class _ServiceCardState extends State<ServiceCard> {
         duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
           color: _isHovered ? AppColors.cream : Colors.white,
-          border: Border.all(color: AppColors.teal.withOpacity(0.1)),
+          border: Border.all(color: AppColors.teal.withAlpha(26)),
         ),
         padding: const EdgeInsets.all(26),
         child: Column(
@@ -41,7 +41,7 @@ class _ServiceCardState extends State<ServiceCard> {
               decoration: BoxDecoration(
                 color: _isHovered
                     ? AppColors.teal
-                    : AppColors.teal.withOpacity(0.08),
+                    : AppColors.teal.withAlpha(20),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Center(
@@ -115,12 +115,12 @@ class _StepCardState extends State<StepCard> {
                 color: _isHovered ? AppColors.teal : Colors.white,
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: AppColors.teal.withOpacity(0.18),
+                  color: AppColors.teal.withAlpha(46),
                   width: 1.5,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.teal.withOpacity(0.1),
+                    color: AppColors.teal.withAlpha(26),
                     blurRadius: 20,
                     offset: const Offset(0, 4),
                   ),
@@ -193,12 +193,12 @@ class _FeatureCardState extends State<FeatureCard> {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.all(28),
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(_isHovered ? 0.07 : 0.04),
+          color: Colors.white.withAlpha(_isHovered ? 18 : 10),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: _isHovered
-                ? AppColors.teal.withOpacity(0.45)
-                : Colors.white.withOpacity(0.08),
+                ? AppColors.teal.withAlpha(115)
+                : Colors.white.withAlpha(20),
           ),
         ),
         child: Column(
@@ -209,7 +209,7 @@ class _FeatureCardState extends State<FeatureCard> {
               width: 46,
               height: 46,
               decoration: BoxDecoration(
-                color: AppColors.teal.withOpacity(0.2),
+                color: AppColors.teal.withAlpha(51),
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Center(

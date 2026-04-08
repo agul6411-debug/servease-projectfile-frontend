@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:get_storage/get_storage.dart';
 import 'dart:convert';
@@ -103,7 +104,7 @@ class AuthService {
         );
       }
     } catch (e) {
-      print('Logout API call failed: $e');
+      debugPrint('Logout API call failed: $e');
     } finally {
       // Clear all stored data
       await box.remove('token');

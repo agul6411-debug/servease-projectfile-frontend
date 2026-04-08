@@ -13,7 +13,7 @@ class DashedRing extends StatelessWidget {
       width: size,
       height: size,
       child: CustomPaint(
-        painter: _RingPainter(color: AppColors.teal.withOpacity(opacity)),
+        painter: _RingPainter(color: AppColors.teal.withAlpha((opacity * 255).round())),
       ),
     );
   }
@@ -98,10 +98,10 @@ class OrbitIcon extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(13),
-          border: Border.all(color: AppColors.teal.withOpacity(0.12)),
+          border: Border.all(color: AppColors.teal.withAlpha(31)),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: Colors.black.withAlpha(20),
               blurRadius: 16,
               offset: const Offset(0, 4),
             ),
