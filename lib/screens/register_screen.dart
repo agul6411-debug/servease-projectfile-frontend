@@ -159,15 +159,8 @@ class _CTABannerState extends State<_CTABanner>
   void _navigate(String type) {
     if (type == 'customer') {
       Get.toNamed('/customer-signup');
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Navigating to Service Provider Signup...'),
-          backgroundColor: Color(0xFF1A5C35),
-          behavior: SnackBarBehavior.floating,
-          duration: Duration(seconds: 2),
-        ),
-      );
+    } else if (type == 'provider') {
+      Get.toNamed('/provider-signup');
     }
   }
 

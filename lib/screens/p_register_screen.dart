@@ -1,76 +1,125 @@
 import 'package:flutter/material.dart';
 
-class CustomerSignupPage extends StatefulWidget {
-  const CustomerSignupPage({super.key});
+class ServiceProviderSignupPage extends StatefulWidget {
+  const ServiceProviderSignupPage({super.key});
 
   @override
-  State<CustomerSignupPage> createState() => _CustomerSignupPageState();
+  State<ServiceProviderSignupPage> createState() =>
+      _ServiceProviderSignupPageState();
 }
 
-class _CustomerSignupPageState extends State<CustomerSignupPage> {
+class _ServiceProviderSignupPageState
+    extends State<ServiceProviderSignupPage> {
   final _formKey = GlobalKey<FormState>();
 
-  final _fullNameController    = TextEditingController();
-  final _emailController       = TextEditingController();
-  final _phoneController       = TextEditingController();
-  final _cnicController        = TextEditingController();
-  final _addressController     = TextEditingController();
-  final _passwordController    = TextEditingController();
-  final _confirmPassController = TextEditingController();
+  // Controllers
+  final _fullNameCtrl    = TextEditingController();
+  final _emailCtrl       = TextEditingController();
+  final _phoneCtrl       = TextEditingController();
+  final _cnicCtrl        = TextEditingController();
+  final _addressCtrl     = TextEditingController();
+  final _passwordCtrl    = TextEditingController();
+  final _confirmPassCtrl = TextEditingController();
+  final _yearsExpCtrl    = TextEditingController();
+  final _bioCtrl         = TextEditingController();
 
   bool _showPassword        = false;
   bool _showConfirmPassword = false;
   bool _agreeToTerms        = false;
   bool _isLoading           = false;
+  String? _selectedCategory;
+
+  static const List<String> _categories = [
+    'Electrician',
+    'Plumber',
+    'Cleaner',
+    'Carpenter',
+    'Painter',
+    'Tutor',
+    'Gardener',
+    'Driver',
+    'Mechanic',
+    'Appliance Repair',
+    'Other',
+  ];
+
+  // ── Colors ───────────────────────────────────
+  static const Color _green  = Color(0xFF1A5C35);
+  static const Color _orange = Color(0xFFF5A623);
 
   @override
   void dispose() {
-    _fullNameController.dispose();
-    _emailController.dispose();
-    _phoneController.dispose();
-    _cnicController.dispose();
-    _addressController.dispose();
-    _passwordController.dispose();
-    _confirmPassController.dispose();
+    _fullNameCtrl.dispose();
+    _emailCtrl.dispose();
+    _phoneCtrl.dispose();
+    _cnicCtrl.dispose();
+    _addressCtrl.dispose();
+    _passwordCtrl.dispose();
+    _confirmPassCtrl.dispose();
+    _yearsExpCtrl.dispose();
+    _bioCtrl.dispose();
     super.dispose();
   }
 
-  // ── Validators ──────────────────────────────
-  String? _requiredValidator(String? v, String field) {
+  // ── Snackbar ─────────────────────────────────
+  void _showSnack(String msg, {bool isError = false}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(msg),
+        backgroundColor: isError ? Colors.redAccent : _green,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10)),
+        duration: const Duration(seconds: 3),
+      ),
+    );
+  }
+
+  // ── Validators ───────────────────────────────
+  String? _required(String? v, String field) {
     if (v == null || v.trim().isEmpty) return '$field is required';
     return null;
   }
 
-  String? _emailValidator(String? v) {
+  String? _emailVal(String? v) {
     if (v == null || v.trim().isEmpty) return 'Email is required';
-    final regex = RegExp(r'^[\w\-.]+@([\w\-]+\.)+[\w]{2,4}$');
-    if (!regex.hasMatch(v.trim())) return 'Enter a valid email';
+    if (!RegExp(r'^[\w\-.]+@([\w\-]+\.)+[\w]{2,4}$')
+        .hasMatch(v.trim())) {
+      return 'Enter a valid email';
+    }
     return null;
   }
 
-  String? _cnicValidator(String? v) {
+  String? _cnicVal(String? v) {
     if (v == null || v.trim().isEmpty) return 'CNIC is required';
-    final regex = RegExp(r'^\d{5}-\d{7}-\d{1}$');
-    if (!regex.hasMatch(v.trim())) return 'Format: XXXXX-XXXXXXX-X';
+    if (!RegExp(r'^\d{5}-\d{7}-\d$').hasMatch(v.trim())) {
+      return 'Format: XXXXX-XXXXXXX-X';
+    }
     return null;
   }
 
-  String? _passwordValidator(String? v) {
+  String? _passVal(String? v) {
     if (v == null || v.isEmpty) return 'Password is required';
     if (v.length < 6) return 'Minimum 6 characters';
     return null;
   }
 
-  String? _confirmPasswordValidator(String? v) {
+  String? _confirmPassVal(String? v) {
     if (v == null || v.isEmpty) return 'Please confirm password';
-    if (v != _passwordController.text) return 'Passwords do not match';
+    if (v != _passwordCtrl.text) return 'Passwords do not match';
+    return null;
+  }
+
+  String? _yearsVal(String? v) {
+    if (v == null || v.trim().isEmpty) return 'Required';
+    final n = int.tryParse(v.trim());
+    if (n == null || n < 0) return 'Enter valid number';
     return null;
   }
 
   // ── Submit ───────────────────────────────────
-  Future<void> _handleCreateAccount() async {
+  Future<void> _handleSubmit() async {
     if (!_formKey.currentState!.validate()) return;
-
     if (!_agreeToTerms) {
       _showSnack(
         'Please agree to Terms and Conditions and Privacy Policy.',
@@ -78,42 +127,25 @@ class _CustomerSignupPageState extends State<CustomerSignupPage> {
       );
       return;
     }
-
     setState(() => _isLoading = true);
     await Future.delayed(const Duration(seconds: 2));
     if (!mounted) return;
     setState(() => _isLoading = false);
-
     _showSnack('Account created successfully! Welcome to ServEase.');
   }
 
-  void _showSnack(String msg, {bool isError = false}) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(msg),
-        backgroundColor:
-            isError ? Colors.redAccent : const Color(0xFF1A5C35),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        duration: const Duration(seconds: 3),
-      ),
-    );
-  }
-
   // ── Input Decoration ─────────────────────────
-  InputDecoration _inputDecoration({
+  InputDecoration _dec({
     required String hint,
-    required IconData prefixIcon,
-    Widget? suffixIcon,
+    required IconData icon,
+    Widget? suffix,
   }) {
     return InputDecoration(
       hintText: hint,
-      hintStyle: const TextStyle(color: Color(0xFFBBBBBB), fontSize: 13),
-      prefixIcon:
-          Icon(prefixIcon, color: const Color(0xFFBBBBBB), size: 18),
-      suffixIcon: suffixIcon,
+      hintStyle:
+          const TextStyle(color: Color(0xFFBBBBBB), fontSize: 13),
+      prefixIcon: Icon(icon, color: const Color(0xFFBBBBBB), size: 18),
+      suffixIcon: suffix,
       filled: true,
       fillColor: Colors.white,
       contentPadding:
@@ -128,8 +160,7 @@ class _CustomerSignupPageState extends State<CustomerSignupPage> {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide:
-            const BorderSide(color: Color(0xFF1A5C35), width: 1.6),
+        borderSide: const BorderSide(color: _green, width: 1.6),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
@@ -144,31 +175,39 @@ class _CustomerSignupPageState extends State<CustomerSignupPage> {
   }
 
   // ── Label ────────────────────────────────────
-  Widget _label(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
-      child: Text(
-        text,
-        style: const TextStyle(
-          fontSize: 13,
-          fontWeight: FontWeight.w500,
-          color: Color(0xFF444444),
+  Widget _label(String text) => Padding(
+        padding: const EdgeInsets.only(bottom: 6),
+        child: Text(
+          text,
+          style: const TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+            color: Color(0xFF444444),
+          ),
         ),
-      ),
-    );
-  }
+      );
 
-  // ── Two-column row helper ────────────────────
-  Widget _fieldRow(Widget left, Widget right) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Expanded(child: left),
-        const SizedBox(width: 16),
-        Expanded(child: right),
-      ],
-    );
-  }
+  // ── Two-column row ───────────────────────────
+  Widget _row(Widget left, Widget right) => Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(child: left),
+          const SizedBox(width: 16),
+          Expanded(child: right),
+        ],
+      );
+
+  // ── Eye icon button ──────────────────────────
+  Widget _eyeBtn(bool visible, VoidCallback onTap) => IconButton(
+        icon: Icon(
+          visible
+              ? Icons.visibility_outlined
+              : Icons.visibility_off_outlined,
+          color: const Color(0xFFBBBBBB),
+          size: 18,
+        ),
+        onPressed: onTap,
+      );
 
   // ── Build ────────────────────────────────────
   @override
@@ -178,14 +217,14 @@ class _CustomerSignupPageState extends State<CustomerSignupPage> {
       body: SafeArea(
         child: Stack(
           children: [
-            // Scrollable form
+            // Main scrollable content
             Center(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.only(top: 60, bottom: 40),
                 child: Center(
                   child: ConstrainedBox(
                     constraints:
-                        const BoxConstraints(maxWidth: 560),
+                        const BoxConstraints(maxWidth: 580),
                     child: Container(
                       margin: const EdgeInsets.symmetric(
                           horizontal: 16),
@@ -209,7 +248,7 @@ class _CustomerSignupPageState extends State<CustomerSignupPage> {
                           crossAxisAlignment:
                               CrossAxisAlignment.start,
                           children: [
-                            // ── Icon + Title ──
+                            // ── Icon + Title ──────────────
                             Center(
                               child: Column(
                                 children: [
@@ -220,35 +259,36 @@ class _CustomerSignupPageState extends State<CustomerSignupPage> {
                                       gradient:
                                           const LinearGradient(
                                         colors: [
-                                          Color(0xFF1A5C35),
-                                          Color(0xFFF5A623),
+                                          _green,
+                                          _orange,
                                         ],
                                         begin: Alignment.topLeft,
-                                        end: Alignment.bottomRight,
+                                        end:
+                                            Alignment.bottomRight,
                                       ),
                                       borderRadius:
                                           BorderRadius.circular(
                                               16),
                                     ),
                                     child: const Icon(
-                                      Icons.person_rounded,
+                                      Icons.work_outline_rounded,
                                       color: Colors.white,
                                       size: 32,
                                     ),
                                   ),
                                   const SizedBox(height: 16),
                                   const Text(
-                                    'Join as Customer',
+                                    'Join as Service Provider',
                                     style: TextStyle(
                                       fontSize: 22,
-                                      fontWeight:
-                                          FontWeight.bold,
+                                      fontWeight: FontWeight.bold,
                                       color: Colors.black87,
                                     ),
                                   ),
                                   const SizedBox(height: 6),
                                   const Text(
-                                    'Get access to trusted home service professionals',
+                                    'Start earning by providing your professional services',
+                                    textAlign: TextAlign.center,
                                     style: TextStyle(
                                         fontSize: 13,
                                         color: Colors.black45),
@@ -260,23 +300,20 @@ class _CustomerSignupPageState extends State<CustomerSignupPage> {
                             const SizedBox(height: 28),
 
                             // ── Row 1: Full Name + Email ──
-                            _fieldRow(
+                            _row(
                               Column(
                                 crossAxisAlignment:
                                     CrossAxisAlignment.start,
                                 children: [
                                   _label('Full Name'),
                                   TextFormField(
-                                    controller:
-                                        _fullNameController,
-                                    decoration: _inputDecoration(
+                                    controller: _fullNameCtrl,
+                                    decoration: _dec(
                                       hint: 'Enter your full name',
-                                      prefixIcon:
-                                          Icons.person_outline,
+                                      icon: Icons.person_outline,
                                     ),
                                     validator: (v) =>
-                                        _requiredValidator(
-                                            v, 'Full name'),
+                                        _required(v, 'Full name'),
                                   ),
                                 ],
                               ),
@@ -286,15 +323,14 @@ class _CustomerSignupPageState extends State<CustomerSignupPage> {
                                 children: [
                                   _label('Email Address'),
                                   TextFormField(
-                                    controller: _emailController,
-                                    keyboardType: TextInputType
-                                        .emailAddress,
-                                    decoration: _inputDecoration(
+                                    controller: _emailCtrl,
+                                    keyboardType:
+                                        TextInputType.emailAddress,
+                                    decoration: _dec(
                                       hint: 'Enter your email',
-                                      prefixIcon:
-                                          Icons.mail_outline,
+                                      icon: Icons.mail_outline,
                                     ),
-                                    validator: _emailValidator,
+                                    validator: _emailVal,
                                   ),
                                 ],
                               ),
@@ -302,25 +338,23 @@ class _CustomerSignupPageState extends State<CustomerSignupPage> {
 
                             const SizedBox(height: 16),
 
-                            // ── Row 2: Phone + CNIC ──
-                            _fieldRow(
+                            // ── Row 2: Phone + CNIC ──────
+                            _row(
                               Column(
                                 crossAxisAlignment:
                                     CrossAxisAlignment.start,
                                 children: [
                                   _label('Phone Number'),
                                   TextFormField(
-                                    controller: _phoneController,
+                                    controller: _phoneCtrl,
                                     keyboardType:
                                         TextInputType.phone,
-                                    decoration: _inputDecoration(
+                                    decoration: _dec(
                                       hint: 'Enter your phone number',
-                                      prefixIcon:
-                                          Icons.phone_outlined,
+                                      icon: Icons.phone_outlined,
                                     ),
                                     validator: (v) =>
-                                        _requiredValidator(
-                                            v, 'Phone number'),
+                                        _required(v, 'Phone number'),
                                   ),
                                 ],
                               ),
@@ -330,13 +364,13 @@ class _CustomerSignupPageState extends State<CustomerSignupPage> {
                                 children: [
                                   _label('CNIC Number'),
                                   TextFormField(
-                                    controller: _cnicController,
-                                    decoration: _inputDecoration(
+                                    controller: _cnicCtrl,
+                                    decoration: _dec(
                                       hint: 'XXXXX-XXXXXXX-X',
-                                      prefixIcon: Icons
+                                      icon: Icons
                                           .credit_card_outlined,
                                     ),
-                                    validator: _cnicValidator,
+                                    validator: _cnicVal,
                                   ),
                                 ],
                               ),
@@ -344,24 +378,22 @@ class _CustomerSignupPageState extends State<CustomerSignupPage> {
 
                             const SizedBox(height: 16),
 
-                            // ── Row 3: Address + Password ──
-                            _fieldRow(
+                            // ── Row 3: Address + Password ─
+                            _row(
                               Column(
                                 crossAxisAlignment:
                                     CrossAxisAlignment.start,
                                 children: [
                                   _label('Address'),
                                   TextFormField(
-                                    controller:
-                                        _addressController,
-                                    decoration: _inputDecoration(
+                                    controller: _addressCtrl,
+                                    decoration: _dec(
                                       hint: 'Enter your address',
-                                      prefixIcon: Icons
+                                      icon: Icons
                                           .location_on_outlined,
                                     ),
                                     validator: (v) =>
-                                        _requiredValidator(
-                                            v, 'Address'),
+                                        _required(v, 'Address'),
                                   ),
                                 ],
                               ),
@@ -371,31 +403,19 @@ class _CustomerSignupPageState extends State<CustomerSignupPage> {
                                 children: [
                                   _label('Password'),
                                   TextFormField(
-                                    controller:
-                                        _passwordController,
+                                    controller: _passwordCtrl,
                                     obscureText: !_showPassword,
-                                    decoration: _inputDecoration(
+                                    decoration: _dec(
                                       hint: 'Create a password',
-                                      prefixIcon:
-                                          Icons.lock_outline,
-                                      suffixIcon: IconButton(
-                                        icon: Icon(
-                                          _showPassword
-                                              ? Icons
-                                                  .visibility_outlined
-                                              : Icons
-                                                  .visibility_off_outlined,
-                                          color: const Color(
-                                              0xFFBBBBBB),
-                                          size: 18,
-                                        ),
-                                        onPressed: () =>
-                                            setState(() =>
-                                                _showPassword =
-                                                    !_showPassword),
+                                      icon: Icons.lock_outline,
+                                      suffix: _eyeBtn(
+                                        _showPassword,
+                                        () => setState(() =>
+                                            _showPassword =
+                                                !_showPassword),
                                       ),
                                     ),
-                                    validator: _passwordValidator,
+                                    validator: _passVal,
                                   ),
                                 ],
                               ),
@@ -403,7 +423,7 @@ class _CustomerSignupPageState extends State<CustomerSignupPage> {
 
                             const SizedBox(height: 16),
 
-                            // ── Confirm Password (left half) ──
+                            // ── Confirm Password (left half)
                             Row(
                               crossAxisAlignment:
                                   CrossAxisAlignment.start,
@@ -416,32 +436,20 @@ class _CustomerSignupPageState extends State<CustomerSignupPage> {
                                       _label('Confirm Password'),
                                       TextFormField(
                                         controller:
-                                            _confirmPassController,
+                                            _confirmPassCtrl,
                                         obscureText:
                                             !_showConfirmPassword,
-                                        decoration:
-                                            _inputDecoration(
+                                        decoration: _dec(
                                           hint: 'Confirm your password',
-                                          prefixIcon:
-                                              Icons.lock_outline,
-                                          suffixIcon: IconButton(
-                                            icon: Icon(
-                                              _showConfirmPassword
-                                                  ? Icons
-                                                      .visibility_outlined
-                                                  : Icons
-                                                      .visibility_off_outlined,
-                                              color: const Color(
-                                                  0xFFBBBBBB),
-                                              size: 18,
-                                            ),
-                                            onPressed: () => setState(
-                                                () => _showConfirmPassword =
+                                          icon: Icons.lock_outline,
+                                          suffix: _eyeBtn(
+                                            _showConfirmPassword,
+                                            () => setState(() =>
+                                                _showConfirmPassword =
                                                     !_showConfirmPassword),
                                           ),
                                         ),
-                                        validator:
-                                            _confirmPasswordValidator,
+                                        validator: _confirmPassVal,
                                       ),
                                     ],
                                   ),
@@ -450,9 +458,191 @@ class _CustomerSignupPageState extends State<CustomerSignupPage> {
                               ],
                             ),
 
+                            const SizedBox(height: 24),
+
+                            // ── Professional Information ──
+                            const Text(
+                              'Professional Information',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black87,
+                              ),
+                            ),
+
+                            const SizedBox(height: 16),
+
+                            // ── Row 4: Category + Experience
+                            _row(
+                              Column(
+                                crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                children: [
+                                  _label('Service Category'),
+                                  DropdownButtonFormField<String>(
+                                    initialValue: _selectedCategory,
+                                    isExpanded: true,
+                                    icon: const Icon(
+                                        Icons.keyboard_arrow_down,
+                                        color: Color(0xFFBBBBBB)),
+                                    hint: const Text(
+                                      'Select a category',
+                                      style: TextStyle(
+                                          color: Color(0xFFBBBBBB),
+                                          fontSize: 13),
+                                    ),
+                                    decoration: InputDecoration(
+                                      prefixIcon: const Icon(
+                                          Icons.grid_view_outlined,
+                                          color: Color(0xFFBBBBBB),
+                                          size: 18),
+                                      filled: true,
+                                      fillColor: Colors.white,
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                              vertical: 14,
+                                              horizontal: 12),
+                                      border: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10),
+                                        borderSide: const BorderSide(
+                                            color: Color(0xFFE0E0E0)),
+                                      ),
+                                      enabledBorder:
+                                          OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10),
+                                        borderSide: const BorderSide(
+                                            color: Color(0xFFE0E0E0)),
+                                      ),
+                                      focusedBorder:
+                                          OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10),
+                                        borderSide: const BorderSide(
+                                            color: _green,
+                                            width: 1.6),
+                                      ),
+                                      errorBorder: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10),
+                                        borderSide: const BorderSide(
+                                            color: Colors.redAccent),
+                                      ),
+                                      focusedErrorBorder:
+                                          OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10),
+                                        borderSide: const BorderSide(
+                                            color: Colors.redAccent,
+                                            width: 1.6),
+                                      ),
+                                    ),
+                                    items: _categories
+                                        .map(
+                                          (c) => DropdownMenuItem(
+                                            value: c,
+                                            child: Text(c,
+                                                style: const TextStyle(
+                                                    fontSize: 13)),
+                                          ),
+                                        )
+                                        .toList(),
+                                    onChanged: (val) => setState(
+                                        () => _selectedCategory = val),
+                                    validator: (v) => v == null
+                                        ? 'Please select a category'
+                                        : null,
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                children: [
+                                  _label('Years of Experience'),
+                                  TextFormField(
+                                    controller: _yearsExpCtrl,
+                                    keyboardType:
+                                        TextInputType.number,
+                                    decoration: _dec(
+                                      hint: 'e.g. 5',
+                                      icon: Icons
+                                          .access_time_outlined,
+                                    ),
+                                    validator: _yearsVal,
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            const SizedBox(height: 16),
+
+                            // ── Professional Bio ──────────
+                            _label('Professional Bio'),
+                            TextFormField(
+                              controller: _bioCtrl,
+                              maxLines: 4,
+                              decoration: InputDecoration(
+                                hintText:
+                                    'Tell us about your skills, experience, and what makes you stand out...',
+                                hintStyle: const TextStyle(
+                                    color: Color(0xFFBBBBBB),
+                                    fontSize: 13),
+                                prefixIcon: const Padding(
+                                  padding:
+                                      EdgeInsets.only(bottom: 56),
+                                  child: Icon(
+                                      Icons.edit_note_outlined,
+                                      color: Color(0xFFBBBBBB),
+                                      size: 20),
+                                ),
+                                filled: true,
+                                fillColor: Colors.white,
+                                contentPadding:
+                                    const EdgeInsets.symmetric(
+                                        vertical: 14,
+                                        horizontal: 12),
+                                border: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.circular(10),
+                                  borderSide: const BorderSide(
+                                      color: Color(0xFFE0E0E0)),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.circular(10),
+                                  borderSide: const BorderSide(
+                                      color: Color(0xFFE0E0E0)),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.circular(10),
+                                  borderSide: const BorderSide(
+                                      color: _green, width: 1.6),
+                                ),
+                                errorBorder: OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.circular(10),
+                                  borderSide: const BorderSide(
+                                      color: Colors.redAccent),
+                                ),
+                                focusedErrorBorder:
+                                    OutlineInputBorder(
+                                  borderRadius:
+                                      BorderRadius.circular(10),
+                                  borderSide: const BorderSide(
+                                      color: Colors.redAccent,
+                                      width: 1.6),
+                                ),
+                              ),
+                              validator: (v) =>
+                                  _required(v, 'Professional bio'),
+                            ),
+
                             const SizedBox(height: 22),
 
-                            // ── Terms Checkbox ──
+                            // ── Terms Checkbox ────────────
                             Row(
                               crossAxisAlignment:
                                   CrossAxisAlignment.center,
@@ -462,16 +652,14 @@ class _CustomerSignupPageState extends State<CustomerSignupPage> {
                                   height: 20,
                                   child: Checkbox(
                                     value: _agreeToTerms,
-                                    activeColor:
-                                        const Color(0xFF1A5C35),
+                                    activeColor: _green,
                                     side: const BorderSide(
-                                      color: Color(0xFF555555),
-                                      width: 1.5,
-                                    ),
+                                        color: Color(0xFF555555),
+                                        width: 1.5),
                                     shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(3),
-                                    ),
+                                        borderRadius:
+                                            BorderRadius.circular(
+                                                3)),
                                     onChanged: (val) => setState(
                                         () => _agreeToTerms =
                                             val ?? false),
@@ -497,15 +685,12 @@ class _CustomerSignupPageState extends State<CustomerSignupPage> {
                                           'Terms and Conditions',
                                           style: TextStyle(
                                             fontSize: 13,
-                                            color:
-                                                Color(0xFF1A5C35),
+                                            color: _green,
                                             fontWeight:
                                                 FontWeight.w600,
-                                            decoration:
-                                                TextDecoration
-                                                    .underline,
-                                            decorationColor:
-                                                Color(0xFF1A5C35),
+                                            decoration: TextDecoration
+                                                .underline,
+                                            decorationColor: _green,
                                           ),
                                         ),
                                       ),
@@ -523,15 +708,12 @@ class _CustomerSignupPageState extends State<CustomerSignupPage> {
                                           'Privacy Policy',
                                           style: TextStyle(
                                             fontSize: 13,
-                                            color:
-                                                Color(0xFF1A5C35),
+                                            color: _green,
                                             fontWeight:
                                                 FontWeight.w600,
-                                            decoration:
-                                                TextDecoration
-                                                    .underline,
-                                            decorationColor:
-                                                Color(0xFF1A5C35),
+                                            decoration: TextDecoration
+                                                .underline,
+                                            decorationColor: _green,
                                           ),
                                         ),
                                       ),
@@ -543,7 +725,7 @@ class _CustomerSignupPageState extends State<CustomerSignupPage> {
 
                             const SizedBox(height: 24),
 
-                            // ── Create Account Button ──
+                            // ── Create Account Button ─────
                             SizedBox(
                               width: double.infinity,
                               height: 52,
@@ -551,9 +733,9 @@ class _CustomerSignupPageState extends State<CustomerSignupPage> {
                                 decoration: BoxDecoration(
                                   gradient: const LinearGradient(
                                     colors: [
-                                      Color(0xFF1A5C35),
+                                      _green,
                                       Color(0xFF2DAA55),
-                                      Color(0xFFF5A623),
+                                      _orange,
                                     ],
                                     begin: Alignment.centerLeft,
                                     end: Alignment.centerRight,
@@ -562,8 +744,7 @@ class _CustomerSignupPageState extends State<CustomerSignupPage> {
                                       BorderRadius.circular(30),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: const Color(0xFF1A5C35)
-                                          .withAlpha(89),
+                                      color: _green.withAlpha(89),
                                       blurRadius: 12,
                                       offset: const Offset(0, 4),
                                     ),
@@ -572,7 +753,7 @@ class _CustomerSignupPageState extends State<CustomerSignupPage> {
                                 child: ElevatedButton(
                                   onPressed: _isLoading
                                       ? null
-                                      : _handleCreateAccount,
+                                      : _handleSubmit,
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor:
                                         Colors.transparent,
@@ -610,7 +791,7 @@ class _CustomerSignupPageState extends State<CustomerSignupPage> {
 
                             const SizedBox(height: 16),
 
-                            // ── Sign In Link ──
+                            // ── Sign In link ──────────────
                             Center(
                               child: Wrap(
                                 alignment: WrapAlignment.center,
@@ -629,12 +810,11 @@ class _CustomerSignupPageState extends State<CustomerSignupPage> {
                                       'Sign In',
                                       style: TextStyle(
                                         fontSize: 13,
-                                        color: Color(0xFF1A5C35),
+                                        color: _green,
                                         fontWeight: FontWeight.w700,
                                         decoration:
                                             TextDecoration.underline,
-                                        decorationColor:
-                                            Color(0xFF1A5C35),
+                                        decorationColor: _green,
                                       ),
                                     ),
                                   ),
