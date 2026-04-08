@@ -3,7 +3,7 @@ import 'package:get_storage/get_storage.dart';
 import 'dart:convert';
 
 class AuthService {
-  static const String apiUrl = 'https://wholesaleapp.sandbox.pk/api';
+  static const String apiUrl = '3000/api/auth';
   static final GetStorage box = GetStorage();
 
   /// Login user with email and password
