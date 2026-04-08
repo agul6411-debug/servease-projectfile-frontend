@@ -4,6 +4,7 @@ import 'package:projectfile/screens/home_page_new.dart';
 import 'package:projectfile/screens/login_screen.dart';
 import 'package:projectfile/screens/register_screen.dart';
 import 'package:projectfile/screens/splash_screen.dart';
+import 'package:projectfile/screens/c_registration_screen.dart';
 import 'package:projectfile/routes/auth_middleware.dart';
 
 class AppRoutes {
@@ -12,6 +13,7 @@ class AppRoutes {
   static const String onboarding = '/onboarding';
   static const String login = '/login';
   static const String register = '/register';
+  static const String customerSignup = '/customer-signup';
   static const String dashboard = '/dashboard';
 
   static final List<GetPage<dynamic>> pages = [
@@ -19,6 +21,7 @@ class AppRoutes {
     GetPage(name: home, page: () => HomePage()),
     GetPage(name: login, page: () => LoginScreen()),
     GetPage(name: register, page: () => RegisterScreen()),
+    GetPage(name: customerSignup, page: () => CustomerSignupPage()),
     GetPage(
       name: dashboard,
       page: () => DashboardScreen(),
@@ -26,3 +29,4 @@ class AppRoutes {
     ),
   ];
 }
+

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 // ─────────────────────────────────────────────
 // Full Page
@@ -156,17 +157,18 @@ class _CTABannerState extends State<_CTABanner>
   }
 
   void _navigate(String type) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(type == 'customer'
-            ? 'Navigating to Customer Signup...'
-            : 'Navigating to Service Provider Signup...'),
-        backgroundColor: const Color(0xFF1A5C35),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        duration: const Duration(seconds: 2),
-      ),
-    );
+    if (type == 'customer') {
+      Get.toNamed('/customer-signup');
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Navigating to Service Provider Signup...'),
+          backgroundColor: Color(0xFF1A5C35),
+          behavior: SnackBarBehavior.floating,
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
   }
 
   void _signIn() {
