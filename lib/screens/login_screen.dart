@@ -36,7 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       if (result['success']) {
-        Get.toNamed('/dashboard');
+        Get.toNamed('/view-services');
       } else {
         Get.snackbar('Error', result['message'] ?? 'Login failed');
       }
