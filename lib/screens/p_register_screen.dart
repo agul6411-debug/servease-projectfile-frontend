@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:projectfile/core/utils/theme.dart';
+import 'package:projectfile/core/services/auth_service.dart';
 
 class ServiceProviderSignupPage extends StatefulWidget {
   const ServiceProviderSignupPage({super.key});
@@ -43,10 +45,6 @@ class _ServiceProviderSignupPageState
     'Other',
   ];
 
-  // ── Colors ───────────────────────────────────
-  static const Color _green  = Color(0xFF1A5C35);
-  static const Color _orange = Color(0xFFF5A623);
-
   @override
   void dispose() {
     _fullNameCtrl.dispose();
@@ -66,7 +64,7 @@ class _ServiceProviderSignupPageState
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(msg),
-        backgroundColor: isError ? Colors.redAccent : _green,
+        backgroundColor: isError ? AppTheme.errorRed : AppTheme.primaryGreen,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10)),
@@ -117,7 +115,7 @@ class _ServiceProviderSignupPageState
     return null;
   }
 
-  // ── Submit ───────────────────────────────────
+  // ── Submit using AuthService ─────────────────
   Future<void> _handleSubmit() async {
     if (!_formKey.currentState!.validate()) return;
     if (!_agreeToTerms) {
@@ -127,11 +125,43 @@ class _ServiceProviderSignupPageState
       );
       return;
     }
+
     setState(() => _isLoading = true);
-    await Future.delayed(const Duration(seconds: 2));
-    if (!mounted) return;
-    setState(() => _isLoading = false);
-    _showSnack('Account created successfully! Welcome to ServEase.');
+
+    try {
+      final result = await AuthService.registerProvider({
+        'full_name': _fullNameCtrl.text.trim(),
+        'email': _emailCtrl.text.trim(),
+        'phone': _phoneCtrl.text.trim(),
+        'cnic': _cnicCtrl.text.trim(),
+        'address': _addressCtrl.text.trim(),
+        'password': _passwordCtrl.text,
+        'category': _selectedCategory,
+        'years_of_experience': int.tryParse(_yearsExpCtrl.text.trim()) ?? 0,
+        'bio': _bioCtrl.text.trim(),
+      });
+
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+
+      if (result['success'] == true) {
+        _showSnack(result['message'] ?? 'Account created successfully! Welcome to ServEase.');
+        
+        // Navigate to provider home or dashboard
+        // Navigator.pushReplacementNamed(context, '/provider-home');
+        
+        // For now, just show success and go back
+        await Future.delayed(const Duration(seconds: 1));
+        if (!mounted) return;
+        Navigator.pop(context);
+      } else {
+        _showSnack(result['message'] ?? 'Registration failed', isError: true);
+      }
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+      _showSnack('An error occurred. Please try again.', isError: true);
+    }
   }
 
   // ── Input Decoration ─────────────────────────
@@ -143,8 +173,8 @@ class _ServiceProviderSignupPageState
     return InputDecoration(
       hintText: hint,
       hintStyle:
-          const TextStyle(color: Color(0xFFBBBBBB), fontSize: 13),
-      prefixIcon: Icon(icon, color: const Color(0xFFBBBBBB), size: 18),
+          const TextStyle(color: AppTheme.textLight, fontSize: 13),
+      prefixIcon: Icon(icon, color: AppTheme.textLight, size: 18),
       suffixIcon: suffix,
       filled: true,
       fillColor: Colors.white,
@@ -152,24 +182,24 @@ class _ServiceProviderSignupPageState
           const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+        borderSide: const BorderSide(color: AppTheme.borderLight),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+        borderSide: const BorderSide(color: AppTheme.borderLight),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: _green, width: 1.6),
+        borderSide: const BorderSide(color: AppTheme.primaryGreen, width: 1.6),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: Colors.redAccent),
+        borderSide: const BorderSide(color: AppTheme.errorRed),
       ),
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
         borderSide:
-            const BorderSide(color: Colors.redAccent, width: 1.6),
+            const BorderSide(color: AppTheme.errorRed, width: 1.6),
       ),
     );
   }
@@ -182,7 +212,7 @@ class _ServiceProviderSignupPageState
           style: const TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w500,
-            color: Color(0xFF444444),
+            color: AppTheme.textDark,
           ),
         ),
       );
@@ -212,6 +242,7 @@ class _ServiceProviderSignupPageState
   // ── Build ────────────────────────────────────
   @override
   Widget build(BuildContext context) {
+    Color? green = AppTheme.primaryGreen;
     return Scaffold(
       backgroundColor: const Color(0xFFEEECE8),
       body: SafeArea(
@@ -259,8 +290,8 @@ class _ServiceProviderSignupPageState
                                       gradient:
                                           const LinearGradient(
                                         colors: [
-                                          _green,
-                                          _orange,
+                                          AppTheme.primaryGreen,
+                                          AppTheme.accentOrange,
                                         ],
                                         begin: Alignment.topLeft,
                                         end:
@@ -520,7 +551,7 @@ class _ServiceProviderSignupPageState
                                         borderRadius:
                                             BorderRadius.circular(10),
                                         borderSide: const BorderSide(
-                                            color: _green,
+                                            color: AppTheme.primaryGreen,
                                             width: 1.6),
                                       ),
                                       errorBorder: OutlineInputBorder(
@@ -619,7 +650,7 @@ class _ServiceProviderSignupPageState
                                   borderRadius:
                                       BorderRadius.circular(10),
                                   borderSide: const BorderSide(
-                                      color: _green, width: 1.6),
+                                      color: AppTheme.primaryGreen, width: 1.6),
                                 ),
                                 errorBorder: OutlineInputBorder(
                                   borderRadius:
@@ -652,7 +683,7 @@ class _ServiceProviderSignupPageState
                                   height: 20,
                                   child: Checkbox(
                                     value: _agreeToTerms,
-                                    activeColor: _green,
+                                    activeColor: AppTheme.primaryGreen,
                                     side: const BorderSide(
                                         color: Color(0xFF555555),
                                         width: 1.5),
@@ -681,16 +712,16 @@ class _ServiceProviderSignupPageState
                                       GestureDetector(
                                         onTap: () => _showSnack(
                                             'Opening Terms and Conditions...'),
-                                        child: const Text(
+                                        child: Text(
                                           'Terms and Conditions',
                                           style: TextStyle(
                                             fontSize: 13,
-                                            color: _green,
+                                            color: green,
                                             fontWeight:
                                                 FontWeight.w600,
                                             decoration: TextDecoration
                                                 .underline,
-                                            decorationColor: _green,
+                                            decorationColor: green,
                                           ),
                                         ),
                                       ),
@@ -704,16 +735,16 @@ class _ServiceProviderSignupPageState
                                       GestureDetector(
                                         onTap: () => _showSnack(
                                             'Opening Privacy Policy...'),
-                                        child: const Text(
+                                        child: Text(
                                           'Privacy Policy',
                                           style: TextStyle(
                                             fontSize: 13,
-                                            color: _green,
+                                            color: green,
                                             fontWeight:
                                                 FontWeight.w600,
                                             decoration: TextDecoration
                                                 .underline,
-                                            decorationColor: _green,
+                                            decorationColor: green,
                                           ),
                                         ),
                                       ),
@@ -731,11 +762,11 @@ class _ServiceProviderSignupPageState
                               height: 52,
                               child: DecoratedBox(
                                 decoration: BoxDecoration(
-                                  gradient: const LinearGradient(
+                                  gradient: LinearGradient(
                                     colors: [
-                                      _green,
-                                      Color(0xFF2DAA55),
-                                      _orange,
+                                      green,
+                                      const Color(0xFF2DAA55),
+                                      AppTheme.accentOrange,
                                     ],
                                     begin: Alignment.centerLeft,
                                     end: Alignment.centerRight,
@@ -744,7 +775,7 @@ class _ServiceProviderSignupPageState
                                       BorderRadius.circular(30),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: _green.withAlpha(89),
+                                      color: AppTheme.primaryGreen.withAlpha(89),
                                       blurRadius: 12,
                                       offset: const Offset(0, 4),
                                     ),
@@ -806,15 +837,15 @@ class _ServiceProviderSignupPageState
                                   ),
                                   GestureDetector(
                                     onTap: () => Navigator.of(context).pushNamed('/login'),
-                                    child: const Text(
+                                    child: Text(
                                       'Sign In',
                                       style: TextStyle(
                                         fontSize: 13,
-                                        color: _green,
+                                        color: green,
                                         fontWeight: FontWeight.w700,
                                         decoration:
                                             TextDecoration.underline,
-                                        decorationColor: _green,
+                                        decorationColor: green,
                                       ),
                                     ),
                                   ),

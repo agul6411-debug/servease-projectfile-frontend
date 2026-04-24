@@ -11,9 +11,9 @@ class AuthMiddleware extends GetMiddleware {
     // Check if user has a valid token stored
     final token = box.read('token');
 
-    // If no token exists, redirect to login
+    // If no token exists, redirect to sign in
     if (token == null) {
-      return const RouteSettings(name: AppRoutes.login);
+      return const RouteSettings(name: AppRoutes.signIn);
     }
 
     // Optional: Verify token is still valid (commented for performance)

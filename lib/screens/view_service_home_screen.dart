@@ -53,11 +53,11 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
 
   final List<ServiceCategory> _allServices = const [
     ServiceCategory(
-        name: 'Electrician',
+        name: 'hand made crafts',
         icon: Icons.bolt_rounded,
         bgColor: Color(0xFFF5A623)),
     ServiceCategory(
-        name: 'Plumber',
+        name: '',
         icon: Icons.water_drop_rounded,
         bgColor: Color(0xFF3B7DD8)),
     ServiceCategory(
@@ -424,7 +424,7 @@ class _CustomerHomePageState extends State<CustomerHomePage> {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: _allServices.length,
-            separatorBuilder: (_, __) =>
+            separatorBuilder: (_, _) =>
                 const SizedBox(height: 12),
             itemBuilder: (context, index) {
               final s = _allServices[index];

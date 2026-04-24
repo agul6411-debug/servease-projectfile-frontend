@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:projectfile/core/utils/theme.dart';
+import 'package:projectfile/core/services/auth_service.dart';
 
 class CustomerSignupPage extends StatefulWidget {
   const CustomerSignupPage({super.key});
@@ -67,7 +69,7 @@ class _CustomerSignupPageState extends State<CustomerSignupPage> {
     return null;
   }
 
-  // ── Submit ───────────────────────────────────
+  // ── Submit using AuthService ─────────────────
   Future<void> _handleCreateAccount() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -80,11 +82,38 @@ class _CustomerSignupPageState extends State<CustomerSignupPage> {
     }
 
     setState(() => _isLoading = true);
-    await Future.delayed(const Duration(seconds: 2));
-    if (!mounted) return;
-    setState(() => _isLoading = false);
 
-    _showSnack('Account created successfully! Welcome to ServEase.');
+    try {
+      final result = await AuthService.registerCustomer({
+        'full_name': _fullNameController.text.trim(),
+        'email': _emailController.text.trim(),
+        'phone': _phoneController.text.trim(),
+        'cnic': _cnicController.text.trim(),
+        'address': _addressController.text.trim(),
+        'password': _passwordController.text,
+      });
+
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+
+      if (result['success'] == true) {
+        _showSnack(result['message'] ?? 'Account created successfully! Welcome to ServEase.');
+        
+        // Navigate to customer home or dashboard
+        // Navigator.pushReplacementNamed(context, '/customer-home');
+        
+        // For now, just show success and go back
+        await Future.delayed(const Duration(seconds: 1));
+        if (!mounted) return;
+        Navigator.pop(context);
+      } else {
+        _showSnack(result['message'] ?? 'Registration failed', isError: true);
+      }
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _isLoading = false);
+      _showSnack('An error occurred. Please try again.', isError: true);
+    }
   }
 
   void _showSnack(String msg, {bool isError = false}) {
@@ -110,35 +139,35 @@ class _CustomerSignupPageState extends State<CustomerSignupPage> {
   }) {
     return InputDecoration(
       hintText: hint,
-      hintStyle: const TextStyle(color: Color(0xFFBBBBBB), fontSize: 13),
+      hintStyle: const TextStyle(color: AppTheme.textLight, fontSize: 13),
       prefixIcon:
-          Icon(prefixIcon, color: const Color(0xFFBBBBBB), size: 18),
+          Icon(prefixIcon, color: AppTheme.textLight, size: 18),
       suffixIcon: suffixIcon,
       filled: true,
-      fillColor: Colors.white,
+      fillColor: AppTheme.surfaceWhite,
       contentPadding:
           const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+        borderSide: const BorderSide(color: AppTheme.borderLight),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: Color(0xFFE0E0E0)),
+        borderSide: const BorderSide(color: AppTheme.borderLight),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
         borderSide:
-            const BorderSide(color: Color(0xFF1A5C35), width: 1.6),
+            const BorderSide(color: AppTheme.primaryGreen, width: 1.6),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: const BorderSide(color: Colors.redAccent),
+        borderSide: const BorderSide(color: AppTheme.errorRed),
       ),
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
         borderSide:
-            const BorderSide(color: Colors.redAccent, width: 1.6),
+            const BorderSide(color: AppTheme.errorRed, width: 1.6),
       ),
     );
   }
@@ -152,7 +181,7 @@ class _CustomerSignupPageState extends State<CustomerSignupPage> {
         style: const TextStyle(
           fontSize: 13,
           fontWeight: FontWeight.w500,
-          color: Color(0xFF444444),
+          color: AppTheme.textDark,
         ),
       ),
     );

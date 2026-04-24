@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:projectfile/core/utils/theme.dart';
 
 // ─────────────────────────────────────────────
 // Full Page
@@ -9,6 +10,10 @@ class RegisterScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = MediaQuery.of(context).size.width < 600;
+    final horizontalPadding = isMobile ? 16.0 : 32.0;
+    final verticalPadding = isMobile ? 20.0 : 32.0;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF2F2F0),
       body: SingleChildScrollView(
@@ -22,7 +27,8 @@ class RegisterScreen extends StatelessWidget {
 
             // ── CTA Banner ──
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 32),
+              padding: EdgeInsets.symmetric(
+                  horizontal: horizontalPadding, vertical: verticalPadding),
               child: const _CTABanner(),
             ),
 
@@ -43,33 +49,37 @@ class _HeroSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = MediaQuery.of(context).size.width < 600;
+    final horizontalPadding = isMobile ? 24.0 : 40.0;
+    final verticalPadding = isMobile ? 40.0 : 56.0;
+    final fontSize = isMobile ? 28.0 : 42.0;
+    final descFontSize = isMobile ? 14.0 : 16.0;
+
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 56),
+      padding:
+          EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: verticalPadding),
       decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFF1A5C35), Color(0xFF2D8A50)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        gradient: AppTheme.primaryGradient,
       ),
       child: Column(
         children: [
-          const Text(
+          Text(
             'Your Trusted Home\nService Platform',
             textAlign: TextAlign.center,
             style: TextStyle(
-              color: Colors.white,
-              fontSize: 42,
+              color: const Color.fromARGB(255, 14, 12, 12),
+              fontSize: fontSize,
               fontWeight: FontWeight.bold,
               height: 1.2,
             ),
           ),
-          const SizedBox(height: 16),
-          const Text(
+          SizedBox(height: isMobile ? 12 : 16),
+          Text(
             'Connect with verified professionals for all your home service needs.\nFast, reliable, and transparent.',
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.white70, fontSize: 16, height: 1.6),
+            style: TextStyle(
+                color: const Color.fromARGB(179, 14, 13, 13), fontSize: descFontSize, height: 1.6),
           ),
         ],
       ),
@@ -92,37 +102,77 @@ class _FeaturesStrip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = MediaQuery.of(context).size.width < 600;
+    final horizontalPadding = isMobile ? 16.0 : 40.0;
+    final verticalPadding = isMobile ? 16.0 : 24.0;
+    final itemSpacing = isMobile ? 8.0 : 10.0;
+    final fontSize = isMobile ? 12.0 : 14.0;
+    final iconSize = isMobile ? 18.0 : 22.0;
+    final containerSize = isMobile ? 32.0 : 40.0;
+
     return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 40),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: _features.map((f) {
-          return Row(
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF5A623).withAlpha(31),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Icon(f['icon'] as IconData,
-                    color: const Color(0xFFF5A623), size: 22),
-              ),
-              const SizedBox(width: 10),
-              Text(
-                f['label'] as String,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF1A1A1A),
-                ),
-              ),
-            ],
-          );
-        }).toList(),
-      ),
+      color: const Color.fromARGB(255, 5, 5, 5),
+      padding:
+          EdgeInsets.symmetric(vertical: verticalPadding, horizontal: horizontalPadding),
+      child: isMobile
+          ? Column(
+              children: _features.map((f) {
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 12),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: containerSize,
+                        height: containerSize,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF5A623).withAlpha(31),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Icon(f['icon'] as IconData,
+                            color: const Color(0xFFF5A623), size: iconSize),
+                      ),
+                      SizedBox(width: itemSpacing),
+                      Text(
+                        f['label'] as String,
+                        style: TextStyle(
+                          fontSize: fontSize,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFF1A1A1A),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(),
+            )
+          : Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: _features.map((f) {
+                return Row(
+                  children: [
+                    Container(
+                      width: containerSize,
+                      height: containerSize,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF5A623).withAlpha(31),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Icon(f['icon'] as IconData,
+                          color: const Color(0xFFF5A623), size: iconSize),
+                    ),
+                    SizedBox(width: itemSpacing),
+                    Text(
+                      f['label'] as String,
+                      style: TextStyle(
+                        fontSize: fontSize,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF1A1A1A),
+                      ),
+                    ),
+                  ],
+                );
+              }).toList(),
+            ),
     );
   }
 }
@@ -165,18 +215,18 @@ class _CTABannerState extends State<_CTABanner>
   }
 
   void _signIn() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Navigating to Sign In...'),
-        backgroundColor: Color(0xFF1A5C35),
-        behavior: SnackBarBehavior.floating,
-        duration: Duration(seconds: 2),
-      ),
-    );
+    Get.toNamed('/sign-in');
   }
 
   @override
   Widget build(BuildContext context) {
+    final isMobile = MediaQuery.of(context).size.width < 600;
+    final verticalPadding = isMobile ? 40.0 : 56.0;
+    final horizontalPadding = isMobile ? 24.0 : 40.0;
+    final titleFontSize = isMobile ? 24.0 : 32.0;
+    final descFontSize = isMobile ? 13.0 : 15.0;
+    final buttonGap = isMobile ? 12.0 : 20.0;
+
     return ClipRRect(
       borderRadius: BorderRadius.circular(24),
       child: Stack(
@@ -184,19 +234,11 @@ class _CTABannerState extends State<_CTABanner>
           // ── Gradient background ──
           Container(
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 56, horizontal: 32),
+            padding:
+                EdgeInsets.symmetric(vertical: verticalPadding, horizontal: horizontalPadding),
             decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Color(0xFF1A5C35), // deep green
-                  Color(0xFF2DAA55), // mid green
-                  Color(0xFFF5A623), // orange
-                ],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-              ),
+              gradient: AppTheme.accentGradient,
             ),
-
           ),
 
           // ── Animated + pattern overlay ──
@@ -205,8 +247,7 @@ class _CTABannerState extends State<_CTABanner>
               animation: _controller,
               builder: (_, _) {
                 return CustomPaint(
-                  painter: _CrossPatternPainter(
-                      offset: _controller.value * 60),
+                  painter: _CrossPatternPainter(offset: _controller.value * 60),
                 );
               },
             ),
@@ -214,68 +255,102 @@ class _CTABannerState extends State<_CTABanner>
 
           // ── Content ──
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 52, horizontal: 40),
+            padding:
+                EdgeInsets.symmetric(vertical: verticalPadding - 4, horizontal: horizontalPadding),
             child: Column(
               children: [
-                const Text(
+                Text(
                   "Let's Get You Started!",
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 32,
+                    color: const Color.fromARGB(255, 12, 11, 11),
+                    fontSize: titleFontSize,
                     fontWeight: FontWeight.bold,
                     letterSpacing: 0.5,
                   ),
                 ),
-                const SizedBox(height: 10),
-                const Text(
+                SizedBox(height: isMobile ? 8 : 10),
+                Text(
                   'Join thousands of satisfied customers and service providers on our platform',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 15,
+                    color: const Color.fromARGB(179, 14, 13, 13),
+                    fontSize: descFontSize,
                     height: 1.5,
                   ),
                 ),
-                const SizedBox(height: 36),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Signup as Customer — white outlined
-                    _CTAButton(
-                      label: 'Signup as Customer',
-                      filled: false,
-                      onTap: () => _navigate('customer'),
-                    ),
-                    const SizedBox(width: 20),
-                    // Signup as Service Provider — orange filled
-                    _CTAButton(
-                      label: 'Signup as Service Provider',
-                      filled: true,
-                      onTap: () => _navigate('provider'),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                // Sign In link
+                SizedBox(height: isMobile ? 24 : 36),
+                isMobile
+                    ? Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _CTAButton(
+                            label: 'Signup as Customer',
+                            filled: false,
+                            onTap: () => _navigate('customer'),
+                            isMobile: true,
+                          ),
+                          SizedBox(height: buttonGap),
+                          _CTAButton(
+                            label: 'Signup as Service Provider',
+                            filled: true,
+                            onTap: () => _navigate('provider'),
+                            isMobile: true,
+                          ),
+                        ],
+                      )
+                    : Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          _CTAButton(
+                            label: 'Signup as Customer',
+                            filled: false,
+                            onTap: () => _navigate('customer'),
+                          ),
+                          SizedBox(width: buttonGap),
+                          _CTAButton(
+                            label: 'Signup as Service Provider',
+                            filled: true,
+                            onTap: () => _navigate('provider'),
+                          ),
+                        ],
+                      ),
+                SizedBox(height: isMobile ? 20 : 28),
+                // Sign In button option
                 GestureDetector(
                   onTap: _signIn,
-                  child: RichText(
-                    text: const TextSpan(
-                      style: TextStyle(
-                          color: Colors.white70, fontSize: 13),
-                      children: [
-                        TextSpan(text: 'Already have an account? '),
-                        TextSpan(
-                          text: 'Sign In',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                            decoration: TextDecoration.underline,
-                            decorationColor: Colors.white,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: isMobile ? 16 : 24,
+                        vertical: isMobile ? 10 : 12),
+                    decoration: BoxDecoration(
+                      color: Colors.transparent,
+                      border: Border(
+                        top: BorderSide(
+                            color: const Color.fromARGB(255, 8, 8, 8).withAlpha(77), width: 1),
+                      ),
+                    ),
+                    child: RichText(
+                      textAlign: TextAlign.center,
+                      text: TextSpan(
+                        style: TextStyle(
+                            color: const Color.fromARGB(179, 14, 13, 13),
+                            fontSize: isMobile ? 12 : 14),
+                        children: [
+                          const TextSpan(text: 'Already have an account? '),
+                          TextSpan(
+                            text: 'Sign In',
+                            style: TextStyle(
+                              color: const Color.fromARGB(255, 17, 16, 16),
+                              fontWeight: FontWeight.bold,
+                              fontSize: isMobile ? 13 : 15,
+                              decoration: TextDecoration.underline,
+                              decorationColor: const Color.fromARGB(255, 10, 10, 10),
+                              decorationThickness: 1.5,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -295,9 +370,13 @@ class _CTAButton extends StatefulWidget {
   final String label;
   final bool filled;
   final VoidCallback onTap;
+  final bool isMobile;
 
   const _CTAButton(
-      {required this.label, required this.filled, required this.onTap});
+      {required this.label,
+      required this.filled,
+      required this.onTap,
+      this.isMobile = false});
 
   @override
   State<_CTAButton> createState() => _CTAButtonState();
@@ -308,6 +387,10 @@ class _CTAButtonState extends State<_CTAButton> {
 
   @override
   Widget build(BuildContext context) {
+    final horizontalPadding = widget.isMobile ? 20.0 : 28.0;
+    final verticalPadding = widget.isMobile ? 12.0 : 15.0;
+    final fontSize = widget.isMobile ? 12.0 : 14.0;
+
     return MouseRegion(
       onEnter: (_) => setState(() => _hovered = true),
       onExit: (_) => setState(() => _hovered = false),
@@ -321,12 +404,13 @@ class _CTAButtonState extends State<_CTAButton> {
             1.0,
           ),
           transformAlignment: Alignment.center,
-          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 15),
+          padding:
+              EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: verticalPadding),
           decoration: BoxDecoration(
             color: widget.filled
                 ? (_hovered
-                    ? const Color(0xFFE09010)
-                    : const Color(0xFFF5A623))
+                    ? AppTheme.accentOrangeDark
+                    : AppTheme.accentOrange)
                 : (_hovered
                     ? Colors.white.withAlpha(38)
                     : Colors.white),
@@ -335,22 +419,16 @@ class _CTAButtonState extends State<_CTAButton> {
                 ? null
                 : Border.all(color: Colors.white, width: 1.5),
             boxShadow: _hovered
-                ? [
-                    BoxShadow(
-                      color: Colors.black.withAlpha(46),
-                      blurRadius: 16,
-                      offset: const Offset(0, 4),
-                    )
-                  ]
+                ? AppTheme.shadowLarge
                 : [],
           ),
           child: Text(
             widget.label,
             style: TextStyle(
-              color: widget.filled ? Colors.white : const Color(0xFF1A5C35),
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.2,
+              color: widget.filled ? Colors.white : AppTheme.primaryGreen,
+              fontSize: fontSize,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 0.3,
             ),
           ),
         ),
