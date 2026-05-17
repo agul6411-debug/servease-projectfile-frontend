@@ -1,6 +1,9 @@
+// ignore_for_file: curly_braces_in_flow_control_structures
+
 import 'package:flutter/material.dart';
 import 'package:frontfile_servease/services/api_service.dart';
 import 'package:get/get.dart';
+import 'package:frontfile_servease/routes.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -52,20 +55,17 @@ class _LoginScreenState extends State<LoginScreen>
   // ===============================
   // LOGIN LOGIC
   // ===============================
-
   void _handleSignIn() async {
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
 
     if (email.isEmpty || password.isEmpty) {
       Get.snackbar(
-        'Missing Fields',
-        'Please enter your email and password',
+        'Error',
+        'Email and password required',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.shade600,
+        backgroundColor: Colors.red,
         colorText: Colors.white,
-        margin: const EdgeInsets.all(16),
-        borderRadius: 12,
       );
       return;
     }
@@ -75,52 +75,56 @@ class _LoginScreenState extends State<LoginScreen>
     try {
       final api = ApiService();
 
-      final result = await api.login(email, password);
-
-      print("Login result: $result");
-
-      if (!mounted) return;
+      // ONLY ONE CALL
+      final result = await api.login(email, password, "customer");
+      // 👆 role can be anything now BUT backend already returns real role
 
       setState(() => _isLoading = false);
 
-      if (result['message'] == 'Login successful') {
+      print("LOGIN RESPONSE: $result");
+
+      if (result['success'] == true) {
+        final role = result['role'];
+
         Get.snackbar(
           'Success',
-          'Login successful',
+          'Login successful as $role',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green.shade600,
+          backgroundColor: Colors.green,
           colorText: Colors.white,
-          margin: const EdgeInsets.all(16),
-          borderRadius: 12,
         );
 
-        Future.delayed(const Duration(milliseconds: 500), () {
-          Get.offNamed('/admin_dashboard');
-        });
+        await Future.delayed(const Duration(milliseconds: 300));
+
+        // SAFE NAVIGATION
+        if (role == 'admin') {
+          Get.offAllNamed('/admin_dashboard');
+        } else if (role == 'provider') {
+          Get.offAllNamed('/provider_home_screen');
+        } else if (role == 'customer') {
+          Get.offAllNamed('/customer_home_screen');
+        } else {
+          Get.snackbar("Error", "Unknown role");
+        }
       } else {
         Get.snackbar(
           'Error',
-          'Login failed',
+          result['message'] ?? 'Login failed',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.red.shade600,
+          backgroundColor: Colors.red,
           colorText: Colors.white,
-          margin: const EdgeInsets.all(16),
-          borderRadius: 12,
         );
       }
     } catch (e) {
-      if (!mounted) return;
-
       setState(() => _isLoading = false);
+      print("LOGIN ERROR: $e");
 
       Get.snackbar(
         'Error',
-        'Something went wrong',
+        'Server error',
         snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red.shade600,
+        backgroundColor: Colors.red,
         colorText: Colors.white,
-        margin: const EdgeInsets.all(16),
-        borderRadius: 12,
       );
     }
   }

@@ -279,6 +279,9 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
         if (label == 'verify') {
           Get.toNamed(AppRoutes.verifyPage);
         }
+        if (label == 'profile') {
+          Get.toNamed(AppRoutes.adminprofile);
+        }
       },
 
       items: _navItems.map((item) {

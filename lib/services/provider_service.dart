@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ProviderService {
-  static const String baseUrl = 'http://localhost:3000/providers';
+  static const String baseUrl = 'http://localhost:3000/register/providers';
 
   // =========================
   // CREATE  →  POST /providers
@@ -77,4 +77,6 @@ class ProviderService {
     final response = await http.delete(Uri.parse('$baseUrl/$id'));
     return jsonDecode(response.body);
   }
+
+  Future<Object?> registerProvider(Map<String, Object?> map) async {}
 }

@@ -1,17 +1,19 @@
-// API service
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  final String baseUrl = "http://localhost:3000/auth";
+  final String baseUrl = "http://localhost:3000";
 
-  Future login(String email, String password) async {
-    final response = await http.post(
-      Uri.parse("$baseUrl/login"),
+  Future login(String email, String password, String role) async {
+    final res = await http.post(
+      Uri.parse("$baseUrl/login"), // ← /auth/login
       headers: {"Content-Type": "application/json"},
-      body: jsonEncode({"email": email, "password": password}),
+      body: jsonEncode({"email": email, "password": password, "role": role}),
     );
 
-    return jsonDecode(response.body);
+    print("STATUS: ${res.statusCode}");
+    print("BODY: ${res.body}");
+
+    return jsonDecode(res.body);
   }
 }
