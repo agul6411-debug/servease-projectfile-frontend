@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontfile_servease/services/provider_service.dart';
+import 'package:frontfile_servease/services/providerpagereg_service.dart';
 import 'package:get/get.dart';
 
 class ProviderPagereg extends StatefulWidget {
@@ -134,8 +134,7 @@ class _ProviderPageregState extends State<ProviderPagereg> {
 
       if (!mounted) return;
       setState(() => _isLoading = false);
-
-      final data = result as Map<String, dynamic>;
+      final data = result;
 
       if (data['success'] == true) {
         _showSnack('Registration successful!');
@@ -748,8 +747,7 @@ class _ProviderPageregState extends State<ProviderPagereg> {
                                   ],
                                 ),
                                 child: ElevatedButton(
-                                  onPressed: () =>
-                                      Get.toNamed('/provider_home_screen'),
+                                  onPressed: _isLoading ? null : _handleSubmit,
                                   onLongPress: _isLoading
                                       ? null
                                       : () => _showSnack(

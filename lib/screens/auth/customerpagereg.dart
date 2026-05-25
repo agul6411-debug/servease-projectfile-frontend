@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontfile_servease/services/customerservice.dart';
+import 'package:frontfile_servease/services/cust_registerservice.dart';
 import 'package:get/get.dart';
 
 class CustomerPagereg extends StatefulWidget {
@@ -96,22 +96,24 @@ class _CustomerPageregState extends State<CustomerPagereg> {
       if (!mounted) return;
       setState(() => _isLoading = false);
 
+      // ── SUCCESS CASE ──
       if (result == 'Registration successful') {
         _showSnack('Account created successfully! Redirecting...');
 
-        // Navigate to customer home or dashboard
-        // Navigator.pushReplacementNamed(context, '/customer-home');
-
-        // For now, just show success and go back
         await Future.delayed(const Duration(seconds: 1));
+
         if (!mounted) return;
-        Navigator.pop(context);
-      } else {
+
+        Get.offAllNamed('/customer_home_screen');
+      }
+      // ── ERROR CASE ──
+      else {
         _showSnack(result, isError: true);
       }
     } catch (e) {
       if (!mounted) return;
       setState(() => _isLoading = false);
+
       _showSnack('An error occurred. Please try again.', isError: true);
     }
   }
@@ -196,6 +198,18 @@ class _CustomerPageregState extends State<CustomerPagereg> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Customer Registration'),
+        leading: Navigator.canPop(context)
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => Navigator.of(context).pop(),
+              )
+            : null,
+        backgroundColor: Colors.white,
+        elevation: 0,
+        foregroundColor: Colors.black,
+      ),
       backgroundColor: const Color(0xFFEEECE8),
       body: SafeArea(
         child: Stack(
@@ -547,9 +561,7 @@ class _CustomerPageregState extends State<CustomerPagereg> {
                                   ],
                                 ),
                                 child: ElevatedButton(
-                                  onPressed: () =>
-                                      Get.toNamed('/customer_home_screen'),
-                                  onLongPress: _isLoading
+                                  onPressed: _isLoading
                                       ? null
                                       : _handleCreateAccount,
                                   style: ElevatedButton.styleFrom(
@@ -575,7 +587,6 @@ class _CustomerPageregState extends State<CustomerPagereg> {
                                             color: Colors.white,
                                             fontSize: 15,
                                             fontWeight: FontWeight.w600,
-                                            letterSpacing: 0.3,
                                           ),
                                         ),
                                 ),

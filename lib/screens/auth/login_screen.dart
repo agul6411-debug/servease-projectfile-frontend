@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:frontfile_servease/services/api_service.dart';
 import 'package:get/get.dart';
 import 'package:frontfile_servease/routes.dart';
+import 'package:get_storage/get_storage.dart';
+import 'package:http/http.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -24,7 +26,7 @@ class _LoginScreenState extends State<LoginScreen>
   bool _obscurePassword = true;
   bool _rememberMe = false;
   bool _isLoading = false;
-
+  final box = GetStorage();
   @override
   void initState() {
     super.initState();
@@ -94,6 +96,8 @@ class _LoginScreenState extends State<LoginScreen>
           colorText: Colors.white,
         );
 
+        final token = result['token'];
+        box.write('auth_token', token);
         await Future.delayed(const Duration(milliseconds: 300));
 
         // SAFE NAVIGATION
@@ -136,6 +140,18 @@ class _LoginScreenState extends State<LoginScreen>
 
     return Scaffold(
       backgroundColor: const Color(0xFFF2F5F0),
+      appBar: AppBar(
+        title: const Text('Login'),
+        leading: Navigator.canPop(context)
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => Navigator.of(context).pop(),
+              )
+            : null,
+        backgroundColor: Colors.white,
+        elevation: 0,
+        foregroundColor: Colors.black,
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: FadeTransition(

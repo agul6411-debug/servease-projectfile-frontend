@@ -1,56 +1,38 @@
 import 'package:flutter/material.dart';
-import 'package:frontfile_servease/routes.dart';
-import 'package:frontfile_servease/services/dashboard_api.dart';
+import 'package:frontfile_servease/models/admin_dashboard_model.dart';
+import 'package:frontfile_servease/screens/admin/admindrawer.dart';
+import 'package:frontfile_servease/services/adminservice.dart';
 import 'package:get/get.dart';
 
-class Admindashboard extends StatelessWidget {
-  const Admindashboard({super.key});
+class AdminDashboard extends StatefulWidget {
+  const AdminDashboard({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return const AdminPanelPage();
-  }
+  State<AdminDashboard> createState() => _AdminDashboardState();
 }
 
-class AdminPanelPage extends StatefulWidget {
-  const AdminPanelPage({super.key});
+class _AdminDashboardState extends State<AdminDashboard> {
+  final AdminService _adminService = AdminService();
 
-  @override
-  State<AdminPanelPage> createState() => _AdminPanelPageState();
-}
-
-class _AdminPanelPageState extends State<AdminPanelPage> {
-  int _selectedIndex = 0;
+  AdminDashboardModel? dashboardData;
 
   bool isLoading = true;
-
-  Map<String, dynamic> stats = {};
-
-  final List<_NavItem> _navItems = const [
-    _NavItem(icon: Icons.dashboard_rounded, label: 'Dashboard'),
-    _NavItem(icon: Icons.verified_user_rounded, label: 'Verify'),
-    _NavItem(icon: Icons.add, label: 'Add Service'),
-    _NavItem(icon: Icons.people_rounded, label: 'providers'),
-    _NavItem(icon: Icons.face, label: 'Profile'),
-  ];
 
   @override
   void initState() {
     super.initState();
-    loadDashboard();
+    fetchDashboard();
   }
 
-  Future<void> loadDashboard() async {
-    try {
-      final data = await DashboardApi.getStats();
+  Future<void> fetchDashboard() async {
+    final result = await _adminService.getDashboardStats();
 
+    if (result != null) {
       setState(() {
-        stats = data;
+        dashboardData = result;
         isLoading = false;
       });
-    } catch (e) {
-      print(e);
-
+    } else {
       setState(() {
         isLoading = false;
       });
@@ -59,308 +41,297 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
-
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
-
-      body: CustomScrollView(
-        slivers: [
-          SliverToBoxAdapter(child: _buildHeader()),
-
-          SliverPadding(
-            padding: const EdgeInsets.all(16),
-
-            sliver: SliverToBoxAdapter(child: _buildStatsGrid()),
+      drawer: const AdminDrawer(),
+      backgroundColor: const Color(0xffF6F7F9),
+      bottomNavigationBar: Container(
+        height: 70,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(25),
+            topRight: Radius.circular(25),
           ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            // HOME
+            GestureDetector(
+              onTap: () {
+                Get.offAllNamed('/admindashboard');
+              },
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  Icon(Icons.home, color: Color(0xff14C15D)),
+                  SizedBox(height: 4),
+                  Text(
+                    'Home',
+                    style: TextStyle(
+                      color: Color(0xff14C15D),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
 
-          SliverToBoxAdapter(child: _buildQuickActions()),
+            // PROFILE
+            GestureDetector(
+              onTap: () {
+                Get.offAllNamed('/adminprofile');
+              },
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  Icon(Icons.person, color: Colors.grey),
+                  SizedBox(height: 4),
+                  Text(
+                    'Profile',
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
 
-          const SliverToBoxAdapter(child: SizedBox(height: 30)),
-        ],
+            // NOTIFICATIONS
+            GestureDetector(
+              onTap: () {
+                Get.offAllNamed('/adminnotifications');
+              },
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  Icon(Icons.notifications, color: Colors.grey),
+                  SizedBox(height: 4),
+                  Text(
+                    'Notifications',
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // SETTINGS
+            GestureDetector(
+              onTap: () {
+                Get.offAllNamed('/adminsettings');
+              },
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  Icon(Icons.settings, color: Colors.grey),
+                  SizedBox(height: 4),
+                  Text(
+                    'Settings',
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
-
-      bottomNavigationBar: _buildBottomNav(),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : SafeArea(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    _buildHeader(),
+                    const SizedBox(height: 20),
+                    _buildStatsSection(),
+                    const SizedBox(height: 25),
+                    _buildQuickActions(),
+                    const SizedBox(height: 25),
+                  ],
+                ),
+              ),
+            ),
     );
   }
 
   Widget _buildHeader() {
     return Container(
+      height: 180,
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [Color(0xFF43A047), Color(0xFFFF9800)],
+          colors: [Color(0xff00D26A), Color(0xffFF8A00)],
+        ),
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(35),
+          bottomRight: Radius.circular(35),
         ),
       ),
-
-      padding: EdgeInsets.only(
-        top: MediaQuery.of(context).padding.top + 20,
-        left: 20,
-        right: 20,
-        bottom: 30,
-      ),
-
-      child: const Column(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Admin Dashboard',
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(.25),
+                  shape: BoxShape.circle,
+                ),
+                child: Builder(
+                  builder: (context) {
+                    return GestureDetector(
+                      onTap: () {
+                        Scaffold.of(context).openDrawer();
+                      },
+                      child: const Icon(Icons.menu, color: Colors.white),
+                    );
+                  },
+                ),
+              ),
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(.25),
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(.25),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.arrow_back_ios_new,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 18),
+          const Text(
+            'Admin Panel',
             style: TextStyle(
               color: Colors.white,
-              fontSize: 26,
+              fontSize: 30,
               fontWeight: FontWeight.bold,
             ),
           ),
-
-          SizedBox(height: 6),
-
-          Text('Manage your platform', style: TextStyle(color: Colors.white70)),
+          const SizedBox(height: 5),
+          Text(
+            'Manage your platform',
+            style: TextStyle(color: Colors.white.withOpacity(.9), fontSize: 16),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildStatsGrid() {
-    return Column(
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child: _StatCard(
-                icon: Icons.people_rounded,
-
-                iconBg: Colors.green,
-
-                label: 'providers',
-
-                value: '${stats['totalProviders'] ?? 0}',
-
-                change: '+12%',
-              ),
-            ),
-
-            const SizedBox(width: 12),
-
-            Expanded(
-              child: _StatCard(
-                icon: Icons.home_repair_service,
-
-                iconBg: Colors.orange,
-
-                label: 'Services',
-
-                value: '${stats['totalServices'] ?? 0}',
-
-                change: '+5%',
-              ),
-            ),
-          ],
-        ),
-
-        const SizedBox(height: 12),
-
-        Row(
-          children: [
-            Expanded(
-              child: _StatCard(
-                icon: Icons.currency_rupee,
-
-                iconBg: Colors.green,
-
-                label: 'Revenue',
-
-                value: 'PKR ${stats['revenue'] ?? 0}',
-
-                change: '+18%',
-              ),
-            ),
-
-            const SizedBox(width: 12),
-
-            Expanded(
-              child: _StatCard(
-                icon: Icons.calendar_today,
-
-                iconBg: Colors.deepOrange,
-
-                label: 'Bookings',
-
-                value: '${stats['totalBookings'] ?? 0}',
-
-                change: '+9%',
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
-  Widget _buildQuickActions() {
+  Widget _buildStatsSection() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-
+      child: GridView.count(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        crossAxisCount: 2,
+        mainAxisSpacing: 15,
+        crossAxisSpacing: 15,
+        childAspectRatio: 1.1,
         children: [
-          const Text(
-            'Quick Actions',
-
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          _buildStatCard(
+            icon: Icons.group_outlined,
+            iconBg: const Color(0xff00B74A),
+            title: 'Total Users',
+            value: dashboardData?.totalUsers.toString() ?? '0',
+            percent: '+12%',
           ),
-
-          const SizedBox(height: 14),
-
-          _QuickActionTile(
-            icon: Icons.verified_user,
-
-            iconColor: Colors.orange,
-
-            title: 'Pending Verification',
-
-            subtitle: '${stats['pendingVerify'] ?? 0} pending',
+          _buildStatCard(
+            icon: Icons.person_outline,
+            iconBg: const Color(0xffFF6A00),
+            title: 'Active Providers',
+            value: dashboardData?.totalProviders.toString() ?? '0',
+            percent: '+8%',
           ),
-
-          const SizedBox(height: 10),
-
-          _QuickActionTile(
-            icon: Icons.report,
-
-            iconColor: Colors.red,
-
-            title: 'Open Complaints',
-
-            subtitle: '${stats['complaints'] ?? 0} complaints',
+          _buildStatCard(
+            icon: Icons.attach_money,
+            iconBg: const Color(0xff00B74A),
+            title: 'Monthly Revenue',
+            value: '₨0',
+            percent: '+23%',
           ),
-
-          const SizedBox(height: 10),
-
-          _QuickActionTile(
-            icon: Icons.people_alt,
-
-            iconColor: Colors.blue,
-
-            title: 'Active admin Users',
-
-            subtitle: '${stats['totalAdmins'] ?? 0} active',
+          _buildStatCard(
+            icon: Icons.calendar_today_outlined,
+            iconBg: const Color(0xffFF6A00),
+            title: 'Total Bookings',
+            value: dashboardData?.totalBookings.toString() ?? '0',
+            percent: '+15%',
           ),
         ],
       ),
     );
   }
 
-  Widget _buildBottomNav() {
-    return BottomNavigationBar(
-      currentIndex: _selectedIndex,
-
-      selectedItemColor: Colors.green,
-
-      unselectedItemColor: Colors.grey,
-
-      type: BottomNavigationBarType.fixed,
-
-      onTap: (index) {
-        setState(() {
-          _selectedIndex = index;
-        });
-
-        final label = _navItems[index].label.toLowerCase();
-
-        if (label == 'providers') {
-          Get.toNamed(AppRoutes.providersScreen);
-        }
-
-        if (label == 'add service') {
-          Get.toNamed(AppRoutes.addserviceScreen);
-        }
-
-        if (label == 'verify') {
-          Get.toNamed(AppRoutes.verifyPage);
-        }
-        if (label == 'profile') {
-          Get.toNamed(AppRoutes.adminprofile);
-        }
-      },
-
-      items: _navItems.map((item) {
-        return BottomNavigationBarItem(
-          icon: Icon(item.icon),
-          label: item.label,
-        );
-      }).toList(),
-    );
-  }
-}
-
-class _StatCard extends StatelessWidget {
-  final IconData icon;
-  final Color iconBg;
-  final String label;
-  final String value;
-  final String change;
-
-  const _StatCard({
-    required this.icon,
-    required this.iconBg,
-    required this.label,
-    required this.value,
-    required this.change,
-  });
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildStatCard({
+    required IconData icon,
+    required Color iconBg,
+    required String title,
+    required String value,
+    required String percent,
+  }) {
     return Container(
       padding: const EdgeInsets.all(16),
-
       decoration: BoxDecoration(
         color: Colors.white,
-
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(.05),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
       ),
-
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-
         children: [
           Container(
             padding: const EdgeInsets.all(10),
-
-            decoration: BoxDecoration(
-              color: iconBg,
-
-              borderRadius: BorderRadius.circular(12),
-            ),
-
+            decoration: BoxDecoration(color: iconBg, shape: BoxShape.circle),
             child: Icon(icon, color: Colors.white),
           ),
-
-          const SizedBox(height: 14),
-
-          Text(label, style: const TextStyle(color: Colors.grey)),
-
+          const Spacer(),
+          Text(title, style: const TextStyle(color: Colors.grey, fontSize: 14)),
           const SizedBox(height: 6),
-
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-
             children: [
               Text(
                 value,
-
                 style: const TextStyle(
-                  fontSize: 22,
+                  fontSize: 32,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-
               Text(
-                change,
-
+                percent,
                 style: const TextStyle(
-                  color: Colors.green,
-                  fontWeight: FontWeight.bold,
+                  color: Color(0xff00B74A),
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ],
@@ -369,78 +340,102 @@ class _StatCard extends StatelessWidget {
       ),
     );
   }
-}
 
-class _QuickActionTile extends StatelessWidget {
-  final IconData icon;
-  final Color iconColor;
-  final String title;
-  final String subtitle;
-
-  const _QuickActionTile({
-    required this.icon,
-    required this.iconColor,
-    required this.title,
-    required this.subtitle,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-
-      decoration: BoxDecoration(
-        color: Colors.white,
-
-        borderRadius: BorderRadius.circular(14),
-      ),
-
-      child: Row(
+  Widget _buildQuickActions() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-
-            decoration: BoxDecoration(
-              color: iconColor.withOpacity(0.15),
-
-              borderRadius: BorderRadius.circular(10),
-            ),
-
-            child: Icon(icon, color: iconColor),
+          const Text(
+            'Quick Actions',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
-
-          const SizedBox(width: 14),
-
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-
-              children: [
-                Text(
-                  title,
-
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-
-                const SizedBox(height: 4),
-
-                Text(
-                  subtitle,
-
-                  style: const TextStyle(color: Colors.grey, fontSize: 12),
-                ),
-              ],
-            ),
+          const SizedBox(height: 18),
+          _actionTile(
+            title: 'Pending Verifications',
+            subtitle: '${dashboardData?.pendingProviders ?? 0} pending',
+            icon: Icons.shield_outlined,
+            iconColor: const Color(0xffFF6A00),
+          ),
+          const SizedBox(height: 14),
+          _actionTile(
+            title: 'Open Complaints',
+            subtitle: '${dashboardData?.openComplaints ?? 0} pending',
+            icon: Icons.error_outline,
+            iconColor: const Color(0xffFF6A00),
+          ),
+          const SizedBox(height: 14),
+          _actionTile(
+            title: 'Manage Services',
+            subtitle: '${dashboardData?.totalServices ?? 0} pending',
+            icon: Icons.inventory_2_outlined,
+            iconColor: const Color(0xffFF6A00),
+          ),
+          const SizedBox(height: 14),
+          _actionTile(
+            title: 'Active Users',
+            subtitle: '${dashboardData?.totalUsers ?? 0} pending',
+            icon: Icons.people_outline,
+            iconColor: const Color(0xffFF6A00),
           ),
         ],
       ),
     );
   }
-}
 
-class _NavItem {
-  final IconData icon;
-  final String label;
-
-  const _NavItem({required this.icon, required this.label});
+  Widget _actionTile({
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required Color iconColor,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(.05),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: const Color(0xffFFF4EC),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Icon(icon, color: iconColor),
+          ),
+          const SizedBox(width: 15),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  subtitle,
+                  style: const TextStyle(color: Colors.grey, fontSize: 14),
+                ),
+              ],
+            ),
+          ),
+          const Icon(Icons.arrow_forward_ios, color: Colors.grey, size: 18),
+        ],
+      ),
+    );
+  }
 }

@@ -16,6 +16,18 @@ class RegisterScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF4FFF4),
+      appBar: AppBar(
+        title: const Text('Register'),
+        leading: Navigator.canPop(context)
+            ? IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => Navigator.of(context).pop(),
+              )
+            : null,
+        backgroundColor: Colors.white,
+        elevation: 0,
+        foregroundColor: Colors.black,
+      ),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -332,7 +344,7 @@ class _CTABannerState extends State<_CTABanner>
                           _CTAButton(
                             label: 'Signup as Service Provider',
                             filled: true,
-                            onTap: () => Get.toNamed('/providerpage'),
+                            onTap: () => _navigate('provider'),
                             isMobile: true,
                           ),
                         ],
@@ -341,7 +353,7 @@ class _CTABannerState extends State<_CTABanner>
                 SizedBox(height: isMobile ? 20 : 28),
 
                 GestureDetector(
-                  onTap: () => Get.toNamed('/login'),
+                  onTap: () => _navigate('login'),
                   child: Container(
                     padding: EdgeInsets.symmetric(
                       horizontal: isMobile ? 16 : 24,
