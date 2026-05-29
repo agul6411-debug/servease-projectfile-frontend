@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:frontfile_servease/screens/admin/blockorunblock.dart';
 import 'package:get/get.dart';
-
+import 'package:frontfile_servease/routes.dart';
 import 'package:frontfile_servease/models/admin_drawer_model.dart';
 import 'package:frontfile_servease/services/admin_drawer_service.dart';
 
@@ -112,11 +113,19 @@ class _AdminDrawerState extends State<AdminDrawer> {
 
                     GestureDetector(
                       onTap: () {
-                        Navigator.pop(context);
+                        Get.offAllNamed(AppRoutes.adminDashboard);
                       },
-                      child: CircleAvatar(
-                        backgroundColor: Colors.white.withOpacity(.2),
-                        child: const Icon(Icons.close, color: Colors.white),
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Icon(
+                          Icons.close,
+                          color: Colors.white,
+                          size: 20,
+                        ),
                       ),
                     ),
                   ],
@@ -195,20 +204,24 @@ class _AdminDrawerState extends State<AdminDrawer> {
                       title: "Provider Verification",
                       badge: '${drawerData?.pendingProviders ?? 0}',
                       onTap: () {
-                        Get.toNamed('/provider_verfication');
+                        Get.offAllNamed('/provider_verficationscreen');
                       },
                     ),
 
                     _menuTile(
                       icon: Icons.badge_outlined,
                       title: "CNIC View",
-                      onTap: () {},
+                      onTap: () {
+                        Get.offAllNamed('/CNICview');
+                      },
                     ),
 
                     _menuTile(
                       icon: Icons.approval_outlined,
                       title: "Approve / Reject",
-                      onTap: () {},
+                      onTap: () {
+                        Get.offAllNamed('/acceptance');
+                      },
                     ),
 
                     const SizedBox(height: 12),
@@ -218,19 +231,25 @@ class _AdminDrawerState extends State<AdminDrawer> {
                     _menuTile(
                       icon: Icons.people_outline,
                       title: "All Users",
-                      onTap: () {},
+                      onTap: () {
+                        Get.offAllNamed('/allusers');
+                      },
                     ),
 
                     _menuTile(
                       icon: Icons.person_outline,
                       title: "User Details",
-                      onTap: () {},
+                      onTap: () {
+                        Get.offAllNamed('/userdetail');
+                      },
                     ),
 
                     _menuTile(
                       icon: Icons.block_outlined,
                       title: "Block / Unblock",
-                      onTap: () {},
+                      onTap: () {
+                        Get.offAndToNamed('/blockorunblock');
+                      },
                     ),
 
                     const SizedBox(height: 12),
@@ -241,19 +260,25 @@ class _AdminDrawerState extends State<AdminDrawer> {
                       icon: Icons.report_problem_outlined,
                       title: "Complaint Handling",
                       badge: '${drawerData?.pendingComplaints ?? 0}',
-                      onTap: () {},
+                      onTap: () {
+                        Get.offAllNamed('/complainhandling');
+                      },
                     ),
 
                     _menuTile(
                       icon: Icons.chat_outlined,
                       title: "Complaint Details",
-                      onTap: () {},
+                      onTap: () {
+                        Get.offAllNamed('/complaindetail');
+                      },
                     ),
 
                     _menuTile(
                       icon: Icons.task_alt_outlined,
                       title: "Resolution",
-                      onTap: () {},
+                      onTap: () {
+                        Get.offAllNamed('/complainresolution');
+                      },
                     ),
 
                     const SizedBox(height: 12),
@@ -264,7 +289,7 @@ class _AdminDrawerState extends State<AdminDrawer> {
                       icon: Icons.miscellaneous_services_outlined,
                       title: "Service Management",
                       onTap: () {
-                        Get.toNamed('/adminservices');
+                        Get.toNamed('/servicemanagement');
                       },
                     ),
 

@@ -237,7 +237,9 @@ class _CTABannerState extends State<_CTABanner>
     if (type == 'customer') {
       Get.toNamed('/customer_page');
     } else if (type == 'provider') {
-      Get.toNamed('/provider_page');
+      Get.toNamed('/providerPagereg');
+    } else if (type == 'login') {
+      Get.toNamed('/login_screen');
     }
   }
 

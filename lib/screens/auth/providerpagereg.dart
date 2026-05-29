@@ -27,16 +27,18 @@ class _ProviderPageregState extends State<ProviderPagereg> {
   bool _showConfirmPassword = false;
   bool _agreeToTerms = false;
   bool _isLoading = false;
-  String? _selectedCategory;
+  int?
+  _selectedServiceId; // matches service_id (int FK) in provider_details table
 
-  static const List<String> _categories = [
-    'Crafts',
-    'Fashion',
-    'Education',
-    'Cleaning',
-    'Beauty',
-    'Other',
-  ];
+  // Map of service_id -> display name (load from API in production)
+  static const Map<int, String> _services = {
+    1: 'Crafts',
+    2: 'Fashion',
+    3: 'Education',
+    4: 'Cleaning',
+    5: 'Beauty',
+    6: 'Other',
+  };
 
   @override
   void dispose() {
@@ -120,6 +122,9 @@ class _ProviderPageregState extends State<ProviderPagereg> {
     setState(() => _isLoading = true);
 
     try {
+      // Payload matches DB columns:
+      // users: full_name, email, phone, cnic, address, password, role
+      // provider_details: user_id (set by backend), service_id, years_of_experience, bio
       final result = await ProviderService().registerProvider({
         'full_name': _fullNameCtrl.text.trim(),
         'email': _emailCtrl.text.trim(),
@@ -127,9 +132,12 @@ class _ProviderPageregState extends State<ProviderPagereg> {
         'cnic': _cnicCtrl.text.trim(),
         'address': _addressCtrl.text.trim(),
         'password': _passwordCtrl.text,
-        'category': _selectedCategory,
-        'years_of_experience': int.tryParse(_yearsExpCtrl.text.trim()) ?? 0,
-        'bio': _bioCtrl.text.trim(),
+        'role': 'provider', // users.role enum
+        'service_id': _selectedServiceId, // provider_details.service_id
+        'years_of_experience':
+            int.tryParse(_yearsExpCtrl.text.trim()) ??
+            0, // provider_details.years_of_experience
+        'bio': _bioCtrl.text.trim(), // provider_details.bio
       });
 
       if (!mounted) return;
@@ -468,14 +476,14 @@ class _ProviderPageregState extends State<ProviderPagereg> {
 
                             const SizedBox(height: 16),
 
-                            // ── Row 4: Category + Experience
+                            // ── Row 4: Service + Experience
                             _row(
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   _label('Service Category'),
-                                  DropdownButtonFormField<String>(
-                                    initialValue: _selectedCategory,
+                                  DropdownButtonFormField<int>(
+                                    value: _selectedServiceId,
                                     isExpanded: true,
                                     icon: const Icon(
                                       Icons.keyboard_arrow_down,
@@ -534,12 +542,12 @@ class _ProviderPageregState extends State<ProviderPagereg> {
                                         ),
                                       ),
                                     ),
-                                    items: _categories
+                                    items: _services.entries
                                         .map(
-                                          (c) => DropdownMenuItem(
-                                            value: c,
+                                          (e) => DropdownMenuItem<int>(
+                                            value: e.key,
                                             child: Text(
-                                              c,
+                                              e.value,
                                               style: const TextStyle(
                                                 fontSize: 13,
                                               ),
@@ -547,8 +555,9 @@ class _ProviderPageregState extends State<ProviderPagereg> {
                                           ),
                                         )
                                         .toList(),
-                                    onChanged: (val) =>
-                                        setState(() => _selectedCategory = val),
+                                    onChanged: (val) => setState(
+                                      () => _selectedServiceId = val,
+                                    ),
                                     validator: (v) => v == null
                                         ? 'Please select a category'
                                         : null,
