@@ -4,7 +4,9 @@ import 'package:frontfile_servease/screens/admin/addservices.dart';
 import 'package:frontfile_servease/screens/admin/admindashboard.dart';
 import 'package:frontfile_servease/screens/admin/adminnotification.dart';
 import 'package:frontfile_servease/screens/admin/adminprofile.dart';
+import 'package:frontfile_servease/screens/admin/allusers.dart';
 import 'package:frontfile_servease/screens/admin/provider_verificationscreen.dart';
+import 'package:frontfile_servease/screens/admin/userdetail.dart';
 import 'package:frontfile_servease/screens/auth/splashscreen.dart';
 import 'package:frontfile_servease/screens/auth/homepageview.dart';
 import 'package:get/get.dart';
@@ -18,8 +20,6 @@ import 'package:frontfile_servease/screens/auth/providerpagereg.dart';
 import 'package:frontfile_servease/screens/admin/admindrawer.dart';
 import 'package:frontfile_servease/screens/admin/CNIC__view.dart';
 import 'package:frontfile_servease/screens/admin/acceptance.dart';
-import 'package:frontfile_servease/screens/admin/allusers.dart';
-import 'package:frontfile_servease/screens/admin/userdetail.dart';
 import 'package:frontfile_servease/screens/admin/blockorunblock.dart';
 import 'package:frontfile_servease/screens/admin/complainhandling.dart';
 import 'package:frontfile_servease/screens/admin/complaindetail.dart';
@@ -69,9 +69,9 @@ class AppRoutes {
     GetPage(name: admindrawer, page: () => AdminDrawer()),
     GetPage(name: cnicview, page: () => CNICview()),
     GetPage(name: acceptance, page: () => Acceptance()),
-    GetPage(name: allusers, page: () => Allusers()),
-    GetPage(name: userdetail, page: () => Userdetail()),
-    GetPage(name: blockorunblock, page: () => Blockorunblock()),
+    GetPage(name: allusers, page: () => AllUsers()),
+    GetPage(name: userdetail, page: () => UserDetail()),
+    GetPage(name: blockorunblock, page: () => BlockOrUnblock()),
     GetPage(name: complainhandling, page: () => Complainhandling()),
     GetPage(name: complaindetail, page: () => Complaindetail()),
     GetPage(name: complainresolution, page: () => Complainresolution()),
