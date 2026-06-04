@@ -15,6 +15,4 @@ void main() {
     await tester.pumpWidget(SplashScreen());
 
     // Verify that splash screen is displayed
-    expect(find.byType(SplashScreen), findsOneWidget);
-  });
-}
+    expect(find.byType(SplashScreen), findsOneWidget);\r\n

@@ -1,30 +1,4 @@
 import 'dart:convert';
 
 import 'package:projectfile/models/admin_dashboard_model.dart';
-import 'package:projectfile/screens/admin/admindashboard.dart';
-import 'package:http/http.dart' as http;
-
-class AdminService {
-  static const String baseUrl = 'http://localhost:3000';
-
-  Future<AdminDashboardModel?> getDashboardStats() async {
-    try {
-      final response = await http.get(
-        Uri.parse('$baseUrl/api/admin/dashboard'),
-        headers: {'Content-Type': 'application/json'},
-      );
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-
-        return AdminDashboardModel.fromJson(data);
-      }
-
-      return null;
-    } catch (e) {
-      print('Dashboard Error: $e');
-      return null;
-    }
-  }
-}
-
+import 'package:projectfile/screens/admin/admindashboard.dart';\r\n

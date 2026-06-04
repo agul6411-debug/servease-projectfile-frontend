@@ -465,4 +465,3 @@ class _UserDetailState extends State<UserDetail> {
     );
   }
 }
-

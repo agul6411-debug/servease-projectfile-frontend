@@ -1,6 +1,11 @@
 {
+<<<<<<< HEAD
     "name": "projectfile",
     "short_name": "projectfile",
+=======
+    "name": "frontfile_servease",
+    "short_name": "frontfile_servease",
+>>>>>>> 1330f96941070d2e9b1bdb5ad489cffa11ff129b
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

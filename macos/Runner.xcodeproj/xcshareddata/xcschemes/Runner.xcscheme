@@ -15,7 +15,11 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "33CC10EC2044A3C60003C045"
+<<<<<<< HEAD
                BuildableName = "projectfile.app"
+=======
+               BuildableName = "frontfile_servease.app"
+>>>>>>> 1330f96941070d2e9b1bdb5ad489cffa11ff129b
                BlueprintName = "Runner"
                ReferencedContainer = "container:Runner.xcodeproj">
             </BuildableReference>
@@ -31,7 +35,11 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "33CC10EC2044A3C60003C045"
+<<<<<<< HEAD
             BuildableName = "projectfile.app"
+=======
+            BuildableName = "frontfile_servease.app"
+>>>>>>> 1330f96941070d2e9b1bdb5ad489cffa11ff129b
             BlueprintName = "Runner"
             ReferencedContainer = "container:Runner.xcodeproj">
          </BuildableReference>
@@ -66,7 +74,11 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "33CC10EC2044A3C60003C045"
+<<<<<<< HEAD
             BuildableName = "projectfile.app"
+=======
+            BuildableName = "frontfile_servease.app"
+>>>>>>> 1330f96941070d2e9b1bdb5ad489cffa11ff129b
             BlueprintName = "Runner"
             ReferencedContainer = "container:Runner.xcodeproj">
          </BuildableReference>
@@ -83,7 +95,11 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "33CC10EC2044A3C60003C045"
+<<<<<<< HEAD
             BuildableName = "projectfile.app"
+=======
+            BuildableName = "frontfile_servease.app"
+>>>>>>> 1330f96941070d2e9b1bdb5ad489cffa11ff129b
             BlueprintName = "Runner"
             ReferencedContainer = "container:Runner.xcodeproj">
          </BuildableReference>

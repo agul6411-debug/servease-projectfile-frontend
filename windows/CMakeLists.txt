@@ -1,10 +1,18 @@
 # Project-level configuration.
 cmake_minimum_required(VERSION 3.14)
+<<<<<<< HEAD
 project(projectfile LANGUAGES CXX)
 
 # The name of the executable created for the application. Change this to change
 # the on-disk name of your application.
 set(BINARY_NAME "projectfile")
+=======
+project(frontfile_servease LANGUAGES CXX)
+
+# The name of the executable created for the application. Change this to change
+# the on-disk name of your application.
+set(BINARY_NAME "frontfile_servease")
+>>>>>>> 1330f96941070d2e9b1bdb5ad489cffa11ff129b
 
 # Explicitly opt in to modern CMake behaviors to avoid warnings with recent
 # versions of CMake.
