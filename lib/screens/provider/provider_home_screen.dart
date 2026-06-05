@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:projectfile/models/provider_model.dart';
 import 'package:projectfile/services/provider_dashboard_service.dart';
+import 'package:get/get.dart';
+import 'jobs_screen.dart';
+import 'earnings_screen.dart';
+import 'profiles_screen.dart';
 
 class ProviderHomeScreen extends StatefulWidget {
   const ProviderHomeScreen({super.key});
@@ -91,9 +95,22 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
           ? const Center(child: CircularProgressIndicator(color: _accentRed))
           : _errorMessage != null
           ? _buildErrorState()
-          : _buildBody(),
+          : _buildSelectedScreen(),
       bottomNavigationBar: _buildBottomNav(),
     );
+  }
+
+  Widget _buildSelectedScreen() {
+    switch (_selectedNavIndex) {
+      case 1:
+        return const ProviderJobsScreen();
+      case 2:
+        return const ProviderEarningsScreen();
+      case 3:
+        return const ProviderProfileScreen();
+      default:
+        return _buildBody();
+    }
   }
 
   Widget _buildErrorState() {
@@ -571,7 +588,26 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
           final isSelected = _selectedNavIndex == i;
           return Expanded(
             child: GestureDetector(
-              onTap: () => setState(() => _selectedNavIndex = i),
+              onTap: () {
+                setState(() => _selectedNavIndex = i);
+
+                switch (i) {
+                  case 0:
+                    break;
+
+                  case 1:
+                    Get.to(() => const ProviderJobsScreen());
+                    break;
+
+                  case 2:
+                    Get.to(() => const ProviderEarningsScreen());
+                    break;
+
+                  case 3:
+                    Get.to(() => const ProviderProfileScreen());
+                    break;
+                }
+              },
               child: Container(
                 padding: const EdgeInsets.symmetric(vertical: 12),
                 child: Column(
