@@ -1,4 +1,55 @@
 import 'package:flutter/material.dart';
 import 'package:projectfile/routes.dart';
 import 'package:get/get.dart';
-import 'package:projectfile/screens/admin/admindrawer.dart';\r\n
+import 'package:projectfile/screens/admin/admindrawer.dart';
+
+class Serviesmanagement extends StatefulWidget {
+  const Serviesmanagement({super.key});
+
+  @override
+  State<Serviesmanagement> createState() => _ServiesmanagementState();
+}
+
+class _ServiesmanagementState extends State<Serviesmanagement> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("service Managemant"),
+
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Get.offAllNamed('/admindrawer');
+          },
+        ),
+      ),
+
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text("service Managemant", style: TextStyle(fontSize: 22)),
+
+            const SizedBox(height: 20),
+
+            GestureDetector(
+              onTap: () {
+                Get.offAllNamed(AppRoutes.admindrawer);
+              },
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(Icons.close, color: Colors.white, size: 20),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+

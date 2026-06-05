@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:projectfile/models/all_user_model.dart';
-import 'package:projectfile/screens/admin/allusers.dart';
 import 'package:projectfile/services/all_users_service.dart';
 import 'package:get/get.dart';
 
@@ -98,18 +97,18 @@ class _UserDetailState extends State<UserDetail> {
         await UserService.blockUser(_user!.id);
       }
       await _loadUser();
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              wasBlocked ? 'User unblock ho gaya ✅' : 'User block ho gaya 🚫',
-            ),
-            backgroundColor: wasBlocked ? primaryGreen : Colors.red.shade600,
-            behavior: SnackBarBehavior.floating,
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            wasBlocked ? 'User unblock ho gaya ✅' : 'User block ho gaya 🚫',
           ),
-        );
-      }
+          backgroundColor: wasBlocked ? primaryGreen : Colors.red.shade600,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
     } catch (e) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Error: ${e.toString()}'),
@@ -118,7 +117,7 @@ class _UserDetailState extends State<UserDetail> {
         ),
       );
     } finally {
-      setState(() => _blocking = false);
+      if (mounted) setState(() => _blocking = false);
     }
   }
 
@@ -136,7 +135,7 @@ class _UserDetailState extends State<UserDetail> {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: (iconColor ?? primaryGreen).withOpacity(0.1),
+              color: (iconColor ?? primaryGreen).withAlpha(26),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(icon, size: 18, color: iconColor ?? primaryGreen),
@@ -183,7 +182,7 @@ class _UserDetailState extends State<UserDetail> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withAlpha(13),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -286,7 +285,7 @@ class _UserDetailState extends State<UserDetail> {
                       children: [
                         CircleAvatar(
                           radius: 42,
-                          backgroundColor: Colors.white.withOpacity(0.2),
+                          backgroundColor: Colors.white.withAlpha(51),
                           backgroundImage:
                               _user!.profileImage != null &&
                                   _user!.profileImage!.isNotEmpty
@@ -330,7 +329,7 @@ class _UserDetailState extends State<UserDetail> {
                         Text(
                           'ID: ${_user!.id}',
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.7),
+                            color: Colors.white.withAlpha(179),
                             fontSize: 12,
                           ),
                         ),
@@ -451,7 +450,7 @@ class _UserDetailState extends State<UserDetail> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
       decoration: BoxDecoration(
-        color: (color ?? accentOrange).withOpacity(0.85),
+        color: (color ?? accentOrange).withAlpha(217),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
