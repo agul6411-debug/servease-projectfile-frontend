@@ -13,8 +13,8 @@ class ProviderProfileScreen extends StatelessWidget {
           children: [
             CircleAvatar(radius: 50, child: Text("AR")),
             SizedBox(height: 20),
-            Text("Ali Raza"),
-            Text("Electrician"),
+            Text("Huma"),
+            Text("tutor"),
             Text("03001234567"),
           ],
         ),
