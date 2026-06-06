@@ -11,12 +11,12 @@ class ProviderJobsScreen extends StatelessWidget {
         children: const [
           ListTile(
             leading: Icon(Icons.work),
-            title: Text("AC Repair"),
+            title: Text("Cleaning Service"),
             subtitle: Text("Pending"),
           ),
           ListTile(
             leading: Icon(Icons.work),
-            title: Text("Electric Work"),
+            title: Text("tutor"),
             subtitle: Text("Completed"),
           ),
         ],
