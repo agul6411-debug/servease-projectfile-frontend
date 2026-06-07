@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:frontfile_servease/models/all_user_model.dart';
+import 'package:frontfile_servease/screens/admin/admindrawer.dart';
+import 'package:frontfile_servease/screens/admin/admin_navbar.dart';
 import 'package:frontfile_servease/services/all_users_service.dart';
+import 'package:frontfile_servease/theme/app_theme.dart';
 import 'package:get/get.dart';
 
 class BlockOrUnblock extends StatefulWidget {
@@ -11,10 +14,10 @@ class BlockOrUnblock extends StatefulWidget {
 }
 
 class _BlockOrUnblockState extends State<BlockOrUnblock> {
-  static const Color primaryGreen = Color(0xFF1B8B4B);
-  static const Color darkGreen = Color(0xFF145E33);
-  static const Color accentOrange = Color(0xFFE8671A);
-  static const Color bgColor = Color(0xFFF5F7F5);
+  static const Color primaryGreen = AppColors.success;
+  static const Color darkGreen = AppColors.mediumRed;
+  static const Color accentOrange = AppColors.softPink;
+  static const Color bgColor = AppColors.cream;
 
   List<UserModel> _blockedUsers = [];
   bool _isLoading = true;
@@ -112,8 +115,8 @@ class _BlockOrUnblockState extends State<BlockOrUnblock> {
     Color fg;
     switch (role) {
       case 'admin':
-        bg = const Color(0xFFE8F5E9);
-        fg = const Color(0xFF2E7D32);
+        bg = AppColors.successBg;
+        fg = AppColors.success;
         break;
       case 'provider':
         bg = const Color(0xFFFFF3E0);
@@ -140,13 +143,15 @@ class _BlockOrUnblockState extends State<BlockOrUnblock> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgColor,
+      drawer: const AdminDrawer(),
+      bottomNavigationBar: const AdminBottomNavBar(),
       appBar: AppBar(
         backgroundColor: Colors.red.shade600,
         foregroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, size: 20),
-          onPressed: () => Get.back(),
+          icon: const Icon(Icons.menu, color: Colors.white, size: 20),
+          onPressed: () => Scaffold.of(context).openDrawer(),
         ),
         title: const Text(
           'Blocked Users',

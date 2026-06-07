@@ -1,12 +1,9 @@
-// services/service_api.dart
-// Handles all CRUD operations for Service Management
-
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-class ServiceApiService {
+class AddServiceDetailApi {
   // ── Change this to your actual base URL ──────────────────────────
-  static const String _baseUrl = "http://localhost:3000/api";
+  static const String _baseUrl = 'http://localhost:3000/api';
 
   static Map<String, String> get _headers => {
     'Content-Type': 'application/json',
@@ -29,6 +26,22 @@ class ServiceApiService {
       return [];
     }
     throw Exception('Failed to load services: ${response.statusCode}');
+  }
+
+  // ── GET service details ───────────────────────────────────────────
+  static Future<Map<String, dynamic>> fetchServiceDetail(int id) async {
+    final response = await http.get(
+      Uri.parse('$_baseUrl/services/$id'),
+      headers: _headers,
+    );
+    if (response.statusCode == 200) {
+      final body = jsonDecode(response.body);
+      if (body is Map<String, dynamic>) return body;
+      if (body is Map && body['data'] is Map)
+        return body['data'] as Map<String, dynamic>;
+      throw Exception('Unexpected response format for service details');
+    }
+    throw Exception('Failed to load service details: ${response.statusCode}');
   }
 
   // ── POST create service ───────────────────────────────────────────

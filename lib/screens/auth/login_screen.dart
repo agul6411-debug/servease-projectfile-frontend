@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:frontfile_servease/services/api_service.dart';
+import 'package:frontfile_servease/theme/app_theme.dart';
 import 'package:get/get.dart';
 import 'package:frontfile_servease/routes.dart';
 import 'package:get_storage/get_storage.dart';
@@ -100,13 +101,18 @@ class _LoginScreenState extends State<LoginScreen>
         box.write('auth_token', token);
         await Future.delayed(const Duration(milliseconds: 300));
 
+        final userId = result['user']['id'];
+        final userRole = result['user']['role'];
+        box.write('user_id', userId);
+        box.write('user_role', userRole);
+
         // SAFE NAVIGATION
         if (role == 'admin') {
-          Get.offAllNamed('/admin_dashboard');
+          Get.offAllNamed(AppRoutes.adminDashboard);
         } else if (role == 'provider') {
-          Get.offAllNamed('/provider_home_screen');
+          Get.offAllNamed(AppRoutes.providerHomeScreen);
         } else if (role == 'customer') {
-          Get.offAllNamed('/customer_home_screen');
+          Get.offAllNamed(AppRoutes.customerHomeScreen);
         } else {
           Get.snackbar("Error", "Unknown role");
         }
@@ -139,7 +145,7 @@ class _LoginScreenState extends State<LoginScreen>
     final isMobile = size.width < 600;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF2F5F0),
+      backgroundColor: AppColors.cream,
       appBar: AppBar(
         title: const Text('Login'),
         leading: Navigator.canPop(context)
@@ -181,7 +187,7 @@ class _LoginScreenState extends State<LoginScreen>
                           height: isMobile ? 80 : 96,
                           decoration: BoxDecoration(
                             gradient: const LinearGradient(
-                              colors: [Color(0xFF2ECC71), Color(0xFFF5A623)],
+                              colors: [AppColors.success, AppColors.softPink],
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
                             ),

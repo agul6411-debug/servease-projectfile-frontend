@@ -1,61 +1,11 @@
-// services_screen.dart  — fully connected to backend
 import 'package:flutter/material.dart';
-import "package:frontfile_servease/services/addserviceapi.dart";
+import 'package:frontfile_servease/models/servicemanagmentmodel.dart';
+import 'package:frontfile_servease/screens/admin/admindrawer.dart';
+import 'package:frontfile_servease/screens/admin/admin_navbar.dart';
+import 'package:frontfile_servease/screens/admin/servicedetailspage.dart';
+import 'package:frontfile_servease/services/addserviceapi.dart';
 
-// ── Model ─────────────────────────────────────────────────────────
-class ServiceModel {
-  final int? dbId;
-  final String name;
-  final String description;
-  final int price;
-  final String category;
-  final String icon;
-  final bool isActive;
-
-  const ServiceModel({
-    this.dbId,
-    required this.name,
-    required this.description,
-    required this.price,
-    required this.category,
-    required this.icon,
-    this.isActive = true,
-  });
-
-  factory ServiceModel.fromJson(Map<String, dynamic> json) {
-    return ServiceModel(
-      dbId: json['id'] as int?,
-      name: json['name'] ?? '',
-      description: json['description'] ?? '',
-      price: json['price'] is int
-          ? json['price']
-          : int.tryParse(json['price'].toString()) ?? 0,
-      category: json['category'] ?? 'Other',
-      icon: json['icon'] ?? '🔧',
-      isActive: (json['is_active'] == 1 || json['is_active'] == true),
-    );
-  }
-
-  ServiceModel copyWith({
-    int? dbId,
-    String? name,
-    String? description,
-    int? price,
-    String? category,
-    String? icon,
-    bool? isActive,
-  }) => ServiceModel(
-    dbId: dbId ?? this.dbId,
-    name: name ?? this.name,
-    description: description ?? this.description,
-    price: price ?? this.price,
-    category: category ?? this.category,
-    icon: icon ?? this.icon,
-    isActive: isActive ?? this.isActive,
-  );
-}
-
-// ── Category colors ───────────────────────────────────────────────
+// ── Category helpers ──────────────────────────────────────────────
 Color _catBg(String cat) {
   switch (cat) {
     case 'Fashion':
@@ -66,8 +16,10 @@ Color _catBg(String cat) {
       return const Color(0xFFE8F5E9);
     case 'Beauty':
       return const Color(0xFFFCE4EC);
-    default:
+    case 'Crafts':
       return const Color(0xFFFFF8E1);
+    default:
+      return const Color(0xFFF3E5F5);
   }
 }
 
@@ -81,25 +33,62 @@ Color _catText(String cat) {
       return const Color(0xFF1B5E20);
     case 'Beauty':
       return const Color(0xFF880E4F);
-    default:
+    case 'Crafts':
       return const Color(0xFFE65100);
+    default:
+      return const Color(0xFF6A1B9A);
   }
 }
 
 // ── Screen ────────────────────────────────────────────────────────
-class Addservices extends StatefulWidget {
-  const Addservices({super.key});
+class Servicemanagement extends StatefulWidget {
+  const Servicemanagement({super.key});
 
   @override
-  State<Addservices> createState() => _AddservicesState();
+  State<Servicemanagement> createState() => _ServicemanagementState();
 }
 
-class _AddservicesState extends State<Addservices> {
+class _ServicemanagementState extends State<Servicemanagement> {
   final TextEditingController _searchCtrl = TextEditingController();
 
   List<ServiceModel> _services = [];
   bool _isLoading = true;
   String? _error;
+
+  // ── Predefined services list ──────────────────────────────────────
+  static const List<Map<String, String>> _predefinedServices = [
+    {'name': 'Tailoring', 'icon': '🧵', 'category': 'Fashion'},
+    {'name': 'Embroidery', 'icon': '🪡', 'category': 'Fashion'},
+    {'name': 'Cleaning', 'icon': '🧹', 'category': 'Cleaning'},
+    {'name': 'Tutoring', 'icon': '📚', 'category': 'Education'},
+    {'name': 'Beauty', 'icon': '💄', 'category': 'Beauty'},
+    {'name': 'Mehndi', 'icon': '🌿', 'category': 'Beauty'},
+    {'name': 'Babysitting', 'icon': '👶', 'category': 'Crafts'},
+    {'name': 'Photography', 'icon': '📸', 'category': 'Other'},
+  ];
+
+  static const List<String> _categories = [
+    'Fashion',
+    'Education',
+    'Cleaning',
+    'Beauty',
+    'Crafts',
+    'Other',
+  ];
+  static const List<String> _icons = [
+    '🧵',
+    '🪡',
+    '🧹',
+    '📚',
+    '💄',
+    '🌿',
+    '🎨',
+    '👶',
+    '🏠',
+    '📸',
+    '🔧',
+    '🪠',
+  ];
 
   @override
   void initState() {
@@ -120,7 +109,7 @@ class _AddservicesState extends State<Addservices> {
       _error = null;
     });
     try {
-      final data = await ServiceService.getServices();
+      final data = await ServiceApiService.getServices();
       setState(() {
         _services = data
             .map((e) => ServiceModel.fromJson(e as Map<String, dynamic>))
@@ -147,28 +136,26 @@ class _AddservicesState extends State<Addservices> {
         .toList();
   }
 
-  // ── CREATE ────────────────────────────────────────────────────────
-  void _openAddSheet() => _showSheet(null, null);
-
-  // ── UPDATE ────────────────────────────────────────────────────────
-  void _openEditSheet(ServiceModel svc, int idx) => _showSheet(svc, idx);
+  // ── NAVIGATE TO DETAIL ────────────────────────────────────────────
+  void _openDetail(ServiceModel svc) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => ServiceDetailScreen(service: svc)),
+    );
+  }
 
   // ── TOGGLE ACTIVE ─────────────────────────────────────────────────
   Future<void> _toggleActive(int idx) async {
     final svc = _services[idx];
     final newState = !svc.isActive;
-
-    // Optimistic update
     setState(() {
       _services[idx] = svc.copyWith(isActive: newState);
     });
-
     try {
       if (svc.dbId != null) {
-        await ServiceService.toggleActive(id: svc.dbId!, isActive: newState);
+        await ServiceApiService.toggleActive(id: svc.dbId!, isActive: newState);
       }
     } catch (_) {
-      // Rollback
       setState(() {
         _services[idx] = svc;
       });
@@ -179,18 +166,14 @@ class _AddservicesState extends State<Addservices> {
   // ── DELETE ────────────────────────────────────────────────────────
   Future<void> _deleteService(int idx) async {
     final svc = _services[idx];
-
     setState(() => _services.removeAt(idx));
-
     _showSnack('${svc.name} deleted', const Color(0xFFE53935));
-
     try {
       if (svc.dbId != null) {
-        await ServiceService.deleteService(svc.dbId!);
+        await ServiceApiService.deleteService(svc.dbId!);
       }
     } catch (_) {
       setState(() => _services.insert(idx, svc));
-
       _showSnack('Delete failed', Colors.red);
     }
   }
@@ -207,37 +190,33 @@ class _AddservicesState extends State<Addservices> {
 
   // ── Bottom Sheet ──────────────────────────────────────────────────
   void _showSheet(ServiceModel? existing, int? index) {
-    final nameCtrl = TextEditingController(text: existing?.name ?? '');
+    // Pre-fill with predefined if no name selected yet
+    String selName = existing?.name ?? _predefinedServices[0]['name']!;
+    String selCat = existing?.category ?? _predefinedServices[0]['category']!;
+    String selIcon = existing?.icon ?? _predefinedServices[0]['icon']!;
+
     final descCtrl = TextEditingController(text: existing?.description ?? '');
     final priceCtrl = TextEditingController(
-      text: existing?.price.toString() ?? '',
+      text: existing?.price != null && existing!.price > 0
+          ? existing.price.toString()
+          : '',
     );
-    String selCat = existing?.category ?? 'Crafts';
-    String selIcon = existing?.icon ?? '🧵';
     bool isSaving = false;
 
-    const cats = [
-      'Crafts',
-      'Fashion',
-      'Education',
-      'Cleaning',
-      'Beauty',
-      'Other',
-    ];
-    const icons = [
-      '🧵',
-      '🪡',
-      '🧹',
-      '📚',
-      '💄',
-      '🌿',
-      '🎨',
-      '👶',
-      '🏠',
-      '📸',
-      '🔧',
-      '🪠',
-    ];
+    final serviceNames = _predefinedServices.map((s) => s['name']!).toList();
+    if (existing != null && !serviceNames.contains(existing.name)) {
+      serviceNames.insert(0, existing.name);
+    }
+
+    final categories = [..._categories];
+    if (existing != null && !categories.contains(existing.category)) {
+      categories.insert(0, existing.category);
+    }
+
+    final icons = [..._icons];
+    if (existing != null && !icons.contains(existing.icon)) {
+      icons.insert(0, existing.icon);
+    }
 
     showModalBottomSheet(
       context: context,
@@ -270,7 +249,7 @@ class _AddservicesState extends State<Addservices> {
                   ),
                 ),
                 Text(
-                  existing == null ? 'Add service' : 'Edit service',
+                  existing == null ? 'Add Service' : 'Edit Service',
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
@@ -279,37 +258,76 @@ class _AddservicesState extends State<Addservices> {
                 ),
                 const SizedBox(height: 20),
 
-                _Field(
-                  label: 'Service name',
-                  ctrl: nameCtrl,
-                  hint: 'e.g. Plumbing',
+                // ── Service Name Dropdown ─────────────────────────
+                _dropLabel('Service Name'),
+                const SizedBox(height: 5),
+                DropdownButtonFormField<String>(
+                  value: selName,
+                  decoration: _dropDecor(),
+                  items: serviceNames.map((name) {
+                    final predefined = _predefinedServices.firstWhere(
+                      (s) => s['name'] == name,
+                      orElse: () => <String, String>{},
+                    );
+                    return DropdownMenuItem(
+                      value: name,
+                      child: Row(
+                        children: [
+                          if (predefined.isNotEmpty) ...[
+                            Text(
+                              predefined['icon']!,
+                              style: const TextStyle(fontSize: 18),
+                            ),
+                            const SizedBox(width: 8),
+                          ],
+                          Text(name),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (v) {
+                    if (v == null) return;
+                    final match = _predefinedServices.firstWhere(
+                      (s) => s['name'] == v,
+                      orElse: () => <String, String>{},
+                    );
+                    ss(() {
+                      selName = v;
+                      if (match.isNotEmpty) {
+                        selCat = match['category']!;
+                        selIcon = match['icon']!;
+                      }
+                    });
+                  },
                 ),
+                const SizedBox(height: 12),
+
                 _Field(
                   label: 'Description',
                   ctrl: descCtrl,
                   hint: 'Short description',
                 ),
                 _Field(
-                  label: 'Base price (PKR)',
+                  label: 'Base Price (PKR)',
                   ctrl: priceCtrl,
                   hint: 'e.g. 500',
                   keyboardType: TextInputType.number,
                 ),
 
-                // Category
+                // Category (auto-synced but editable)
                 _dropLabel('Category'),
                 const SizedBox(height: 5),
                 DropdownButtonFormField<String>(
                   value: selCat,
                   decoration: _dropDecor(),
-                  items: cats
+                  items: categories
                       .map((c) => DropdownMenuItem(value: c, child: Text(c)))
                       .toList(),
-                  onChanged: (v) => ss(() => selCat = v ?? 'Crafts'),
+                  onChanged: (v) => ss(() => selCat = v ?? 'Fashion'),
                 ),
                 const SizedBox(height: 12),
 
-                // Icon
+                // Icon (auto-synced but editable)
                 _dropLabel('Icon'),
                 const SizedBox(height: 5),
                 DropdownButtonFormField<String>(
@@ -355,17 +373,17 @@ class _AddservicesState extends State<Addservices> {
                         onPressed: isSaving
                             ? null
                             : () async {
-                                if (nameCtrl.text.trim().isEmpty) return;
+                                if (selName.trim().isEmpty) return;
                                 ss(() => isSaving = true);
                                 try {
                                   final price =
                                       int.tryParse(priceCtrl.text.trim()) ?? 0;
 
                                   if (index != null && existing?.dbId != null) {
-                                    // ── UPDATE ──────────────────────────
-                                    await ServiceService.updateService(
+                                    // UPDATE
+                                    await ServiceApiService.updateService(
                                       id: existing!.dbId!,
-                                      name: nameCtrl.text.trim(),
+                                      name: selName,
                                       description: descCtrl.text.trim(),
                                       price: price,
                                       category: selCat,
@@ -374,7 +392,7 @@ class _AddservicesState extends State<Addservices> {
                                     );
                                     setState(() {
                                       _services[index] = existing.copyWith(
-                                        name: nameCtrl.text.trim(),
+                                        name: selName,
                                         description: descCtrl.text.trim(),
                                         price: price,
                                         category: selCat,
@@ -383,13 +401,13 @@ class _AddservicesState extends State<Addservices> {
                                     });
                                     Navigator.pop(ctx);
                                     _showSnack(
-                                      '${nameCtrl.text.trim()} updated',
+                                      '$selName updated',
                                       const Color(0xFF43A047),
                                     );
                                   } else {
-                                    // ── CREATE ──────────────────────────
-                                    await ServiceService.createService(
-                                      name: nameCtrl.text.trim(),
+                                    // CREATE
+                                    await ServiceApiService.createService(
+                                      name: selName,
                                       description: descCtrl.text.trim(),
                                       price: price,
                                       category: selCat,
@@ -398,10 +416,10 @@ class _AddservicesState extends State<Addservices> {
                                     );
                                     Navigator.pop(ctx);
                                     _showSnack(
-                                      '${nameCtrl.text.trim()} added',
+                                      '$selName added',
                                       const Color(0xFF43A047),
                                     );
-                                    await _loadServices(); // reload to get DB id
+                                    await _loadServices();
                                   }
                                 } catch (_) {
                                   ss(() => isSaving = false);
@@ -430,8 +448,8 @@ class _AddservicesState extends State<Addservices> {
                               )
                             : Text(
                                 existing == null
-                                    ? 'Add service'
-                                    : 'Save changes',
+                                    ? 'Add Service'
+                                    : 'Save Changes',
                                 style: const TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w700,
@@ -442,7 +460,7 @@ class _AddservicesState extends State<Addservices> {
                   ],
                 ),
 
-                // DELETE — edit mode only
+                // Delete — edit mode only
                 if (existing != null) ...[
                   const SizedBox(height: 10),
                   SizedBox(
@@ -463,7 +481,7 @@ class _AddservicesState extends State<Addservices> {
                         size: 18,
                       ),
                       label: const Text(
-                        'Delete service',
+                        'Delete Service',
                         style: TextStyle(
                           color: Color(0xFFE53935),
                           fontWeight: FontWeight.w700,
@@ -486,7 +504,7 @@ class _AddservicesState extends State<Addservices> {
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: const Text(
-          'Delete service',
+          'Delete Service',
           style: TextStyle(fontWeight: FontWeight.w800),
         ),
         content: Text(
@@ -524,6 +542,8 @@ class _AddservicesState extends State<Addservices> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF2F2F2),
+      drawer: const AdminDrawer(),
+      bottomNavigationBar: const AdminBottomNavBar(),
       body: SafeArea(
         child: Column(
           children: [
@@ -550,21 +570,21 @@ class _AddservicesState extends State<Addservices> {
       padding: const EdgeInsets.fromLTRB(14, 16, 14, 16),
       child: Row(
         children: [
-          GestureDetector(
-            onTap: () => Navigator.maybePop(context),
-            child: Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.22),
-                borderRadius: BorderRadius.circular(9),
-              ),
-              child: const Icon(
-                Icons.arrow_back_ios_new_rounded,
-                color: Colors.white,
-                size: 15,
-              ),
-            ),
+          Builder(
+            builder: (context) {
+              return GestureDetector(
+                onTap: () => Scaffold.of(context).openDrawer(),
+                child: Container(
+                  width: 32,
+                  height: 32,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.22),
+                    borderRadius: BorderRadius.circular(9),
+                  ),
+                  child: const Icon(Icons.menu, color: Colors.white, size: 18),
+                ),
+              );
+            },
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -588,7 +608,7 @@ class _AddservicesState extends State<Addservices> {
             ),
           ),
           GestureDetector(
-            onTap: _openAddSheet,
+            onTap: () => _showSheet(null, null),
             child: Container(
               width: 36,
               height: 36,
@@ -705,9 +725,10 @@ class _AddservicesState extends State<Addservices> {
           final realIdx = _services.indexWhere((e) => e.dbId == svc.dbId);
           return _ServiceCard(
             service: svc,
-            onEdit: () => _openEditSheet(svc, realIdx),
+            onEdit: () => _showSheet(svc, realIdx),
             onToggle: () => _toggleActive(realIdx),
             onDelete: () => _confirmDelete(context, realIdx),
+            onDetails: () => _openDetail(svc), // ← NEW
           );
         },
       ),
@@ -721,12 +742,14 @@ class _ServiceCard extends StatelessWidget {
   final VoidCallback onEdit;
   final VoidCallback onToggle;
   final VoidCallback onDelete;
+  final VoidCallback onDetails; // ← NEW
 
   const _ServiceCard({
     required this.service,
     required this.onEdit,
     required this.onToggle,
     required this.onDelete,
+    required this.onDetails,
   });
 
   @override
@@ -750,6 +773,7 @@ class _ServiceCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Top row — icon / name / badge
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -811,12 +835,32 @@ class _ServiceCard extends StatelessWidget {
               ],
             ),
 
+            // Provider / Customer mini-stats row ── NEW ──
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                _StatChip(
+                  icon: Icons.person_pin_rounded,
+                  color: const Color(0xFF1E88E5),
+                  label: '${service.providerCount} Providers',
+                ),
+                const SizedBox(width: 8),
+                _StatChip(
+                  icon: Icons.people_alt_rounded,
+                  color: const Color(0xFF8E24AA),
+                  label: '${service.customerCount} Customers',
+                ),
+              ],
+            ),
+
             const SizedBox(height: 10),
             const Divider(height: 1, color: Color(0xFFF0F0F0)),
             const SizedBox(height: 10),
 
+            // Action buttons row
             Row(
               children: [
+                // Activate / Deactivate
                 Expanded(
                   child: OutlinedButton(
                     onPressed: onToggle,
@@ -847,6 +891,18 @@ class _ServiceCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 8),
+
+                // Details button ── NEW ──
+                _IconBtn(
+                  icon: Icons.bar_chart_rounded,
+                  color: const Color(0xFF1565C0),
+                  borderColor: const Color(0xFFBBDEFB),
+                  onTap: onDetails,
+                  tooltip: 'Details',
+                ),
+                const SizedBox(width: 8),
+
+                // Edit
                 _IconBtn(
                   icon: Icons.edit_rounded,
                   color: const Color(0xFF43A047),
@@ -855,6 +911,8 @@ class _ServiceCard extends StatelessWidget {
                   tooltip: 'Edit',
                 ),
                 const SizedBox(width: 8),
+
+                // Delete
                 _IconBtn(
                   icon: Icons.delete_outline_rounded,
                   color: const Color(0xFFE53935),
@@ -871,7 +929,45 @@ class _ServiceCard extends StatelessWidget {
   }
 }
 
-// ── Widgets ───────────────────────────────────────────────────────
+// ── Stat Chip (Provider / Customer count) ─────────────────────────
+class _StatChip extends StatelessWidget {
+  final IconData icon;
+  final Color color;
+  final String label;
+
+  const _StatChip({
+    required this.icon,
+    required this.color,
+    required this.label,
+  });
+
+  @override
+  Widget build(BuildContext context) => Container(
+    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+    decoration: BoxDecoration(
+      color: color.withOpacity(0.08),
+      borderRadius: BorderRadius.circular(8),
+      border: Border.all(color: color.withOpacity(0.2)),
+    ),
+    child: Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(icon, size: 13, color: color),
+        const SizedBox(width: 4),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+            color: color,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+// ── Reusable Widgets ──────────────────────────────────────────────
 class _CatBadge extends StatelessWidget {
   final String label;
   const _CatBadge({required this.label});

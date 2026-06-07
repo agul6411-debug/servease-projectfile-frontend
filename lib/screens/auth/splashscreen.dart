@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontfile_servease/theme/app_theme.dart';
 import 'package:get/get.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -108,7 +109,7 @@ class _SplashScreenState extends State<SplashScreen>
     final isMobile = size.width < 600;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF2F5F0),
+      backgroundColor: AppColors.cream,
       body: SafeArea(
         child: SingleChildScrollView(
           child: ConstrainedBox(

@@ -51,9 +51,9 @@ class UserService {
     required String email,
     required String password,
     required String role, // 'customer' or 'provider'
-    String? phone,
-    String? cnic,
-    String? address,
+    required String phone,
+    required String cnic,
+    required String address,
     String? profileImage,
   }) async {
     final body = jsonEncode({
@@ -61,10 +61,10 @@ class UserService {
       'email': email,
       'password': password,
       'role': role,
-      if (phone != null) 'phone': phone,
-      if (cnic != null) 'cnic': cnic,
-      if (address != null) 'address': address,
-      if (profileImage != null) 'profile_image': profileImage,
+      'phone': phone,
+      'cnic': cnic,
+      'address': address,
+      'profile_image': null,
     });
 
     final response = await http.post(

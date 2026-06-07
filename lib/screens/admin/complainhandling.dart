@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontfile_servease/routes.dart';
 import 'package:get/get.dart';
 import 'package:frontfile_servease/screens/admin/admindrawer.dart';
+import 'package:frontfile_servease/screens/admin/admin_navbar.dart';
 
 class Complainhandling extends StatefulWidget {
   const Complainhandling({super.key});
@@ -14,16 +15,9 @@ class _ComplainhandlingState extends State<Complainhandling> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("complain handling"),
-
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Get.offAllNamed('/admindrawer');
-          },
-        ),
-      ),
+      drawer: const AdminDrawer(),
+      bottomNavigationBar: const AdminBottomNavBar(),
+      appBar: AppBar(title: const Text("complain handling")),
 
       body: Center(
         child: Column(

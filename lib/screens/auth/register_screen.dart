@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontfile_servease/screens/auth/login_screen.dart';
+import 'package:frontfile_servease/theme/app_theme.dart';
 import 'package:get/get.dart';
 
 // ─────────────────────────────────────────────
@@ -15,7 +16,7 @@ class RegisterScreen extends StatelessWidget {
     final verticalPadding = isMobile ? 20.0 : 32.0;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF4FFF4),
+      backgroundColor: AppColors.cream,
       appBar: AppBar(
         title: const Text('Register'),
         leading: Navigator.canPop(context)

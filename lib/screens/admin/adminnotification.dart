@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:frontfile_servease/screens/admin/admindrawer.dart';
+import 'package:frontfile_servease/screens/admin/admin_navbar.dart';
 
 class AdminNotification extends StatefulWidget {
   const AdminNotification({super.key});
@@ -11,14 +13,10 @@ class _AdminNotificationState extends State<AdminNotification> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const AdminDrawer(),
+      bottomNavigationBar: const AdminBottomNavBar(),
       appBar: AppBar(
         title: const Text('Admin Notifications'),
-        leading: Navigator.canPop(context)
-            ? IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () => Navigator.of(context).pop(),
-              )
-            : null,
         backgroundColor: Colors.white,
         elevation: 0,
         foregroundColor: Colors.black,

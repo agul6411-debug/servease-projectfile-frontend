@@ -1,8 +1,11 @@
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:frontfile_servease/theme/app_theme.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:frontfile_servease/screens/admin/admindrawer.dart';
+import 'package:frontfile_servease/screens/admin/admin_navbar.dart';
 import 'package:frontfile_servease/models/adminprofilemodel.dart';
 import 'package:frontfile_servease/services/adminprofileservice.dart';
 
@@ -57,10 +60,12 @@ class _AdminProfileState extends State<AdminProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xffF6F7F9),
+      backgroundColor: AppColors.cream,
+      drawer: const AdminDrawer(),
+      bottomNavigationBar: const AdminBottomNavBar(),
       body: isLoading
           ? const Center(
-              child: CircularProgressIndicator(color: Color(0xff00C853)),
+              child: CircularProgressIndicator(color: AppColors.success),
             )
           : CustomScrollView(
               slivers: [
@@ -68,14 +73,7 @@ class _AdminProfileState extends State<AdminProfile> {
                 SliverAppBar(
                   expandedHeight: 220,
                   pinned: true,
-                  backgroundColor: const Color(0xff00C853),
-                  leading: IconButton(
-                    icon: const Icon(
-                      Icons.arrow_back_ios_new,
-                      color: Colors.white,
-                    ),
-                    onPressed: () => Get.offAllNamed('/admin_dashboard'),
-                  ),
+                  backgroundColor: AppColors.success,
                   title: const Text(
                     "Admin Profile",
                     style: TextStyle(
@@ -136,7 +134,7 @@ class _AdminProfileState extends State<AdminProfile> {
                                   ),
                                   child: CircleAvatar(
                                     radius: 52,
-                                    backgroundColor: const Color(0xffFF8A00),
+                                    backgroundColor: AppColors.softPink,
                                     child: selectedImage != null
                                         ? ClipOval(
                                             child: kIsWeb
@@ -177,7 +175,7 @@ class _AdminProfileState extends State<AdminProfile> {
                                     child: Container(
                                       padding: const EdgeInsets.all(7),
                                       decoration: BoxDecoration(
-                                        color: const Color(0xffFF8A00),
+                                        color: AppColors.softPink,
                                         shape: BoxShape.circle,
                                         border: Border.all(
                                           color: Colors.white,
@@ -308,7 +306,7 @@ class _AdminProfileState extends State<AdminProfile> {
           width: 4,
           height: 18,
           decoration: BoxDecoration(
-            color: const Color(0xff00C853),
+            color: AppColors.success,
             borderRadius: BorderRadius.circular(4),
           ),
         ),
@@ -366,7 +364,7 @@ class _AdminProfileState extends State<AdminProfile> {
       child: TextField(
         controller: controller,
         obscureText: isPassword,
-        style: const TextStyle(fontSize: 15, color: Color(0xff1A1A2E)),
+        style: const TextStyle(fontSize: 15, color: AppColors.textDark),
         decoration: InputDecoration(
           filled: true,
           fillColor: Colors.transparent,
@@ -374,10 +372,10 @@ class _AdminProfileState extends State<AdminProfile> {
             margin: const EdgeInsets.all(10),
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: const Color(0xff00C853).withOpacity(0.1),
+              color: AppColors.successBg,
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Icon(icon, color: const Color(0xff00C853), size: 20),
+            child: Icon(icon, color: AppColors.success, size: 20),
           ),
           labelText: label,
           labelStyle: TextStyle(color: Colors.grey.shade500, fontSize: 13),
@@ -400,9 +398,9 @@ class _AdminProfileState extends State<AdminProfile> {
       height: 56,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xffFF8A00),
+          backgroundColor: AppColors.softPink,
           elevation: 4,
-          shadowColor: const Color(0xffFF8A00).withOpacity(0.4),
+          shadowColor: AppColors.softPink.withValues(alpha: 0.4),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
@@ -456,9 +454,9 @@ class _AdminProfileState extends State<AdminProfile> {
       height: 56,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xff00C853),
+          backgroundColor: AppColors.success,
           elevation: 4,
-          shadowColor: const Color(0xff00C853).withOpacity(0.4),
+          shadowColor: AppColors.success.withValues(alpha: 0.4),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontfile_servease/routes.dart';
 import 'package:get/get.dart';
 import 'package:frontfile_servease/screens/admin/admindrawer.dart';
+import 'package:frontfile_servease/screens/admin/admin_navbar.dart';
 
 class CNICview extends StatefulWidget {
   const CNICview({super.key});
@@ -14,16 +15,9 @@ class _CNICviewState extends State<CNICview> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("CNIC View"),
-
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () {
-            Get.offAllNamed('/admindrawer');
-          },
-        ),
-      ),
+      drawer: const AdminDrawer(),
+      bottomNavigationBar: const AdminBottomNavBar(),
+      appBar: AppBar(title: const Text("CNIC View")),
 
       body: Center(
         child: Column(

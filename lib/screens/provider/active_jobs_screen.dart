@@ -1,1 +1,0 @@
-// Active jobs screen

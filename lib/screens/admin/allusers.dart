@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontfile_servease/models/all_user_model.dart';
+import 'package:frontfile_servease/screens/admin/admindrawer.dart';
+import 'package:frontfile_servease/screens/admin/admin_navbar.dart';
 import 'package:frontfile_servease/screens/admin/userdetail.dart';
 import 'package:frontfile_servease/services/all_users_service.dart';
 import 'package:get/get.dart';
@@ -218,15 +220,9 @@ class _AllUsersState extends State<AllUsers> {
                                       email: _emailCtrl.text.trim(),
                                       password: _passCtrl.text,
                                       role: _selectedRole,
-                                      phone: _phoneCtrl.text.isEmpty
-                                          ? null
-                                          : _phoneCtrl.text.trim(),
-                                      cnic: _cnicCtrl.text.isEmpty
-                                          ? null
-                                          : _cnicCtrl.text.trim(),
-                                      address: _addressCtrl.text.isEmpty
-                                          ? null
-                                          : _addressCtrl.text.trim(),
+                                      phone: _phoneCtrl.text.trim(),
+                                      cnic: _cnicCtrl.text.trim(),
+                                      address: _addressCtrl.text.trim(),
                                     );
                                     Get.back();
                                     _loadUsers();
@@ -386,16 +382,12 @@ class _AllUsersState extends State<AllUsers> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgColor,
+      drawer: const AdminDrawer(),
+      bottomNavigationBar: const AdminBottomNavBar(),
       appBar: AppBar(
         backgroundColor: primaryGreen,
         foregroundColor: Colors.white,
         elevation: 0,
-        leading: Get.routing.previous.isNotEmpty
-            ? IconButton(
-                icon: const Icon(Icons.arrow_back_ios_new, size: 20),
-                onPressed: () => Get.offAllNamed('/admindrawer'),
-              )
-            : null,
         title: const Text(
           'All Users',
           style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18),

@@ -1,0 +1,127 @@
+import 'dart:convert';
+import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'package:frontfile_servease/models/providermodel/providermodelapi.dart';
+
+class ProviderApiService {
+  static const String baseUrl = "http://localhost:3000/api/providerside";
+
+  static Map<String, String> get _headers => {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+  };
+
+  // DASHBOARD STATS
+  static Future<DashboardStats> fetchDashboardStats(int providerId) async {
+    try {
+      final response = await http.get(
+        Uri.parse("$baseUrl/dashboard/stats?provider_id=$providerId"),
+        headers: _headers,
+      );
+      if (response.statusCode == 200)
+        return DashboardStats.fromJson(jsonDecode(response.body));
+      throw Exception("Failed to load dashboard stats");
+    } catch (e) {
+      throw Exception(e.toString());
+    }
+  }
+
+  // NEW JOB REQUESTS
+  static Future<List<JobRequest>> fetchNewJobRequests(int providerId) async {
+    try {
+      final response = await http.get(
+        Uri.parse("$baseUrl/jobs/new?provider_id=$providerId"),
+        headers: _headers,
+      );
+      if (response.statusCode == 200) {
+        final List data = jsonDecode(response.body);
+        return data.map((e) => JobRequest.fromJson(e)).toList();
+      }
+      return [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  // ALL JOBS (My Jobs page)
+  static Future<List<JobRequest>> fetchAllJobs(int providerId) async {
+    try {
+      final response = await http.get(
+        Uri.parse("$baseUrl/jobs/all?provider_id=$providerId"),
+        headers: _headers,
+      );
+      if (response.statusCode == 200) {
+        final List data = jsonDecode(response.body);
+        return data.map((e) => JobRequest.fromJson(e)).toList();
+      }
+      return [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  // ACCEPT JOB
+  static Future<bool> acceptJob(int jobId) async {
+    try {
+      final response = await http.put(
+        Uri.parse("$baseUrl/jobs/$jobId/accept"),
+        headers: _headers,
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // DECLINE JOB
+  static Future<bool> declineJob(int jobId) async {
+    try {
+      final response = await http.put(
+        Uri.parse("$baseUrl/jobs/$jobId/decline"),
+        headers: _headers,
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // UPDATE JOB STATUS
+  static Future<bool> updateJobStatus(int jobId, String status) async {
+    try {
+      final response = await http.put(
+        Uri.parse("$baseUrl/jobs/$jobId/status"),
+        headers: _headers,
+        body: jsonEncode({"status": status}),
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // SUBMIT COMMISSION
+  static Future<bool> submitCommission({
+    required int providerId,
+    required double amount,
+    required String paymentMethod,
+    required File screenshotFile,
+  }) async {
+    try {
+      final request = http.MultipartRequest(
+        'POST',
+        Uri.parse("$baseUrl/commission/submit"),
+      );
+      request.fields['provider_id'] = providerId.toString();
+      request.fields['amount'] = amount.toString();
+      request.fields['payment_method'] = paymentMethod;
+      request.files.add(
+        await http.MultipartFile.fromPath('screenshot', screenshotFile.path),
+      );
+      final response = await request.send();
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+}

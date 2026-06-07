@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:frontfile_servease/models/admin_dashboard_model.dart';
+import 'package:frontfile_servease/screens/admin/admin_navbar.dart';
 import 'package:frontfile_servease/screens/admin/admindrawer.dart';
 import 'package:frontfile_servease/services/adminservice.dart';
+import 'package:frontfile_servease/theme/app_theme.dart';
+import 'package:frontfile_servease/routes.dart';
 import 'package:get/get.dart';
 
 class AdminDashboard extends StatefulWidget {
@@ -43,105 +46,8 @@ class _AdminDashboardState extends State<AdminDashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const AdminDrawer(),
-      backgroundColor: const Color(0xffF6F7F9),
-      bottomNavigationBar: Container(
-        height: 70,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(25),
-            topRight: Radius.circular(25),
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            // HOME
-            GestureDetector(
-              onTap: () {
-                Get.offAllNamed('/admindashboard');
-              },
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Icon(Icons.home, color: Color(0xff14C15D)),
-                  SizedBox(height: 4),
-                  Text(
-                    'Home',
-                    style: TextStyle(
-                      color: Color(0xff14C15D),
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // PROFILE
-            GestureDetector(
-              onTap: () {
-                Get.offAllNamed('/adminprofile');
-              },
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Icon(Icons.person, color: Colors.grey),
-                  SizedBox(height: 4),
-                  Text(
-                    'Profile',
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // NOTIFICATIONS
-            GestureDetector(
-              onTap: () {
-                Get.offAllNamed('/adminnotifications');
-              },
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Icon(Icons.notifications, color: Colors.grey),
-                  SizedBox(height: 4),
-                  Text(
-                    'Notifications',
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            // SETTINGS
-            GestureDetector(
-              onTap: () {
-                Get.offAllNamed('/adminsettings');
-              },
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Icon(Icons.settings, color: Colors.grey),
-                  SizedBox(height: 4),
-                  Text(
-                    'Settings',
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
+      backgroundColor: AppColors.cream,
+      bottomNavigationBar: const AdminBottomNavBar(),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : SafeArea(
@@ -168,7 +74,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [Color(0xff00D26A), Color(0xffFF8A00)],
+          colors: [AppColors.success, AppColors.softPink],
         ),
         borderRadius: BorderRadius.only(
           bottomLeft: Radius.circular(35),
@@ -214,9 +120,14 @@ class _AdminDashboardState extends State<AdminDashboard> {
                       color: Colors.white.withOpacity(.25),
                       shape: BoxShape.circle,
                     ),
-                    child: const Icon(
-                      Icons.arrow_back_ios_new,
-                      color: Colors.white,
+                    child: GestureDetector(
+                      onTap: () {
+                        Get.offAllNamed(AppRoutes.homepageview);
+                      },
+                      child: Icon(
+                        Icons.arrow_back_ios_new,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ],
@@ -255,28 +166,28 @@ class _AdminDashboardState extends State<AdminDashboard> {
         children: [
           _buildStatCard(
             icon: Icons.group_outlined,
-            iconBg: const Color(0xff00B74A),
+            iconBg: AppColors.success,
             title: 'Total Users',
             value: dashboardData?.totalUsers.toString() ?? '0',
             percent: '+12%',
           ),
           _buildStatCard(
             icon: Icons.person_outline,
-            iconBg: const Color(0xffFF6A00),
+            iconBg: AppColors.softPink,
             title: 'Active Providers',
             value: dashboardData?.totalProviders.toString() ?? '0',
             percent: '+8%',
           ),
           _buildStatCard(
             icon: Icons.attach_money,
-            iconBg: const Color(0xff00B74A),
+            iconBg: AppColors.success,
             title: 'Monthly Revenue',
             value: '₨0',
             percent: '+23%',
           ),
           _buildStatCard(
             icon: Icons.calendar_today_outlined,
-            iconBg: const Color(0xffFF6A00),
+            iconBg: AppColors.softPink,
             title: 'Total Bookings',
             value: dashboardData?.totalBookings.toString() ?? '0',
             percent: '+15%',
@@ -330,7 +241,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
               Text(
                 percent,
                 style: const TextStyle(
-                  color: Color(0xff00B74A),
+                  color: AppColors.success,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -408,7 +319,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: const Color(0xffFFF4EC),
+              color: AppColors.warningBg,
               borderRadius: BorderRadius.circular(16),
             ),
             child: Icon(icon, color: iconColor),

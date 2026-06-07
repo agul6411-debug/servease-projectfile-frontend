@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontfile_servease/models/all_user_model.dart';
 import 'package:frontfile_servease/screens/admin/allusers.dart';
 import 'package:frontfile_servease/services/all_users_service.dart';
+import 'package:frontfile_servease/screens/admin/admin_navbar.dart';
 import 'package:get/get.dart';
 
 class UserDetail extends StatefulWidget {
@@ -212,6 +213,7 @@ class _UserDetailState extends State<UserDetail> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgColor,
+      bottomNavigationBar: const AdminBottomNavBar(),
       appBar: AppBar(
         backgroundColor: primaryGreen,
         foregroundColor: Colors.white,

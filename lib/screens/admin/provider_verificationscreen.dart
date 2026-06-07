@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontfile_servease/models/provider_verification_model.dart';
 import 'package:frontfile_servease/routes.dart';
 import 'package:frontfile_servease/screens/admin/admindrawer.dart';
+import 'package:frontfile_servease/screens/admin/admin_navbar.dart';
 import 'package:frontfile_servease/services/provider_verficationservice.dart';
 import 'package:get/get.dart';
 
@@ -111,6 +112,7 @@ class _ProviderVerificationPageState extends State<ProviderVerificationPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       drawer: const AdminDrawer(),
+      bottomNavigationBar: const AdminBottomNavBar(),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -162,17 +164,21 @@ class _ProviderVerificationPageState extends State<ProviderVerificationPage> {
     padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
     child: Row(
       children: [
-        GestureDetector(
-          onTap: () {
-            Get.offAllNamed(AppRoutes.admindrawer);
-          },
-          child: Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: const Icon(Icons.arrow_back, color: Colors.white, size: 20),
+        Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(.25),
+            shape: BoxShape.circle,
+          ),
+          child: Builder(
+            builder: (context) {
+              return GestureDetector(
+                onTap: () {
+                  Scaffold.of(context).openDrawer();
+                },
+                child: const Icon(Icons.menu, color: Colors.white),
+              );
+            },
           ),
         ),
 

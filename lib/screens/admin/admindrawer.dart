@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontfile_servease/screens/admin/blockorunblock.dart';
+import 'package:frontfile_servease/theme/app_theme.dart';
 import 'package:get/get.dart';
 import 'package:frontfile_servease/routes.dart';
 import 'package:frontfile_servease/models/admin_drawer_model.dart';
@@ -41,7 +41,7 @@ class _AdminDrawerState extends State<AdminDrawer> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      backgroundColor: const Color(0xffF4F4F4),
+      backgroundColor: AppColors.cream,
       child: Column(
         children: [
           // HEADER
@@ -55,7 +55,7 @@ class _AdminDrawerState extends State<AdminDrawer> {
             ),
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [Color(0xff00D26A), Color(0xffFF8A00)],
+                colors: [AppColors.success, AppColors.softPink],
               ),
             ),
             child: Column(
@@ -183,7 +183,7 @@ class _AdminDrawerState extends State<AdminDrawer> {
                       icon: Icons.dashboard_outlined,
                       title: "Dashboard",
                       onTap: () {
-                        Get.toNamed('/admindashboard');
+                        Get.toNamed(AppRoutes.adminDashboard);
                       },
                       selected: true,
                     ),
@@ -204,7 +204,7 @@ class _AdminDrawerState extends State<AdminDrawer> {
                       title: "Provider Verification",
                       badge: '${drawerData?.pendingProviders ?? 0}',
                       onTap: () {
-                        Get.offAllNamed('/provider_verficationscreen');
+                        Get.offAllNamed(AppRoutes.providerverficationpage);
                       },
                     ),
 
@@ -212,7 +212,7 @@ class _AdminDrawerState extends State<AdminDrawer> {
                       icon: Icons.badge_outlined,
                       title: "CNIC View",
                       onTap: () {
-                        Get.offAllNamed('/CNICview');
+                        Get.offAllNamed(AppRoutes.cnicview);
                       },
                     ),
 
@@ -220,7 +220,7 @@ class _AdminDrawerState extends State<AdminDrawer> {
                       icon: Icons.approval_outlined,
                       title: "Approve / Reject",
                       onTap: () {
-                        Get.offAllNamed('/acceptance');
+                        Get.offAllNamed(AppRoutes.acceptance);
                       },
                     ),
 
@@ -232,7 +232,7 @@ class _AdminDrawerState extends State<AdminDrawer> {
                       icon: Icons.people_outline,
                       title: "All Users",
                       onTap: () {
-                        Get.offAllNamed('/allusers');
+                        Get.offAllNamed(AppRoutes.allusers);
                       },
                     ),
 
@@ -240,7 +240,7 @@ class _AdminDrawerState extends State<AdminDrawer> {
                       icon: Icons.person_outline,
                       title: "User Details",
                       onTap: () {
-                        Get.offAllNamed('/userdetail');
+                        Get.offAllNamed(AppRoutes.userdetail);
                       },
                     ),
 
@@ -248,7 +248,7 @@ class _AdminDrawerState extends State<AdminDrawer> {
                       icon: Icons.block_outlined,
                       title: "Block / Unblock",
                       onTap: () {
-                        Get.offAndToNamed('/blockorunblock');
+                        Get.offAndToNamed(AppRoutes.blockorunblock);
                       },
                     ),
 
@@ -261,7 +261,7 @@ class _AdminDrawerState extends State<AdminDrawer> {
                       title: "Complaint Handling",
                       badge: '${drawerData?.pendingComplaints ?? 0}',
                       onTap: () {
-                        Get.offAllNamed('/complainhandling');
+                        Get.offAllNamed(AppRoutes.complainhandling);
                       },
                     ),
 
@@ -269,7 +269,7 @@ class _AdminDrawerState extends State<AdminDrawer> {
                       icon: Icons.chat_outlined,
                       title: "Complaint Details",
                       onTap: () {
-                        Get.offAllNamed('/complaindetail');
+                        Get.offAllNamed(AppRoutes.complaindetail);
                       },
                     ),
 
@@ -277,7 +277,7 @@ class _AdminDrawerState extends State<AdminDrawer> {
                       icon: Icons.task_alt_outlined,
                       title: "Resolution",
                       onTap: () {
-                        Get.offAllNamed('/complainresolution');
+                        Get.offAllNamed(AppRoutes.complainresolution);
                       },
                     ),
 
@@ -289,7 +289,7 @@ class _AdminDrawerState extends State<AdminDrawer> {
                       icon: Icons.miscellaneous_services_outlined,
                       title: "Service Management",
                       onTap: () {
-                        Get.toNamed('/servicemanagement');
+                        Get.toNamed(AppRoutes.servicemanagement);
                       },
                     ),
 
@@ -298,7 +298,7 @@ class _AdminDrawerState extends State<AdminDrawer> {
                     Container(
                       width: double.infinity,
                       decoration: BoxDecoration(
-                        color: const Color(0xffFDECEC),
+                        color: AppColors.errorBg,
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: ListTile(
@@ -349,7 +349,9 @@ class _AdminDrawerState extends State<AdminDrawer> {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
-        color: selected ? const Color(0xffEFE8DD) : Colors.transparent,
+        color: selected
+            ? AppColors.softPink.withValues(alpha: 0.2)
+            : Colors.transparent,
         borderRadius: BorderRadius.circular(18),
       ),
       child: ListTile(
@@ -357,7 +359,7 @@ class _AdminDrawerState extends State<AdminDrawer> {
         leading: CircleAvatar(
           radius: 18,
           backgroundColor: selected
-              ? const Color(0xffD8A03D)
+              ? AppColors.mediumRed
               : Colors.grey.shade200,
           child: Icon(
             icon,

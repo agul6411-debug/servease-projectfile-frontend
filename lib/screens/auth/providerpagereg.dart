@@ -27,19 +27,21 @@ class _ProviderPageregState extends State<ProviderPagereg> {
   bool _showConfirmPassword = false;
   bool _agreeToTerms = false;
   bool _isLoading = false;
-  int?
-  _selectedServiceId; // matches service_id (int FK) in provider_details table
 
-  // Map of service_id -> display name (load from API in production)
-  static const Map<int, String> _services = {
-    1: 'Crafts',
-    2: 'Fashion',
-    3: 'Education',
-    4: 'Cleaning',
-    5: 'Beauty',
-    6: 'Other',
+  String? _selectedCategory;
+  String? _selectedService;
+
+  final Map<String, List<String>> _categoryServices = {
+    "Home Services": ["Cleaning", "Baby Sitter"],
+
+    "Fashion & Design": ["Tailoring", "Embroidery"],
+
+    "Beauty & Care": ["Beauty", "Mehndi"],
+
+    "Education": ["Tutoring"],
+
+    "Media": ["Photography"],
   };
-
   @override
   void dispose() {
     _fullNameCtrl.dispose();
@@ -133,7 +135,8 @@ class _ProviderPageregState extends State<ProviderPagereg> {
         'address': _addressCtrl.text.trim(),
         'password': _passwordCtrl.text,
         'role': 'provider', // users.role enum
-        'service_id': _selectedServiceId, // provider_details.service_id
+        'category': _selectedCategory,
+        'service_name': _selectedService, // provider_details.service_id
         'years_of_experience':
             int.tryParse(_yearsExpCtrl.text.trim()) ??
             0, // provider_details.years_of_experience
@@ -481,86 +484,61 @@ class _ProviderPageregState extends State<ProviderPagereg> {
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  _label('Service Category'),
-                                  DropdownButtonFormField<int>(
-                                    value: _selectedServiceId,
-                                    isExpanded: true,
-                                    icon: const Icon(
-                                      Icons.keyboard_arrow_down,
-                                      color: Color(0xFFBBBBBB),
+                                  _label('Category'),
+
+                                  DropdownButtonFormField<String>(
+                                    value: _selectedCategory,
+                                    decoration: _dec(
+                                      hint: "Select Category",
+                                      icon: Icons.category_outlined,
                                     ),
-                                    hint: const Text(
-                                      'Select a category',
-                                      style: TextStyle(
-                                        color: Color(0xFFBBBBBB),
-                                        fontSize: 13,
-                                      ),
-                                    ),
-                                    decoration: InputDecoration(
-                                      prefixIcon: const Icon(
-                                        Icons.grid_view_outlined,
-                                        color: Color(0xFFBBBBBB),
-                                        size: 18,
-                                      ),
-                                      filled: true,
-                                      fillColor: Colors.white,
-                                      contentPadding:
-                                          const EdgeInsets.symmetric(
-                                            vertical: 14,
-                                            horizontal: 12,
-                                          ),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                        borderSide: const BorderSide(
-                                          color: Color(0xFFE0E0E0),
-                                        ),
-                                      ),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                        borderSide: const BorderSide(
-                                          color: Color(0xFFE0E0E0),
-                                        ),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                        borderSide: const BorderSide(
-                                          color: Color(0xFF4CAF50),
-                                          width: 1.6,
-                                        ),
-                                      ),
-                                      errorBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                        borderSide: const BorderSide(
-                                          color: Color(0xFFF44336),
-                                        ),
-                                      ),
-                                      focusedErrorBorder: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(10),
-                                        borderSide: const BorderSide(
-                                          color: Color(0xFFF44336),
-                                          width: 1.6,
-                                        ),
-                                      ),
-                                    ),
-                                    items: _services.entries
-                                        .map(
-                                          (e) => DropdownMenuItem<int>(
-                                            value: e.key,
-                                            child: Text(
-                                              e.value,
-                                              style: const TextStyle(
-                                                fontSize: 13,
-                                              ),
-                                            ),
-                                          ),
-                                        )
-                                        .toList(),
-                                    onChanged: (val) => setState(
-                                      () => _selectedServiceId = val,
-                                    ),
-                                    validator: (v) => v == null
-                                        ? 'Please select a category'
+                                    items: _categoryServices.keys.map((
+                                      category,
+                                    ) {
+                                      return DropdownMenuItem(
+                                        value: category,
+                                        child: Text(category),
+                                      );
+                                    }).toList(),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _selectedCategory = value;
+                                        _selectedService = null;
+                                      });
+                                    },
+                                    validator: (value) => value == null
+                                        ? "Select Category"
                                         : null,
+                                  ),
+
+                                  const SizedBox(height: 15),
+
+                                  _label('Service'),
+
+                                  DropdownButtonFormField<String>(
+                                    value: _selectedService,
+                                    decoration: _dec(
+                                      hint: "Select Service",
+                                      icon: Icons.home_repair_service_outlined,
+                                    ),
+                                    items:
+                                        (_selectedCategory == null
+                                                ? <String>[]
+                                                : _categoryServices[_selectedCategory]!)
+                                            .map((service) {
+                                              return DropdownMenuItem(
+                                                value: service,
+                                                child: Text(service),
+                                              );
+                                            })
+                                            .toList(),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _selectedService = value;
+                                      });
+                                    },
+                                    validator: (value) =>
+                                        value == null ? "Select Service" : null,
                                   ),
                                 ],
                               ),

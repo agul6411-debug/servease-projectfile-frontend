@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:frontfile_servease/theme/app_theme.dart';
 import 'package:frontfile_servease/models/acceptance_model.dart';
 import 'package:frontfile_servease/services/acceptance_service.dart';
+import 'package:frontfile_servease/screens/admin/admindrawer.dart';
+import 'package:frontfile_servease/screens/admin/admin_navbar.dart';
 import 'package:get/get.dart';
 
 class Acceptance extends StatefulWidget {
@@ -35,19 +38,12 @@ class _AcceptanceState extends State<Acceptance> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xffF6F7F9),
+      backgroundColor: AppColors.cream,
+      drawer: const AdminDrawer(),
+      bottomNavigationBar: const AdminBottomNavBar(),
 
       appBar: AppBar(
         elevation: 0,
-
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-
-          onPressed: () {
-            Get.offAllNamed('/admindrawer');
-          },
-        ),
-
         title: const Text(
           "Acceptance List",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
@@ -56,7 +52,7 @@ class _AcceptanceState extends State<Acceptance> {
         flexibleSpace: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [Color(0xff00C853), Color(0xffFF8A00)],
+              colors: [AppColors.success, AppColors.softPink],
             ),
           ),
         ),
@@ -64,7 +60,7 @@ class _AcceptanceState extends State<Acceptance> {
 
       body: isLoading
           ? const Center(
-              child: CircularProgressIndicator(color: Color(0xff00C853)),
+              child: CircularProgressIndicator(color: AppColors.success),
             )
           : providers.isEmpty
           ? const Center(
@@ -151,7 +147,7 @@ class _AcceptanceState extends State<Acceptance> {
 
                         decoration: BoxDecoration(
                           color: item.status == "approved"
-                              ? const Color(0xff00C853)
+                              ? AppColors.success
                               : Colors.red,
 
                           borderRadius: BorderRadius.circular(14),

@@ -1,7 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:frontfile_servease/constants/apptheme.dart';
 import 'package:frontfile_servease/routes.dart';
 import 'package:get/get.dart';
+
+const Color kTeal = Color(0xFF1D9E8A);
+const Color kGold = Color(0xFFFFC75F);
+const Color kTealAccent = Color(0xFF7DE2CB);
+const Color kTealLight = Color(0xFFC9F1E9);
+const Color kTealMid = Color(0xFF3FC8B2);
+const Color kDark = Color(0xFF0E2522);
+const Color kLightDark = Color(0xFF1F4640);
+const Color kMuted = Color(0xFF5A7B75);
+const Color kNavBackground = Color(0xFFFFFFFF);
 
 class ServEaseApp extends StatefulWidget {
   const ServEaseApp({super.key});
@@ -17,10 +26,12 @@ class _ServEaseAppState extends State<ServEaseApp> {
       title: 'ServEase',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        useMaterial3: true,
         fontFamily: 'sans-serif',
-        scaffoldBackgroundColor: kBg,
+        scaffoldBackgroundColor: kNavBackground,
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color.fromARGB(255, 17, 228, 42),
+          seedColor: kTeal,
+          brightness: Brightness.light,
         ),
       ),
       home: const HomePage(),
@@ -515,7 +526,7 @@ class _ServicesSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: kBg,
+      color: kTealLight,
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 60),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -536,7 +547,7 @@ class _ServicesSection extends StatelessWidget {
               fontFamily: 'serif',
               fontSize: 28,
               fontWeight: FontWeight.w700,
-              color: kDark,
+              color: kLightDark,
               height: 1.2,
             ),
           ),
