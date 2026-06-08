@@ -122,3 +122,66 @@ class CommissionStatus {
         paymentStatus: json['payment_status'] ?? 'pending',
       );
 }
+// ════════════════════════════════════════════════════════════════════════════
+// earnings summary models
+// ════════════════════════════════════════════════════════════════════════════
+
+class MonthlyEarning {
+  final String month;
+  final double amount;
+
+  MonthlyEarning({required this.month, required this.amount});
+
+  factory MonthlyEarning.fromJson(Map<String, dynamic> json) => MonthlyEarning(
+    month: json['month'] ?? '',
+    amount: double.parse(json['amount'].toString()),
+  );
+}
+
+class EarningTransaction {
+  final String title;
+  final String subtitle;
+  final double amount;
+  final bool isFree;
+
+  EarningTransaction({
+    required this.title,
+    required this.subtitle,
+    required this.amount,
+    required this.isFree,
+  });
+
+  factory EarningTransaction.fromJson(Map<String, dynamic> json) =>
+      EarningTransaction(
+        title: json['title'] ?? '',
+        subtitle: json['subtitle'] ?? '',
+        amount: double.parse(json['amount'].toString()),
+        isFree: json['is_free'] == 1 || json['is_free'] == true,
+      );
+}
+
+class EarningsSummary {
+  final double totalEarned;
+  final double commissionDue;
+  final List<MonthlyEarning> monthly;
+  final List<EarningTransaction> transactions;
+
+  EarningsSummary({
+    required this.totalEarned,
+    required this.commissionDue,
+    required this.monthly,
+    required this.transactions,
+  });
+
+  factory EarningsSummary.fromJson(Map<String, dynamic> json) =>
+      EarningsSummary(
+        totalEarned: double.parse(json['total_earned'].toString()),
+        commissionDue: double.parse(json['commission_due'].toString()),
+        monthly: (json['monthly'] as List? ?? [])
+            .map((e) => MonthlyEarning.fromJson(e))
+            .toList(),
+        transactions: (json['transactions'] as List? ?? [])
+            .map((e) => EarningTransaction.fromJson(e))
+            .toList(),
+      );
+}

@@ -2,7 +2,7 @@ class AdminDrawerModel {
   final int pendingProviders;
   final int pendingComplaints;
   final int unreadNotifications;
-
+  final int pendingCommissions;
   final String adminName;
   final String adminEmail;
 
@@ -12,6 +12,7 @@ class AdminDrawerModel {
     required this.unreadNotifications,
     required this.adminName,
     required this.adminEmail,
+    this.pendingCommissions = 0,
   });
 
   factory AdminDrawerModel.fromJson(Map<String, dynamic> json) {
@@ -24,6 +25,7 @@ class AdminDrawerModel {
 
       adminName: json['adminName'] ?? '',
       adminEmail: json['adminEmail'] ?? '',
+      pendingCommissions: json['pendingCommissions'] ?? 0,
     );
   }
 }

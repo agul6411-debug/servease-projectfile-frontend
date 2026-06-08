@@ -1,5 +1,7 @@
 // App routes
 
+import 'package:frontfile_servease/screens/admin/admin_commission_screen.dart';
+import 'package:frontfile_servease/screens/admin/adminbookingscreen.dart';
 import 'package:frontfile_servease/screens/admin/servicemanagement.dart';
 import 'package:frontfile_servease/screens/admin/admindashboard.dart';
 import 'package:frontfile_servease/screens/admin/adminnotification.dart';
@@ -54,6 +56,8 @@ class AppRoutes {
   static const String complainresolution = '/complainresolution';
   static const String servicemanagement = '/servicemanagement';
   static const String providerHomeScreen = '/provider_home_screen';
+  static const String adminCommissions = '/admin_commissions';
+  static const String adminBookings = '/admin_bookings';
 
   static final List<GetPage<dynamic>> pages = [
     GetPage(name: splash, page: () => SplashScreen()),
@@ -90,5 +94,7 @@ class AppRoutes {
       name: providerverficationpage,
       page: () => ProviderVerificationPage(),
     ),
+    GetPage(name: adminCommissions, page: () => const AdminCommissionScreen()),
+    GetPage(name: adminBookings, page: () => const AdminBookingsScreen()),
   ];
 }

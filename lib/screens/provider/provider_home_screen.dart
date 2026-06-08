@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontfile_servease/models/providermodel/providermodelapi.dart';
+import 'package:frontfile_servease/screens/provider/earningscreen.dart';
+import 'package:frontfile_servease/screens/provider/provider_profile_screen.dart';
 import 'package:frontfile_servease/screens/provider/providernavbar.dart';
 import 'package:frontfile_servease/screens/provider/my_jobs_screen.dart';
 import 'package:frontfile_servease/services/providerapiservices/providerapiservice.dart';
@@ -673,6 +675,26 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
             context,
             MaterialPageRoute(
               builder: (_) => MyJobsScreen(providerId: widget.providerId),
+            ),
+          );
+          return;
+        }
+        if (index == 2) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => EarningsScreen(providerId: widget.providerId),
+            ),
+          );
+          return;
+        }
+        if (index == 3) {
+          // Profile
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) =>
+                  ProviderProfileScreen(providerId: widget.providerId),
             ),
           );
           return;

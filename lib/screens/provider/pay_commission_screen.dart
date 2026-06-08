@@ -1,8 +1,12 @@
-import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:frontfile_servease/services/providerapiservices/providerapiservice.dart';
 import 'package:frontfile_servease/screens/provider/commission_submitted_screen.dart';
+import 'package:frontfile_servease/screens/provider/provider_home_screen.dart';
+import 'package:frontfile_servease/screens/provider/provider_profile_screen.dart';
+import 'package:frontfile_servease/screens/provider/my_jobs_screen.dart';
+import 'package:frontfile_servease/screens/provider/providernavbar.dart';
 import 'package:frontfile_servease/theme/app_theme.dart';
 
 class PayCommissionScreen extends StatefulWidget {
@@ -20,7 +24,8 @@ class PayCommissionScreen extends StatefulWidget {
 
 class _PayCommissionScreenState extends State<PayCommissionScreen> {
   String _selectedMethod = 'JazzCash';
-  File? _screenshot;
+  Uint8List? _screenshotBytes;
+  String? _screenshotName;
   bool _isSubmitting = false;
 
   final _methods = [
@@ -31,11 +36,17 @@ class _PayCommissionScreenState extends State<PayCommissionScreen> {
 
   Future<void> _pickScreenshot() async {
     final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (picked != null) setState(() => _screenshot = File(picked.path));
+    if (picked != null) {
+      final bytes = await picked.readAsBytes();
+      setState(() {
+        _screenshotBytes = bytes;
+        _screenshotName = picked.name;
+      });
+    }
   }
 
   Future<void> _submit() async {
-    if (_screenshot == null) {
+    if (_screenshotBytes == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please upload payment screenshot'),
@@ -45,11 +56,12 @@ class _PayCommissionScreenState extends State<PayCommissionScreen> {
       return;
     }
     setState(() => _isSubmitting = true);
-    final success = await ProviderApiService.submitCommission(
+    final success = await ProviderApiService.submitCommissionWeb(
       providerId: widget.providerId,
       amount: widget.commissionAmount,
       paymentMethod: _selectedMethod,
-      screenshotFile: _screenshot!,
+      screenshotBytes: _screenshotBytes!,
+      screenshotName: _screenshotName ?? 'screenshot.jpg',
     );
     setState(() => _isSubmitting = false);
     if (success && mounted) {
@@ -103,12 +115,9 @@ class _PayCommissionScreenState extends State<PayCommissionScreen> {
                       color: AppColors.textDark,
                     ),
                   ),
-                  Text(
+                  const Text(
                     'For completed jobs at 10%',
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: AppColors.textMuted,
-                    ),
+                    style: TextStyle(fontSize: 12, color: AppColors.textMuted),
                   ),
                 ],
               ),
@@ -170,19 +179,19 @@ class _PayCommissionScreenState extends State<PayCommissionScreen> {
               onTap: _pickScreenshot,
               child: Container(
                 width: double.infinity,
-                height: _screenshot != null ? 180 : 100,
+                height: _screenshotBytes != null ? 180 : 100,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: Colors.grey.shade300,
-                    style: BorderStyle.solid,
-                  ),
+                  border: Border.all(color: Colors.grey.shade300),
                 ),
-                child: _screenshot != null
+                child: _screenshotBytes != null
                     ? ClipRRect(
                         borderRadius: BorderRadius.circular(12),
-                        child: Image.file(_screenshot!, fit: BoxFit.cover),
+                        child: Image.memory(
+                          _screenshotBytes!,
+                          fit: BoxFit.cover,
+                        ),
                       )
                     : Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -229,6 +238,40 @@ class _PayCommissionScreenState extends State<PayCommissionScreen> {
             ),
           ],
         ),
+      ),
+      bottomNavigationBar: ProviderBottomNavBar(
+        currentIndex: 2,
+        onTap: (index) {
+          if (index == 0) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) =>
+                    ProviderHomeScreen(providerId: widget.providerId),
+              ),
+            );
+            return;
+          }
+          if (index == 1) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => MyJobsScreen(providerId: widget.providerId),
+              ),
+            );
+            return;
+          }
+          if (index == 3) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) =>
+                    ProviderProfileScreen(providerId: widget.providerId),
+              ),
+            );
+            return;
+          }
+        },
       ),
     );
   }

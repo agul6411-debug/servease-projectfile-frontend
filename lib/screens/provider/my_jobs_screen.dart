@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:frontfile_servease/models/providermodel/providermodelapi.dart';
 import 'package:frontfile_servease/services/providerapiservices/providerapiservice.dart';
 import 'package:frontfile_servease/screens/provider/job_detail_screen.dart';
+import 'package:frontfile_servease/screens/provider/providernavbar.dart';
+import 'package:frontfile_servease/screens/provider/provider_home_screen.dart';
+import 'package:frontfile_servease/screens/provider/provider_profile_screen.dart';
+import 'package:frontfile_servease/screens/provider/earningscreen.dart';
 import 'package:frontfile_servease/theme/app_theme.dart';
 
 class MyJobsScreen extends StatefulWidget {
@@ -98,6 +102,41 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
                   ),
           ),
         ],
+      ),
+      bottomNavigationBar: ProviderBottomNavBar(
+        currentIndex: 1,
+        onTap: (index) {
+          if (index == 0) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) =>
+                    ProviderHomeScreen(providerId: widget.providerId),
+              ),
+            );
+            return;
+          }
+          if (index == 2) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => EarningsScreen(providerId: widget.providerId),
+              ),
+            );
+            return;
+          }
+          if (index == 3) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) =>
+                    ProviderProfileScreen(providerId: widget.providerId),
+              ),
+            );
+            return;
+          }
+          // index == 1 is current page (My Jobs)
+        },
       ),
     );
   }

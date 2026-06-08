@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:frontfile_servease/routes.dart';
+import 'package:frontfile_servease/screens/provider/providernavbar.dart';
+import 'package:frontfile_servease/screens/provider/my_jobs_screen.dart';
+import 'package:frontfile_servease/screens/provider/provider_profile_screen.dart';
+import 'package:frontfile_servease/screens/provider/earningscreen.dart';
 import 'package:frontfile_servease/theme/app_theme.dart';
 
 class CommissionSubmittedScreen extends StatelessWidget {
@@ -99,6 +104,44 @@ class CommissionSubmittedScreen extends StatelessWidget {
             ],
           ),
         ),
+      ),
+      bottomNavigationBar: ProviderBottomNavBar(
+        currentIndex: 0,
+        onTap: (index) {
+          final box = GetStorage();
+          final userId = box.read('user_id') ?? 0;
+          if (index == 0) {
+            Get.offAllNamed(AppRoutes.providerHomeScreen);
+            return;
+          }
+          if (index == 1) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => MyJobsScreen(providerId: userId),
+              ),
+            );
+            return;
+          }
+          if (index == 2) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => EarningsScreen(providerId: userId),
+              ),
+            );
+            return;
+          }
+          if (index == 3) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => ProviderProfileScreen(providerId: userId),
+              ),
+            );
+            return;
+          }
+        },
       ),
     );
   }

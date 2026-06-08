@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'package:frontfile_servease/models/providermodel/providermodelapi.dart';
 
@@ -117,6 +118,54 @@ class ProviderApiService {
       request.fields['payment_method'] = paymentMethod;
       request.files.add(
         await http.MultipartFile.fromPath('screenshot', screenshotFile.path),
+      );
+      final response = await request.send();
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+  // ════════════════════════════════════════════════════════════════════════════
+
+  // FETCH EARNINGS
+  // EARNINGS
+  static Future<EarningsSummary?> fetchEarnings(int providerId) async {
+    try {
+      final response = await http.get(
+        Uri.parse("$baseUrl/earnings?provider_id=$providerId"),
+        headers: _headers,
+      );
+      if (response.statusCode == 200) {
+        return EarningsSummary.fromJson(jsonDecode(response.body));
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // SUBMIT COMMISSION (Web compatible)
+  static Future<bool> submitCommissionWeb({
+    required int providerId,
+    required double amount,
+    required String paymentMethod,
+    required Uint8List screenshotBytes,
+    required String screenshotName,
+  }) async {
+    try {
+      final request = http.MultipartRequest(
+        'POST',
+        Uri.parse("$baseUrl/commission/submit"),
+      );
+      request.fields['provider_id'] = providerId.toString();
+      request.fields['amount'] = amount.toString();
+      request.fields['payment_method'] = paymentMethod;
+      request.files.add(
+        http.MultipartFile.fromBytes(
+          'screenshot',
+          screenshotBytes,
+          filename: screenshotName,
+        ),
       );
       final response = await request.send();
       return response.statusCode == 200;
