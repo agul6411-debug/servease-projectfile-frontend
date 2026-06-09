@@ -14,7 +14,7 @@ import 'package:frontfile_servease/screens/auth/homepageview.dart';
 import 'package:get/get.dart';
 import 'package:frontfile_servease/screens/auth/login_screen.dart';
 import 'package:frontfile_servease/screens/auth/register_screen.dart';
-import 'package:frontfile_servease/screens/customer/customer_home_screen.dart';
+import 'package:frontfile_servease/screens/customer/customerscreen.dart';
 import 'package:frontfile_servease/screens/auth/customerpagereg.dart';
 import 'package:frontfile_servease/screens/auth/providerpagereg.dart';
 import 'package:frontfile_servease/screens/admin/admindrawer.dart';
