@@ -1,6 +1,7 @@
 // Provider list screen
 import 'package:flutter/material.dart';
 import 'package:frontfile_servease/models/customer/customer_model.dart';
+import 'package:frontfile_servease/screens/customer/provider_detail_screen.dart';
 import 'package:frontfile_servease/services/customer/customerserviceali.dart';
 
 import 'package:frontfile_servease/theme/app_theme.dart';
@@ -352,7 +353,14 @@ class _ProviderListCard extends StatelessWidget {
           size: 14,
           color: AppColors.textMuted,
         ),
-        onTap: () {},
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => ProviderDetailScreen(providerId: provider.id),
+            ),
+          );
+        },
       ),
     );
   }

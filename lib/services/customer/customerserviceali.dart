@@ -26,6 +26,23 @@ class CustomerApiService {
     }
   }
 
+  // GET all providers
+  static Future<List<TopProvider>> fetchAllProviders() async {
+    try {
+      final res = await http.get(
+        Uri.parse("$baseUrl/providers"),
+        headers: _headers,
+      );
+      if (res.statusCode == 200)
+        return List<Map<String, dynamic>>.from(
+          jsonDecode(res.body),
+        ).map((e) => TopProvider.fromJson(e)).toList();
+      return [];
+    } catch (e) {
+      return [];
+    }
+  }
+
   // GET providers by category
   static Future<List<TopProvider>> fetchProvidersByCategory(
     String category,
@@ -37,29 +54,74 @@ class CustomerApiService {
         ),
         headers: _headers,
       );
-      if (res.statusCode == 200) {
+      if (res.statusCode == 200)
         return List<Map<String, dynamic>>.from(
           jsonDecode(res.body),
         ).map((e) => TopProvider.fromJson(e)).toList();
-      }
       return [];
     } catch (e) {
       return [];
     }
   }
 
-  // GET all providers
-  static Future<List<TopProvider>> fetchAllProviders() async {
+  // GET provider detail
+  static Future<ProviderDetail?> fetchProviderDetail(int providerId) async {
     try {
       final res = await http.get(
-        Uri.parse("$baseUrl/providers"),
+        Uri.parse("$baseUrl/provider/$providerId"),
         headers: _headers,
       );
-      if (res.statusCode == 200) {
+      if (res.statusCode == 200)
+        return ProviderDetail.fromJson(jsonDecode(res.body));
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // POST create booking
+  static Future<Map<String, dynamic>?> createBooking({
+    required int customerId,
+    required int providerId,
+    required int serviceId,
+    required String scheduledDate,
+    required String scheduledTime,
+    required String location,
+    required double totalPrice,
+  }) async {
+    try {
+      final res = await http.post(
+        Uri.parse("$baseUrl/bookings"),
+        headers: _headers,
+        body: jsonEncode({
+          'customer_id': customerId,
+          'provider_id': providerId,
+          'service_id': serviceId,
+          'scheduled_date': scheduledDate,
+          'scheduled_time': scheduledTime,
+          'location': location,
+          'total_price': totalPrice,
+        }),
+      );
+      if (res.statusCode == 200 || res.statusCode == 201)
+        return jsonDecode(res.body);
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // GET customer bookings
+  static Future<List<CustomerBooking>> fetchMyBookings(int customerId) async {
+    try {
+      final res = await http.get(
+        Uri.parse("$baseUrl/bookings?customer_id=$customerId"),
+        headers: _headers,
+      );
+      if (res.statusCode == 200)
         return List<Map<String, dynamic>>.from(
           jsonDecode(res.body),
-        ).map((e) => TopProvider.fromJson(e)).toList();
-      }
+        ).map((e) => CustomerBooking.fromJson(e)).toList();
       return [];
     } catch (e) {
       return [];

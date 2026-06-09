@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontfile_servease/models/customer/customer_model.dart';
+import 'package:frontfile_servease/screens/customer/my_bookings_screen.dart';
 import 'package:frontfile_servease/screens/customer/provider_list_screen.dart';
 import 'package:frontfile_servease/services/customer/customerserviceali.dart';
 import 'package:get_storage/get_storage.dart';
@@ -43,6 +44,17 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
           builder: (_) => const ProvidersListScreen(selectedCategory: 'all'),
         ),
       );
+      return;
+    }
+    if (index == 2) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const MyBookingsScreen()),
+      );
+      return;
+    }
+    if (index == 3) {
+      // Profile screen — baad mein add karenge
       return;
     }
     setState(() => _currentNav = index);
