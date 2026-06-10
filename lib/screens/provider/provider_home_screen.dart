@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontfile_servease/models/providermodel/providermodelapi.dart';
 import 'package:frontfile_servease/screens/provider/earningscreen.dart';
 import 'package:frontfile_servease/screens/provider/provider_profile_screen.dart';
+import 'package:frontfile_servease/screens/provider/provider_notifications_screen.dart';
 import 'package:frontfile_servease/screens/provider/providernavbar.dart';
 import 'package:frontfile_servease/screens/provider/my_jobs_screen.dart';
 import 'package:frontfile_servease/services/providerapiservices/providerapiservice.dart';
@@ -196,7 +197,13 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
       actions: [
         IconButton(
           icon: const Icon(Icons.notifications_outlined, color: Colors.white),
-          onPressed: () {},
+          onPressed: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) =>
+                  ProviderNotificationsScreen(providerId: widget.providerId),
+            ),
+          ),
         ),
         Container(
           margin: const EdgeInsets.only(right: 12),

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:frontfile_servease/models/customer/customer_model.dart';
+import 'package:frontfile_servease/screens/customer/customer_profile_screen.dart';
 import 'package:frontfile_servease/screens/customer/my_bookings_screen.dart';
+import 'package:frontfile_servease/screens/customer/notification_screen.dart';
+import 'package:frontfile_servease/screens/customer/provider_detail_screen.dart';
 import 'package:frontfile_servease/screens/customer/provider_list_screen.dart';
 import 'package:frontfile_servease/services/customer/customerserviceali.dart';
 import 'package:get_storage/get_storage.dart';
@@ -50,11 +53,14 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (_) => const MyBookingsScreen()),
-      );
+      ).then((_) => setState(() {}));
       return;
     }
     if (index == 3) {
-      // Profile screen — baad mein add karenge
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const CustomerProfileScreen()),
+      );
       return;
     }
     setState(() => _currentNav = index);
@@ -132,12 +138,31 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
                   ),
                 ],
               ),
-              IconButton(
-                icon: const Icon(
-                  Icons.notifications_outlined,
-                  color: Colors.white,
-                ),
-                onPressed: () {},
+              Row(
+                children: [
+                  IconButton(
+                    icon: const Icon(
+                      Icons.notifications_outlined,
+                      color: Colors.white,
+                    ),
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => NotificationScreen(customerId: _userId),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  IconButton(
+                    icon: const Icon(Icons.person_outline, color: Colors.white),
+                    onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const CustomerProfileScreen(),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -596,7 +621,12 @@ class _ProviderCard extends StatelessWidget {
           size: 14,
           color: AppColors.textMuted,
         ),
-        onTap: () {},
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ProviderDetailScreen(providerId: provider.id),
+          ),
+        ),
       ),
     );
   }

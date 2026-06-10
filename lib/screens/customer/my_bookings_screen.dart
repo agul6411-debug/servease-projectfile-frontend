@@ -1,4 +1,3 @@
-// My bookings screen
 import 'package:flutter/material.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:frontfile_servease/models/customer/customer_model.dart';
@@ -25,6 +24,12 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
   @override
   void initState() {
     super.initState();
+    _load();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     _load();
   }
 
@@ -71,7 +76,6 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
       ),
       body: Column(
         children: [
-          // Filter tabs
           Container(
             color: Colors.white,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -110,7 +114,6 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
               }).toList(),
             ),
           ),
-
           Expanded(
             child: _isLoading
                 ? const Center(

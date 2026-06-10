@@ -45,37 +45,29 @@ class _ProviderNotificationsScreenState
     }
   }
 
-  IconData _getIcon(String? type) {
+  IconData _iconForType(String type) {
     switch (type) {
-      case 'job_request':
-        return Icons.work_outline;
-      case 'commission':
-        return Icons.payments_outlined;
-      case 'review':
-        return Icons.star_outline;
       case 'booking':
-        return Icons.check_circle_outline;
-      case 'verification':
-        return Icons.verified_outlined;
+        return Icons.calendar_today_outlined;
+      case 'system':
+        return Icons.info_outline;
+      case 'complaint':
+        return Icons.warning_amber_outlined;
       default:
         return Icons.notifications_outlined;
     }
   }
 
-  Color _getColor(String? type) {
+  Color _colorForType(String type) {
     switch (type) {
-      case 'job_request':
-        return AppColors.primaryGreen;
-      case 'commission':
-        return AppColors.accentYellow;
-      case 'review':
-        return Colors.purple;
       case 'booking':
-        return const Color(0xFF1565C0);
-      case 'verification':
         return AppColors.primaryGreen;
+      case 'system':
+        return Colors.blueGrey;
+      case 'complaint':
+        return Colors.orange.shade400;
       default:
-        return AppColors.textMuted;
+        return Colors.blueGrey;
     }
   }
 
@@ -118,7 +110,7 @@ class _ProviderNotificationsScreenState
                 itemBuilder: (_, i) {
                   final n = _notifications[i];
                   final isUnread = n['is_read'] == 0 || n['is_read'] == false;
-                  final color = _getColor(n['type']);
+                  final color = _colorForType(n['type']);
                   return Container(
                     margin: const EdgeInsets.only(bottom: 8),
                     decoration: BoxDecoration(
@@ -150,7 +142,7 @@ class _ProviderNotificationsScreenState
                               shape: BoxShape.circle,
                             ),
                             child: Icon(
-                              _getIcon(n['type']),
+                              _iconForType(n['type']),
                               color: color,
                               size: 18,
                             ),

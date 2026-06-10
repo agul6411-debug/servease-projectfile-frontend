@@ -127,4 +127,36 @@ class CustomerApiService {
       return [];
     }
   }
+
+  // GET notifications
+  static Future<List<CustomerNotification>> fetchNotifications(
+    int customerId,
+  ) async {
+    try {
+      final res = await http.get(
+        Uri.parse("$baseUrl/notifications?customer_id=$customerId"),
+        headers: _headers,
+      );
+      if (res.statusCode == 200)
+        return List<Map<String, dynamic>>.from(
+          jsonDecode(res.body),
+        ).map((e) => CustomerNotification.fromJson(e)).toList();
+      return [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  // PUT mark as read
+  static Future<bool> markNotificationRead(int notifId) async {
+    try {
+      final res = await http.put(
+        Uri.parse("$baseUrl/notifications/$notifId/read"),
+        headers: _headers,
+      );
+      return res.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
 }
