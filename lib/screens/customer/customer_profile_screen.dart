@@ -147,12 +147,12 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
   }
 
   Widget _buildHeader() {
-    final bookings = _profile?['total_bookings'] ?? 0;
-    final memberSince = _profile?['member_since'] ?? '';
-    final city = _profile?['address'] ?? '';
+    final bookings = _profile?['Total_Bookings'] ?? 0;
+    final memberSince = _profile?['Member_Since'] ?? '';
+    final city = _profile?['Address'] ?? '';
 
     return Container(
-      color: AppColors.primaryGreen,
+      color: const Color.fromARGB(255, 27, 139, 36),
       padding: const EdgeInsets.fromLTRB(16, 56, 16, 24),
       child: Column(
         children: [
@@ -206,7 +206,7 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
               children: [
                 _headerStat('$bookings', 'Total'),
                 Container(width: 1, height: 28, color: Colors.white24),
-                _headerStat('${_profile?['active_bookings'] ?? 0}', 'Active'),
+                _headerStat('${_profile?['Active_Bookings'] ?? 0}', 'Active'),
               ],
             ),
           ),
@@ -259,7 +259,7 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
           ),
           const SizedBox(height: 14),
           _field('FULL NAME', _nameCtrl),
-          _field('EMAIL', _emailCtrl, enabled: false),
+          _field('EMAIL', _emailCtrl),
           _field('PHONE', _phoneCtrl, type: TextInputType.phone),
           _field('CITY', _cityCtrl, isLast: true),
           const SizedBox(height: 16),

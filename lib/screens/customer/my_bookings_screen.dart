@@ -4,6 +4,7 @@ import 'package:frontfile_servease/models/customer/customer_model.dart';
 import 'package:frontfile_servease/services/customer/customerserviceali.dart';
 import 'package:frontfile_servease/theme/app_theme.dart';
 
+
 class MyBookingsScreen extends StatefulWidget {
   const MyBookingsScreen({super.key});
 
@@ -19,7 +20,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
 
   int get _customerId => box.read('user_id') ?? 0;
 
-  final _filters = ['All', 'Active', 'Completed'];
+  final _filters = ['All booking', 'Active', 'Completed'];
 
   @override
   void initState() {
@@ -67,7 +68,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F0E8),
       appBar: AppBar(
-        backgroundColor: AppColors.primaryGreen,
+        backgroundColor: const Color.fromARGB(255, 27, 89, 139),
         title: const Text(
           'My Bookings',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),

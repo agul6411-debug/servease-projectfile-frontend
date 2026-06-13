@@ -71,7 +71,7 @@ class _ProvidersListScreenState extends State<ProvidersListScreen> {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F0E8),
       appBar: AppBar(
-        backgroundColor: AppColors.primaryGreen,
+        backgroundColor: const Color.fromARGB(255, 27, 139, 27),
         title: const Text(
           'Find Providers',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),

@@ -133,7 +133,7 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    'Hello, $name 👋  $city',
+                    'Hello, $name 👋',
                     style: const TextStyle(color: Colors.white70, fontSize: 12),
                   ),
                 ],
