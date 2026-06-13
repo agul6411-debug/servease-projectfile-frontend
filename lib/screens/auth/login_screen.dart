@@ -66,7 +66,7 @@ class _LoginScreenState extends State<LoginScreen>
       Get.snackbar(
         'Error',
         'Email and password required',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
@@ -92,7 +92,7 @@ class _LoginScreenState extends State<LoginScreen>
         Get.snackbar(
           'Success',
           'Login successful as $role',
-          snackPosition: SnackPosition.BOTTOM,
+          snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.green,
           colorText: Colors.white,
         );
@@ -120,7 +120,7 @@ class _LoginScreenState extends State<LoginScreen>
         Get.snackbar(
           'Error',
           result['message'] ?? 'Login failed',
-          snackPosition: SnackPosition.BOTTOM,
+          snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.red,
           colorText: Colors.white,
         );
@@ -132,7 +132,7 @@ class _LoginScreenState extends State<LoginScreen>
       Get.snackbar(
         'Error',
         'Server error',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
@@ -177,7 +177,7 @@ class _LoginScreenState extends State<LoginScreen>
                       gradient: LinearGradient(
                         colors: [Color(0xFFEAF2E8), Color(0xFFF5F8F0)],
                         begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
                       ),
                     ),
                     child: Column(
@@ -189,7 +189,7 @@ class _LoginScreenState extends State<LoginScreen>
                             gradient: const LinearGradient(
                               colors: [AppColors.success, AppColors.softPink],
                               begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
+                              end: Alignment.topCenter,
                             ),
                             borderRadius: BorderRadius.circular(
                               isMobile ? 22 : 28,
@@ -220,9 +220,7 @@ class _LoginScreenState extends State<LoginScreen>
                             letterSpacing: -0.5,
                           ),
                         ),
-
                         const SizedBox(height: 6),
-
                         Text(
                           'Sign in to continue to ServEase',
                           style: TextStyle(

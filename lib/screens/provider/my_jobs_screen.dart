@@ -21,9 +21,9 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
   String _filter = 'All';
   bool _isLoading = true;
 
-  final _filters = ['All', 'accepted', 'in_progress', 'completed'];
+  final _filters = ['All Jobs', 'accepted', 'in_progress', 'completed'];
   final _filterLabels = {
-    'All': 'All',
+    'All Jobs': 'All Jobs',
     'accepted': 'Active',
     'in_progress': 'In Progress',
     'completed': 'Completed',
