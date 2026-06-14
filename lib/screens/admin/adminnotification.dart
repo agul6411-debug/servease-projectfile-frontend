@@ -476,25 +476,28 @@ class _NotifTile extends StatelessWidget {
                 const SizedBox(height: 6),
                 Row(
                   children: [
-                    if (n['user_name'] != null)
-                      Text(
-                        'To: ${n['user_name']}',
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: Colors.grey.shade400,
-                        ),
-                      ),
-                    if (n['user_name'] == null)
-                      Text(
-                        'Broadcast — ${n['role'] ?? ''}',
-                        style: TextStyle(
-                          fontSize: 11,
-                          color: Colors.grey.shade400,
-                        ),
-                      ),
-                    const Spacer(),
+                    Expanded(
+                      child: n['user_name'] != null
+                          ? Text(
+                              'To: ${n['user_name']} (ID: ${n['user_id']}) — ${n['role']}',
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: Colors.grey.shade500,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            )
+                          : Text(
+                              'Broadcast → All ${n['role']}s',
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: AppColors.primaryGreen,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                    ),
                     Text(
-                      n['created_at']?.toString().substring(0, 10) ?? '',
+                      n['created_at']?.toString().substring(0, 16) ?? '',
                       style: TextStyle(
                         fontSize: 11,
                         color: Colors.grey.shade400,

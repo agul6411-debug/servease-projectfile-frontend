@@ -173,4 +173,36 @@ class ProviderApiService {
       return false;
     }
   }
+
+  // GET NOTIFICATIONS
+  static Future<List<Map<String, dynamic>>> fetchNotifications(
+    int providerId,
+  ) async {
+    try {
+      final response = await http.get(
+        Uri.parse("$baseUrl/notifications?provider_id=$providerId"),
+        headers: _headers,
+      );
+      if (response.statusCode == 200) {
+        final List data = jsonDecode(response.body);
+        return List<Map<String, dynamic>>.from(data);
+      }
+      return [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  // MARK NOTIFICATION AS READ
+  static Future<bool> markNotificationRead(int notifId) async {
+    try {
+      final response = await http.put(
+        Uri.parse("$baseUrl/notifications/$notifId/read"),
+        headers: _headers,
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
 }
