@@ -117,6 +117,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
         mainAxisSize: MainAxisSize.min,
         children: [
           _buildMessageButton(),
+          _buildReportButton(),
           ProviderBottomNavBar(
             currentIndex: 1,
             onTap: (index) {
@@ -400,6 +401,112 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
             borderRadius: BorderRadius.circular(12),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildReportButton() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(14, 0, 14, 12),
+      child: OutlinedButton.icon(
+        onPressed: _showReportDialog,
+        icon: const Icon(Icons.flag_outlined, color: Colors.red),
+        label: const Text(
+          'Report Customer',
+          style: TextStyle(color: Colors.red, fontWeight: FontWeight.w600),
+        ),
+        style: OutlinedButton.styleFrom(
+          side: const BorderSide(color: Colors.red),
+          minimumSize: const Size(double.infinity, 48),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showReportDialog() {
+    final titleCtrl = TextEditingController();
+    final messageCtrl = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Report Customer'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: titleCtrl,
+              decoration: InputDecoration(
+                hintText: 'Issue title (e.g. Rude behavior)',
+                filled: true,
+                fillColor: const Color(0xFFFFF8EF),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: messageCtrl,
+              maxLines: 3,
+              decoration: InputDecoration(
+                hintText: 'Describe the issue...',
+                filled: true,
+                fillColor: const Color(0xFFFFF8EF),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            onPressed: () async {
+              if (titleCtrl.text.trim().isEmpty ||
+                  messageCtrl.text.trim().isEmpty)
+                return;
+              Navigator.pop(ctx);
+              final success = await ProviderApiService.submitComplaint(
+                providerId: widget.providerId,
+                bookingId: widget.job.id,
+                title: titleCtrl.text.trim(),
+                message: messageCtrl.text.trim(),
+              );
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      success
+                          ? 'Complaint submitted to admin'
+                          : 'Failed to submit complaint',
+                    ),
+                    backgroundColor: success
+                        ? AppColors.primaryGreen
+                        : Colors.red,
+                  ),
+                );
+              }
+            },
+            child: const Text('Submit', style: TextStyle(color: Colors.white)),
+          ),
+        ],
       ),
     );
   }

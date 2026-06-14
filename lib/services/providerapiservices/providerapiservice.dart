@@ -19,6 +19,9 @@ class ProviderApiService {
         Uri.parse("$baseUrl/dashboard/stats?provider_id=$providerId"),
         headers: _headers,
       );
+      if (response.statusCode == 403) {
+        throw Exception("ACCOUNT_BLOCKED");
+      }
       if (response.statusCode == 200)
         return DashboardStats.fromJson(jsonDecode(response.body));
       throw Exception("Failed to load dashboard stats");
@@ -199,6 +202,43 @@ class ProviderApiService {
       final response = await http.put(
         Uri.parse("$baseUrl/notifications/$notifId/read"),
         headers: _headers,
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // CLEAR ALL NOTIFICATIONS
+  static Future<bool> clearNotifications(int providerId) async {
+    try {
+      final response = await http.delete(
+        Uri.parse("$baseUrl/notifications/clear?provider_id=$providerId"),
+        headers: _headers,
+      );
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // SUBMIT COMPLAINT (against customer)
+  static Future<bool> submitComplaint({
+    required int providerId,
+    required int bookingId,
+    required String title,
+    required String message,
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse("$baseUrl/complaints"),
+        headers: _headers,
+        body: jsonEncode({
+          'provider_id': providerId,
+          'booking_id': bookingId,
+          'title': title,
+          'message': message,
+        }),
       );
       return response.statusCode == 200;
     } catch (e) {

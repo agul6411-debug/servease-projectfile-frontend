@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontfile_servease/models/providermodel/providermodelapi.dart';
+import 'package:frontfile_servease/routes.dart';
 import 'package:frontfile_servease/screens/provider/earningscreen.dart';
 import 'package:frontfile_servease/screens/provider/provider_profile_screen.dart';
 import 'package:frontfile_servease/screens/provider/provider_notifications_screen.dart';
@@ -7,6 +8,8 @@ import 'package:frontfile_servease/screens/provider/providernavbar.dart';
 import 'package:frontfile_servease/screens/provider/my_jobs_screen.dart';
 import 'package:frontfile_servease/services/providerapiservices/providerapiservice.dart';
 import 'package:frontfile_servease/theme/app_theme.dart';
+import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 class ProviderHomeScreen extends StatefulWidget {
   final int providerId;
@@ -18,6 +21,7 @@ class ProviderHomeScreen extends StatefulWidget {
 }
 
 class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
+  final box = GetStorage();
   DashboardStats? _stats;
   List<JobRequest> _jobRequests = [];
   bool _isLoading = true;
@@ -46,11 +50,41 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
         _isLoading = false;
       });
     } catch (e) {
+      if (e.toString().contains('ACCOUNT_BLOCKED')) {
+        _showBlockedDialog();
+        return;
+      }
       setState(() {
         _error = e.toString();
         _isLoading = false;
       });
     }
+  }
+
+  void _showBlockedDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Account Blocked'),
+        content: const Text(
+          'Your account has been blocked by admin. Please contact support for more information.',
+        ),
+        actions: [
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.declineRed,
+            ),
+            onPressed: () {
+              box.erase(); // saved token/user_id sab clear
+              Navigator.pop(ctx);
+              Get.offAllNamed(AppRoutes.loginScreen);
+            },
+            child: const Text('OK', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _handleAccept(int jobId) async {

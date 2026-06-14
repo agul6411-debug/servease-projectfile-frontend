@@ -17,6 +17,9 @@ class _AdminNotificationState extends State<AdminNotification> {
 
   List<Map<String, dynamic>> _notifications = [];
   bool _isLoading = true;
+  String _filter = 'All';
+
+  final _filters = ['All', 'Customer', 'Provider', 'Broadcast'];
 
   // Send form controllers
   final _titleCtrl = TextEditingController();
@@ -105,6 +108,62 @@ class _AdminNotificationState extends State<AdminNotification> {
     setState(() => _isSending = false);
   }
 
+  List<Map<String, dynamic>> get _filtered {
+    switch (_filter) {
+      case 'Customer':
+        return _notifications
+            .where((n) => n['role'] == 'customer' && n['user_id'] != null)
+            .toList();
+      case 'Provider':
+        return _notifications
+            .where((n) => n['role'] == 'provider' && n['user_id'] != null)
+            .toList();
+      case 'Broadcast':
+        return _notifications.where((n) => n['user_id'] == null).toList();
+      default:
+        return _notifications;
+    }
+  }
+
+  Future<void> _confirmClearAll() async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Clear ALL Notifications?'),
+        content: const Text(
+          'Yeh sab users (customer + provider) ki notifications delete kar dega. Undo nahi ho sakta.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Clear All', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      try {
+        final res = await http.delete(Uri.parse("$_base/clear-all"));
+        if (res.statusCode == 200) {
+          setState(() => _notifications.clear());
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Sab notifications clear ho gayi'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+      } catch (e) {
+        debugPrint('Clear error: $e');
+      }
+    }
+  }
+
   Color _typeColor(String type) {
     switch (type) {
       case 'booking':
@@ -150,6 +209,10 @@ class _AdminNotificationState extends State<AdminNotification> {
         iconTheme: const IconThemeData(color: Colors.white),
         actions: [
           IconButton(
+            icon: const Icon(Icons.delete_sweep_outlined, color: Colors.white),
+            onPressed: _confirmClearAll,
+          ),
+          IconButton(
             icon: const Icon(Icons.refresh, color: Colors.white),
             onPressed: _loadNotifications,
           ),
@@ -162,9 +225,62 @@ class _AdminNotificationState extends State<AdminNotification> {
           children: [
             _buildSendCard(),
             const SizedBox(height: 16),
+            _buildFilterTabs(),
+            const SizedBox(height: 10),
             _buildNotificationsList(),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildFilterTabs() {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: _filters.map((f) {
+          final isSelected = _filter == f;
+          final count = f == 'All'
+              ? _notifications.length
+              : f == 'Customer'
+              ? _notifications
+                    .where(
+                      (n) => n['role'] == 'customer' && n['user_id'] != null,
+                    )
+                    .length
+              : f == 'Provider'
+              ? _notifications
+                    .where(
+                      (n) => n['role'] == 'provider' && n['user_id'] != null,
+                    )
+                    .length
+              : _notifications.where((n) => n['user_id'] == null).length;
+
+          return GestureDetector(
+            onTap: () => setState(() => _filter = f),
+            child: Container(
+              margin: const EdgeInsets.only(right: 10),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: isSelected ? AppColors.primaryGreen : Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: isSelected
+                      ? AppColors.primaryGreen
+                      : Colors.grey.shade300,
+                ),
+              ),
+              child: Text(
+                '$f ($count)',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: isSelected ? Colors.white : AppColors.textMuted,
+                ),
+              ),
+            ),
+          );
+        }).toList(),
       ),
     );
   }
@@ -196,7 +312,6 @@ class _AdminNotificationState extends State<AdminNotification> {
           ),
           const SizedBox(height: 14),
 
-          // User ID (optional)
           _label('User ID (optional — khali choro broadcast ke liye)'),
           const SizedBox(height: 6),
           TextField(
@@ -206,7 +321,6 @@ class _AdminNotificationState extends State<AdminNotification> {
           ),
           const SizedBox(height: 12),
 
-          // Role
           _label('Send To'),
           const SizedBox(height: 6),
           Row(
@@ -245,7 +359,6 @@ class _AdminNotificationState extends State<AdminNotification> {
           ),
           const SizedBox(height: 12),
 
-          // Type
           _label('Type'),
           const SizedBox(height: 6),
           DropdownButtonFormField<String>(
@@ -258,7 +371,6 @@ class _AdminNotificationState extends State<AdminNotification> {
           ),
           const SizedBox(height: 12),
 
-          // Title
           _label('Title'),
           const SizedBox(height: 6),
           TextField(
@@ -267,7 +379,6 @@ class _AdminNotificationState extends State<AdminNotification> {
           ),
           const SizedBox(height: 12),
 
-          // Message
           _label('Message'),
           const SizedBox(height: 6),
           TextField(
@@ -277,7 +388,6 @@ class _AdminNotificationState extends State<AdminNotification> {
           ),
           const SizedBox(height: 16),
 
-          // Send button
           ElevatedButton.icon(
             onPressed: _isSending ? null : _sendNotification,
             icon: _isSending
@@ -311,6 +421,7 @@ class _AdminNotificationState extends State<AdminNotification> {
   }
 
   Widget _buildNotificationsList() {
+    final list = _filtered;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -318,7 +429,7 @@ class _AdminNotificationState extends State<AdminNotification> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             const Text(
-              'Recent Notifications',
+              'Notifications',
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.bold,
@@ -326,7 +437,7 @@ class _AdminNotificationState extends State<AdminNotification> {
               ),
             ),
             Text(
-              '${_notifications.length} total',
+              '${list.length} shown',
               style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
             ),
           ],
@@ -336,7 +447,7 @@ class _AdminNotificationState extends State<AdminNotification> {
             ? const Center(
                 child: CircularProgressIndicator(color: AppColors.primaryGreen),
               )
-            : _notifications.isEmpty
+            : list.isEmpty
             ? Center(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 24),
@@ -347,7 +458,7 @@ class _AdminNotificationState extends State<AdminNotification> {
                 ),
               )
             : Column(
-                children: _notifications
+                children: list
                     .map(
                       (n) => _NotifTile(
                         n: n,
@@ -400,6 +511,12 @@ class _NotifTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isBroadcast = n['user_id'] == null;
+    final roleLabel = (n['role'] ?? '').toString();
+    final roleCapitalized = roleLabel.isNotEmpty
+        ? roleLabel[0].toUpperCase() + roleLabel.substring(1)
+        : '';
+
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(14),
@@ -473,37 +590,88 @@ class _NotifTile extends StatelessWidget {
                     height: 1.5,
                   ),
                 ),
-                const SizedBox(height: 6),
-                Row(
-                  children: [
-                    Expanded(
-                      child: n['user_name'] != null
-                          ? Text(
-                              'To: ${n['user_name']} (ID: ${n['user_id']}) — ${n['role']}',
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: Colors.grey.shade500,
-                                fontWeight: FontWeight.w600,
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                            )
-                          : Text(
-                              'Broadcast → All ${n['role']}s',
-                              style: TextStyle(
+                const SizedBox(height: 8),
+
+                // ── Recipient info box ──
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: isBroadcast
+                        ? AppColors.primaryGreen.withOpacity(0.08)
+                        : Colors.grey.shade100,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: isBroadcast
+                      ? Row(
+                          children: [
+                            const Icon(
+                              Icons.campaign_outlined,
+                              size: 14,
+                              color: AppColors.primaryGreen,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              'Broadcast → All ${roleLabel}s',
+                              style: const TextStyle(
                                 fontSize: 11,
                                 color: AppColors.primaryGreen,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                    ),
-                    Text(
-                      n['created_at']?.toString().substring(0, 16) ?? '',
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: Colors.grey.shade400,
-                      ),
-                    ),
-                  ],
+                          ],
+                        )
+                      : Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Icon(
+                                  roleLabel == 'provider'
+                                      ? Icons.engineering_outlined
+                                      : Icons.person_outline,
+                                  size: 14,
+                                  color: AppColors.textMuted,
+                                ),
+                                const SizedBox(width: 6),
+                                Expanded(
+                                  child: Text(
+                                    '${n['user_name'] ?? 'Unknown'}  •  $roleCapitalized  •  ID: ${n['user_id']}',
+                                    style: const TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w700,
+                                      color: AppColors.textDark,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            if (n['user_email'] != null) ...[
+                              const SizedBox(height: 2),
+                              Padding(
+                                padding: const EdgeInsets.only(left: 20),
+                                child: Text(
+                                  n['user_email'],
+                                  style: TextStyle(
+                                    fontSize: 10,
+                                    color: Colors.grey.shade500,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                ),
+
+                const SizedBox(height: 6),
+                Text(
+                  n['created_at']?.toString().substring(0, 16) ?? '',
+                  style: TextStyle(fontSize: 10, color: Colors.grey.shade400),
                 ),
               ],
             ),

@@ -159,4 +159,67 @@ class CustomerApiService {
       return false;
     }
   }
+
+  // CLEAR ALL NOTIFICATIONS
+  static Future<bool> clearNotifications(int customerId) async {
+    try {
+      final res = await http.delete(
+        Uri.parse("$baseUrl/notifications/clear?customer_id=$customerId"),
+        headers: _headers,
+      );
+      return res.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // SUBMIT RATING
+  static Future<bool> submitRating({
+    required int bookingId,
+    required int customerId,
+    required int providerId,
+    required int rating,
+    String? note,
+  }) async {
+    try {
+      final res = await http.post(
+        Uri.parse("$baseUrl/ratings"),
+        headers: _headers,
+        body: jsonEncode({
+          'booking_id': bookingId,
+          'customer_id': customerId,
+          'provider_id': providerId,
+          'rating': rating,
+          'note': note,
+        }),
+      );
+      return res.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // SUBMIT COMPLAINT (against provider)
+  static Future<bool> submitComplaint({
+    required int customerId,
+    required int bookingId,
+    required String title,
+    required String message,
+  }) async {
+    try {
+      final res = await http.post(
+        Uri.parse("$baseUrl/complaints"),
+        headers: _headers,
+        body: jsonEncode({
+          'customer_id': customerId,
+          'booking_id': bookingId,
+          'title': title,
+          'message': message,
+        }),
+      );
+      return res.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
 }

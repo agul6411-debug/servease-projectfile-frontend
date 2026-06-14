@@ -181,6 +181,7 @@ class ReviewModel {
 // ── Booking Model ─────────────────────────────────────────────────
 class CustomerBooking {
   final int id;
+  final int providerId; // ← ADD
   final String providerName;
   final String serviceName;
   final String scheduledDate;
@@ -190,6 +191,7 @@ class CustomerBooking {
 
   CustomerBooking({
     required this.id,
+    required this.providerId, // ← ADD
     required this.providerName,
     required this.serviceName,
     required this.scheduledDate,
@@ -219,6 +221,7 @@ class CustomerBooking {
 
     return CustomerBooking(
       id: json['id'] ?? 0,
+      providerId: json['provider_id'] ?? 0, // ← ADD
       providerName: json['provider_name'] ?? '',
       serviceName: json['service_name'] ?? '',
       scheduledDate: formatDate(json['scheduled_date']),

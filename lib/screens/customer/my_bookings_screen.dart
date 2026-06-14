@@ -134,8 +134,10 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                         : ListView.builder(
                             padding: const EdgeInsets.all(12),
                             itemCount: _filtered.length,
-                            itemBuilder: (_, i) =>
-                                _BookingCard(booking: _filtered[i]),
+                            itemBuilder: (_, i) => _BookingCard(
+                              booking: _filtered[i],
+                              customerId: _customerId,
+                            ),
                           ),
                   ),
           ),
@@ -145,9 +147,17 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
   }
 }
 
-class _BookingCard extends StatelessWidget {
+class _BookingCard extends StatefulWidget {
   final CustomerBooking booking;
-  const _BookingCard({required this.booking});
+  final int customerId;
+  const _BookingCard({required this.booking, required this.customerId});
+
+  @override
+  State<_BookingCard> createState() => _BookingCardState();
+}
+
+class _BookingCardState extends State<_BookingCard> {
+  CustomerBooking get booking => widget.booking;
 
   Color get _statusColor {
     switch (booking.status) {
@@ -193,8 +203,207 @@ class _BookingCard extends StatelessWidget {
     return colors[booking.providerName.length % colors.length];
   }
 
+  // ── RATING DIALOG ─────────────────────────────────────────────
+  void _showRatingDialog() {
+    int selectedRating = 5;
+    final noteCtrl = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) => AlertDialog(
+          title: const Text('Rate this Provider'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                booking.providerName,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textDark,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(5, (i) {
+                  return IconButton(
+                    onPressed: () =>
+                        setDialogState(() => selectedRating = i + 1),
+                    icon: Icon(
+                      i < selectedRating
+                          ? Icons.star_rounded
+                          : Icons.star_outline_rounded,
+                      color: AppColors.accentYellow,
+                      size: 32,
+                    ),
+                  );
+                }),
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: noteCtrl,
+                maxLines: 3,
+                decoration: InputDecoration(
+                  hintText: 'Short note (optional)',
+                  hintStyle: const TextStyle(fontSize: 13),
+                  filled: true,
+                  fillColor: const Color(0xFFFFF8EF),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(color: Colors.grey.shade300),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 10,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primaryGreen,
+              ),
+              onPressed: () async {
+                Navigator.pop(ctx);
+                final success = await CustomerApiService.submitRating(
+                  bookingId: booking.id,
+                  customerId: widget.customerId,
+                  providerId: booking.providerId,
+                  rating: selectedRating,
+                  note: noteCtrl.text.trim().isEmpty
+                      ? null
+                      : noteCtrl.text.trim(),
+                );
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        success
+                            ? 'Thanks for your rating!'
+                            : 'Failed to submit rating',
+                      ),
+                      backgroundColor: success
+                          ? AppColors.primaryGreen
+                          : Colors.red,
+                    ),
+                  );
+                }
+              },
+              child: const Text(
+                'Submit',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ── REPORT DIALOG ─────────────────────────────────────────────
+  void _showReportDialog() {
+    final titleCtrl = TextEditingController();
+    final messageCtrl = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Report Provider'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: titleCtrl,
+              decoration: InputDecoration(
+                hintText: 'Issue title (e.g. Late arrival)',
+                filled: true,
+                fillColor: const Color(0xFFFFF8EF),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: messageCtrl,
+              maxLines: 3,
+              decoration: InputDecoration(
+                hintText: 'Describe the issue...',
+                filled: true,
+                fillColor: const Color(0xFFFFF8EF),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            onPressed: () async {
+              if (titleCtrl.text.trim().isEmpty ||
+                  messageCtrl.text.trim().isEmpty) {
+                return;
+              }
+              Navigator.pop(ctx);
+              final success = await CustomerApiService.submitComplaint(
+                customerId: widget.customerId,
+                bookingId: booking.id,
+                title: titleCtrl.text.trim(),
+                message: messageCtrl.text.trim(),
+              );
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      success
+                          ? 'Complaint submitted to admin'
+                          : 'Failed to submit complaint',
+                    ),
+                    backgroundColor: success
+                        ? AppColors.primaryGreen
+                        : Colors.red,
+                  ),
+                );
+              }
+            },
+            child: const Text('Submit', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final canReport = [
+      'accepted',
+      'in_progress',
+      'on_the_way',
+      'completed',
+    ].contains(booking.status);
+
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
@@ -297,42 +506,84 @@ class _BookingCard extends StatelessWidget {
                 ),
               ],
             ),
-            if (booking.status == 'completed') ...[
+            if (booking.status == 'completed' || canReport) ...[
               const SizedBox(height: 10),
-              GestureDetector(
-                onTap: () {},
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.accentYellow.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(
-                      color: AppColors.accentYellow.withOpacity(0.3),
-                    ),
-                  ),
-                  child: const Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.star_outline,
-                        size: 14,
-                        color: AppColors.accentYellow,
-                      ),
-                      SizedBox(width: 4),
-                      Text(
-                        'Leave Review ★',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: AppColors.accentYellow,
-                          fontWeight: FontWeight.w600,
+              Row(
+                children: [
+                  if (booking.status == 'completed')
+                    GestureDetector(
+                      onTap: _showRatingDialog,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.accentYellow.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: AppColors.accentYellow.withOpacity(0.3),
+                          ),
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.star_outline,
+                              size: 14,
+                              color: AppColors.accentYellow,
+                            ),
+                            SizedBox(width: 4),
+                            Text(
+                              'Leave Review ★',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: AppColors.accentYellow,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
-                ),
+                    ),
+                  if (canReport) const SizedBox(width: 8),
+                  if (canReport)
+                    GestureDetector(
+                      onTap: _showReportDialog,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.red.withOpacity(0.08),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: Colors.red.withOpacity(0.3),
+                          ),
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.flag_outlined,
+                              size: 14,
+                              color: Colors.red,
+                            ),
+                            SizedBox(width: 4),
+                            Text(
+                              'Report',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.red,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ],
           ],
