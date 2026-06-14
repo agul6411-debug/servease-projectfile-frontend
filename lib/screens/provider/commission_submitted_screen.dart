@@ -7,6 +7,7 @@ import 'package:frontfile_servease/screens/provider/my_jobs_screen.dart';
 import 'package:frontfile_servease/screens/provider/provider_profile_screen.dart';
 import 'package:frontfile_servease/screens/provider/earningscreen.dart';
 import 'package:frontfile_servease/theme/app_theme.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class CommissionSubmittedScreen extends StatelessWidget {
   final double amount;
@@ -37,12 +38,21 @@ class CommissionSubmittedScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 24),
-              const Text(
+              Text(
                 'Commission Submitted!',
-                style: TextStyle(
+                style: GoogleFonts.poppins(
                   fontSize: 22,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w700,
                   color: AppColors.textDark,
+                ),
+              ),
+
+              Text(
+                'Admin will verify your payment within 24 hours.',
+                style: GoogleFonts.inter(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w400,
+                  color: AppColors.textMuted,
                 ),
               ),
               const SizedBox(height: 12),
