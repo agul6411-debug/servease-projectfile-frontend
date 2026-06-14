@@ -23,9 +23,7 @@ import 'package:frontfile_servease/screens/admin/acceptance.dart';
 import 'package:frontfile_servease/screens/admin/admin_navbar.dart';
 import 'package:frontfile_servease/screens/admin/adminsettings.dart';
 import 'package:frontfile_servease/screens/admin/blockorunblock.dart';
-import 'package:frontfile_servease/screens/admin/complainhandling.dart';
-import 'package:frontfile_servease/screens/admin/complaindetail.dart';
-import 'package:frontfile_servease/screens/admin/complainresolution.dart';
+import 'package:frontfile_servease/screens/admin/admin_complaints.dart';
 import 'package:frontfile_servease/screens/provider/provider_home_screen.dart';
 import 'package:get_storage/get_storage.dart';
 
@@ -78,9 +76,7 @@ class AppRoutes {
     GetPage(name: allusers, page: () => AllUsers()),
     GetPage(name: userdetail, page: () => UserDetail()),
     GetPage(name: blockorunblock, page: () => BlockOrUnblock()),
-    GetPage(name: complainhandling, page: () => Complainhandling()),
-    GetPage(name: complaindetail, page: () => Complaindetail()),
-    GetPage(name: complainresolution, page: () => Complainresolution()),
+    GetPage(name: complainhandling, page: () => AdminComplaintsScreen()),
     GetPage(name: servicemanagement, page: () => Servicemanagement()),
     GetPage(
       name: providerHomeScreen,

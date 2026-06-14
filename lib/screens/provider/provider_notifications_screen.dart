@@ -44,6 +44,35 @@ class _ProviderNotificationsScreenState
     }
   }
 
+  Future<void> _confirmClearAll() async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Clear All Notifications?'),
+        content: const Text('This action will not be undone.'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Clear All', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      final success = await ProviderApiService.clearNotifications(
+        widget.providerId,
+      );
+      if (success) {
+        setState(() => _notifications.clear());
+      }
+    }
+  }
+
   IconData _iconForType(String type) {
     switch (type) {
       case 'booking':
@@ -96,6 +125,16 @@ class _ProviderNotificationsScreenState
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
         ),
         iconTheme: const IconThemeData(color: Colors.white),
+        actions: [
+          if (_notifications.isNotEmpty)
+            IconButton(
+              icon: const Icon(
+                Icons.delete_sweep_outlined,
+                color: Colors.white,
+              ),
+              onPressed: _confirmClearAll,
+            ),
+        ],
       ),
       body: _isLoading
           ? const Center(

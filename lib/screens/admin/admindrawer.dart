@@ -188,13 +188,6 @@ class _AdminDrawerState extends State<AdminDrawer> {
                       selected: true,
                     ),
 
-                    _menuTile(
-                      icon: Icons.analytics_outlined,
-                      title: "Analytics",
-                      badge: "Live",
-                      onTap: () {},
-                    ),
-
                     const SizedBox(height: 12),
 
                     _sectionTitle("PROVIDER MANAGEMENT"),
@@ -237,14 +230,6 @@ class _AdminDrawerState extends State<AdminDrawer> {
                     ),
 
                     _menuTile(
-                      icon: Icons.person_outline,
-                      title: "User Details",
-                      onTap: () {
-                        Get.offAllNamed(AppRoutes.userdetail);
-                      },
-                    ),
-
-                    _menuTile(
                       icon: Icons.block_outlined,
                       title: "Block / Unblock",
                       onTap: () {
@@ -262,22 +247,6 @@ class _AdminDrawerState extends State<AdminDrawer> {
                       badge: '${drawerData?.pendingComplaints ?? 0}',
                       onTap: () {
                         Get.offAllNamed(AppRoutes.complainhandling);
-                      },
-                    ),
-
-                    _menuTile(
-                      icon: Icons.chat_outlined,
-                      title: "Complaint Details",
-                      onTap: () {
-                        Get.offAllNamed(AppRoutes.complaindetail);
-                      },
-                    ),
-
-                    _menuTile(
-                      icon: Icons.task_alt_outlined,
-                      title: "Resolution",
-                      onTap: () {
-                        Get.offAllNamed(AppRoutes.complainresolution);
                       },
                     ),
 
