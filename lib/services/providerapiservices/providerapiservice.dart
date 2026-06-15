@@ -65,15 +65,16 @@ class ProviderApiService {
   }
 
   // ACCEPT JOB
-  static Future<bool> acceptJob(int jobId) async {
+  static Future<Map<String, dynamic>> acceptJob(int jobId) async {
     try {
       final response = await http.put(
         Uri.parse("$baseUrl/jobs/$jobId/accept"),
         headers: _headers,
       );
-      return response.statusCode == 200;
+      final body = jsonDecode(response.body);
+      return {'success': response.statusCode == 200, ...body};
     } catch (e) {
-      return false;
+      return {'success': false, 'message': e.toString()};
     }
   }
 
@@ -243,6 +244,51 @@ class ProviderApiService {
       return response.statusCode == 200;
     } catch (e) {
       return false;
+    }
+  }
+
+  // SECURITY DEPOSIT — SUBMIT
+  static Future<bool> submitSecurityDeposit({
+    required int providerId,
+    required String paymentMethod,
+    required Uint8List screenshotBytes,
+    required String screenshotName,
+  }) async {
+    try {
+      final request = http.MultipartRequest(
+        'POST',
+        Uri.parse("$baseUrl/security-deposit/submit"),
+      );
+      request.fields['provider_id'] = providerId.toString();
+      request.fields['payment_method'] = paymentMethod;
+      request.files.add(
+        http.MultipartFile.fromBytes(
+          'screenshot',
+          screenshotBytes,
+          filename: screenshotName,
+        ),
+      );
+      final response = await request.send();
+      return response.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // SECURITY DEPOSIT — STATUS
+  static Future<String> getSecurityDepositStatus(int providerId) async {
+    try {
+      final response = await http.get(
+        Uri.parse("$baseUrl/security-deposit/status?provider_id=$providerId"),
+        headers: _headers,
+      );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data['status'] ?? 'pending';
+      }
+      return 'pending';
+    } catch (e) {
+      return 'pending';
     }
   }
 }

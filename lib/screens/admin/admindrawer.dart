@@ -268,6 +268,13 @@ class _AdminDrawerState extends State<AdminDrawer> {
                       onTap: () => Get.toNamed(AppRoutes.adminCommissions),
                     ),
                     _menuTile(
+                      icon: Icons.payments_outlined,
+                      title: "Security Deposits",
+                      badge: '${drawerData?.pendingSecurityDeposits ?? 0}',
+                      onTap: () => Get.toNamed(AppRoutes.adminSecurityDeposits),
+                    ),
+
+                    _menuTile(
                       icon: Icons.book_online_outlined,
                       title: "Booking Management",
                       onTap: () => Get.toNamed(AppRoutes.adminBookings),

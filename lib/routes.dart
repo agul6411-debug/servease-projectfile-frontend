@@ -26,6 +26,7 @@ import 'package:frontfile_servease/screens/admin/blockorunblock.dart';
 import 'package:frontfile_servease/screens/admin/admin_complaints.dart';
 import 'package:frontfile_servease/screens/provider/provider_home_screen.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:frontfile_servease/screens/admin/admin_security_deposits_screen.dart';
 
 class AppRoutes {
   static const String splash = '/';
@@ -56,7 +57,7 @@ class AppRoutes {
   static const String providerHomeScreen = '/provider_home_screen';
   static const String adminCommissions = '/admin_commissions';
   static const String adminBookings = '/admin_bookings';
-
+  static const String adminSecurityDeposits = '/admin_security_deposits';
   static final List<GetPage<dynamic>> pages = [
     GetPage(name: splash, page: () => SplashScreen()),
     GetPage(name: homepageview, page: () => HomePage()),
@@ -78,6 +79,10 @@ class AppRoutes {
     GetPage(name: blockorunblock, page: () => BlockOrUnblock()),
     GetPage(name: complainhandling, page: () => AdminComplaintsScreen()),
     GetPage(name: servicemanagement, page: () => Servicemanagement()),
+    GetPage(
+      name: adminSecurityDeposits,
+      page: () => const AdminSecurityDepositsScreen(),
+    ),
     GetPage(
       name: providerHomeScreen,
       page: () {

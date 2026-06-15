@@ -3,7 +3,8 @@ class ProviderVerificationModel {
   final String fullName;
   final String email;
   final String phone;
-  final String? cnicImage;
+  final String? cnicFrontImage;
+  final String? cnicBackImage;
   final String? bio;
   final int? yearsOfExperience;
   final String approvalStatus;
@@ -13,7 +14,8 @@ class ProviderVerificationModel {
     required this.fullName,
     required this.email,
     required this.phone,
-    this.cnicImage,
+    this.cnicFrontImage,
+    this.cnicBackImage,
     this.bio,
     this.yearsOfExperience,
     required this.approvalStatus,
@@ -25,7 +27,8 @@ class ProviderVerificationModel {
       fullName: json['full_name'] ?? '',
       email: json['email'] ?? '',
       phone: json['phone'] ?? '',
-      cnicImage: json['cnic_image'],
+      cnicFrontImage: json['cnic_front_image'],
+      cnicBackImage: json['cnic_back_image'],
       bio: json['bio'],
       yearsOfExperience: json['years_of_experience'],
       approvalStatus: json['approval_status'] ?? 'pending',

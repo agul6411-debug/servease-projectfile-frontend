@@ -6,6 +6,7 @@ class AdminDashboardModel {
   final int totalBookings;
   final int openComplaints;
   final int pendingProviders;
+  final int commissionEarned;
 
   AdminDashboardModel({
     required this.totalUsers,
@@ -15,6 +16,7 @@ class AdminDashboardModel {
     required this.totalBookings,
     required this.openComplaints,
     required this.pendingProviders,
+    required this.commissionEarned,
   });
 
   factory AdminDashboardModel.fromJson(Map<String, dynamic> json) {
@@ -26,6 +28,7 @@ class AdminDashboardModel {
       totalBookings: json['totalBookings'] ?? 0,
       openComplaints: json['openComplaints'] ?? 0,
       pendingProviders: json['pendingProviders'] ?? 0,
+      commissionEarned: json['commissionEarned'] ?? 0,
     );
   }
 }
