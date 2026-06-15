@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 /// Orange & Green — Soft Pastel Theme
 class AppColors {
@@ -143,8 +144,8 @@ ThemeData get lightTheme => ThemeData(
       borderSide: BorderSide.none,
     ),
   ),
-  textTheme: const TextTheme(
-    bodyMedium: TextStyle(
+  textTheme: GoogleFonts.poppinsTextTheme().copyWith(
+    bodyMedium: const TextStyle(
       color: AppColors.foreground,
       fontWeight: AppFontWeights.normal,
       fontSize: 16,
