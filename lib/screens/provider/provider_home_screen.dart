@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontfile_servease/models/providermodel/providermodelapi.dart';
 import 'package:frontfile_servease/routes.dart';
 import 'package:frontfile_servease/screens/provider/earningscreen.dart';
+import 'package:frontfile_servease/screens/provider/pay_commission_screen.dart';
 import 'package:frontfile_servease/screens/provider/provider_profile_screen.dart';
 import 'package:frontfile_servease/screens/provider/provider_notifications_screen.dart';
 import 'package:frontfile_servease/screens/provider/providernavbar.dart';
@@ -10,6 +11,8 @@ import 'package:frontfile_servease/services/providerapiservices/providerapiservi
 import 'package:frontfile_servease/theme/app_theme.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'dart:async';
+import 'package:frontfile_servease/screens/provider/security_deposit_screen.dart';
 
 class ProviderHomeScreen extends StatefulWidget {
   final int providerId;
@@ -32,6 +35,55 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
   void initState() {
     super.initState();
     _loadDashboardData();
+    _startSecurityDepositTimer();
+  }
+
+  void _startSecurityDepositTimer() {
+    Timer(const Duration(seconds: 5), () async {
+      if (!mounted) return;
+      final status = await ProviderApiService.getSecurityDepositStatus(
+        widget.providerId,
+      );
+      if (status == 'pending' && mounted) {
+        _showSecurityDepositReminder();
+      }
+    });
+  }
+
+  void _showSecurityDepositReminder() {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Security Deposit Required'),
+        content: const Text(
+          'Agar aap apni services customers ko provide karna chahte hain, to admin ko as a security RS 500 send karein. '
+          'JazzCash/EasyPaisa number: 0314-7549904. Payment ke baad screenshot upload karein.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Later'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primaryGreen,
+            ),
+            onPressed: () {
+              Navigator.pop(ctx);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) =>
+                      SecurityDepositScreen(providerId: widget.providerId),
+                ),
+              );
+            },
+            child: const Text('Pay Now', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _loadDashboardData() async {
@@ -88,8 +140,9 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
   }
 
   Future<void> _handleAccept(int jobId) async {
-    final success = await ProviderApiService.acceptJob(jobId);
-    if (success && mounted) {
+    final result = await ProviderApiService.acceptJob(jobId);
+
+    if (result['success'] == true) {
       setState(() {
         _jobRequests.removeWhere((j) => j.id == jobId);
         if (_stats != null) {
@@ -113,6 +166,97 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
           ),
         );
       }
+      return;
+    }
+
+    // Security deposit required
+    if (result['code'] == 'SECURITY_DEPOSIT_REQUIRED') {
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Security Deposit Required'),
+          content: const Text(
+            'Aap jobs accept karne se pehle RS 500 security deposit submit karein. Admin verify karne ke baad aap jobs accept kar sakenge.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primaryGreen,
+              ),
+              onPressed: () {
+                Navigator.pop(ctx);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) =>
+                        SecurityDepositScreen(providerId: widget.providerId),
+                  ),
+                );
+              },
+              child: const Text(
+                'Pay Now',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    // Commission due
+    if (result['code'] == 'COMMISSION_DUE') {
+      final amount = (result['commission_due'] as num?)?.toDouble() ?? 0.0;
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Commission Due'),
+          content: Text(
+            'Aapka RS ${amount.toStringAsFixed(0)} commission pending hai. Naye job accept karne se pehle commission pay karein.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.accentYellow,
+              ),
+              onPressed: () {
+                Navigator.pop(ctx);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => PayCommissionScreen(
+                      providerId: widget.providerId,
+                      commissionAmount: amount,
+                    ),
+                  ),
+                );
+              },
+              child: const Text(
+                'Pay Commission',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(result['message'] ?? 'Failed to accept job'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 

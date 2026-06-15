@@ -1,24 +1,46 @@
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 
 class ProviderService {
-  // Android emulator  → 10.0.2.2
-  // iOS simulator     → localhost
-  // Physical device   → your PC's local IP e.g. 192.168.1.x
   static const String baseUrl = "http://localhost:3000";
-  // REGISTER PROVIDER
-  Future<Map<String, dynamic>> registerProvider(
-    Map<String, dynamic> data,
-  ) async {
+
+  // REGISTER PROVIDER — Web (Uint8List)
+  Future<Map<String, dynamic>> registerProviderWeb(
+    Map<String, dynamic> data, {
+    required Uint8List cnicFrontBytes,
+    required String cnicFrontName,
+    required Uint8List cnicBackBytes,
+    required String cnicBackName,
+  }) async {
     try {
-      final response = await http.post(
-        Uri.parse("$baseUrl/register/provider"),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode(data),
+      final request = http.MultipartRequest(
+        'POST',
+        Uri.parse("$baseUrl/api/auth/register/provider"),
       );
 
-      final result = jsonDecode(response.body);
-      return result;
+      data.forEach((key, value) {
+        if (value != null) request.fields[key] = value.toString();
+      });
+
+      request.files.add(
+        http.MultipartFile.fromBytes(
+          'cnic_front',
+          cnicFrontBytes,
+          filename: cnicFrontName,
+        ),
+      );
+      request.files.add(
+        http.MultipartFile.fromBytes(
+          'cnic_back',
+          cnicBackBytes,
+          filename: cnicBackName,
+        ),
+      );
+
+      final streamed = await request.send();
+      final res = await http.Response.fromStream(streamed);
+      return jsonDecode(res.body);
     } catch (e) {
       return {"success": false, "message": e.toString()};
     }

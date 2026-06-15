@@ -376,11 +376,15 @@ class _ProviderCard extends StatelessWidget {
               children: [
                 Expanded(
                   child: OutlinedButton.icon(
-                    onPressed: provider.cnicImage != null
-                        ? () => _showCnic(context, provider.cnicImage!)
+                    onPressed: provider.cnicFrontImage != null
+                        ? () => _showCnic(
+                            context,
+                            provider.cnicFrontImage!,
+                            'CNIC Front',
+                          )
                         : null,
                     icon: const Icon(Icons.remove_red_eye_outlined, size: 16),
-                    label: const Text('View CNIC'),
+                    label: const Text('Front'),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.grey.shade700,
                       side: BorderSide(color: Colors.grey.shade300),
@@ -391,10 +395,34 @@ class _ProviderCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: 8),
                 Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: provider.cnicBackImage != null
+                        ? () => _showCnic(
+                            context,
+                            provider.cnicBackImage!,
+                            'CNIC Back',
+                          )
+                        : null,
+                    icon: const Icon(Icons.remove_red_eye_outlined, size: 16),
+                    label: const Text('Back'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.grey.shade700,
+                      side: BorderSide(color: Colors.grey.shade300),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  flex: 2,
                   child: ElevatedButton(
                     onPressed: onReview,
+
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF3A7D44),
                       shape: RoundedRectangleBorder(
@@ -441,13 +469,19 @@ class _ProviderCard extends StatelessWidget {
     ),
   );
 
-  void _showCnic(BuildContext context, String imageUrl) {
+  void _showCnic(BuildContext context, String imagePath, String title) {
+    const String baseUrl =
+        "http://localhost:3000"; // same as ProviderService.baseUrl
+    final fullUrl = imagePath.startsWith('http')
+        ? imagePath
+        : "$baseUrl$imagePath";
+
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text('CNIC Image'),
+        title: Text(title),
         content: Image.network(
-          imageUrl,
+          fullUrl,
           errorBuilder: (_, __, ___) => const Text('Image not available'),
         ),
         actions: [
