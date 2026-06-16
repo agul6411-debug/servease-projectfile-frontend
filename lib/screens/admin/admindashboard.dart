@@ -245,6 +245,23 @@ class _AdminDashboardState extends State<AdminDashboard> {
         'value': 'RS ${dashboardData?.commissionEarned ?? 0}',
         'sub': 'Verified payments',
       },
+      {
+        'icon': Icons.payments_outlined,
+        'color': const Color(0xFF00695C),
+        'bg': const Color(0xFFE0F2F1),
+        'title': 'Commission (10%)',
+        'value':
+            'RS ${dashboardData?.commissionEarned.toStringAsFixed(0) ?? 0}',
+        'sub': 'Verified commissions',
+      },
+      {
+        'icon': Icons.security_outlined,
+        'color': const Color(0xFF1565C0),
+        'bg': const Color(0xFFE3F2FD),
+        'title': 'Security Deposits',
+        'value': 'RS ${dashboardData?.securityAmount.toStringAsFixed(0) ?? 0}',
+        'sub': '${dashboardData?.securityDeposits ?? 0} verified',
+      },
     ];
 
     return Padding(
