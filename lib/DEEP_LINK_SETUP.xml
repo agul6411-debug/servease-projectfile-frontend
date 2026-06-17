@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+  ═══════════════════════════════════════════════════════════
+  ANDROID DEEP LINK SETUP
+  ═══════════════════════════════════════════════════════════
+  
+  android/app/src/main/AndroidManifest.xml mein 
+  MainActivity ke andar yeh <intent-filter> add karo:
+  
+  <activity
+      android:name=".MainActivity"
+      ... >
+      
+      <!-- Existing intent-filter (rakhna hai) -->
+      <intent-filter>
+          <action android:name="android.intent.action.MAIN"/>
+          <category android:name="android.intent.category.LAUNCHER"/>
+      </intent-filter>
+      
+      <!-- YEH NAYA intent-filter ADD KARO -->
+      <intent-filter android:autoVerify="true">
+          <action android:name="android.intent.action.VIEW" />
+          <category android:name="android.intent.category.DEFAULT" />
+          <category android:name="android.intent.category.BROWSABLE" />
+          <data android:scheme="servease" />
+      </intent-filter>
+      
+  </activity>
+  
+  ═══════════════════════════════════════════════════════════
+  PUBSPEC.YAML mein yeh package add karo:
+  ═══════════════════════════════════════════════════════════
+  
+  dependencies:
+    app_links: ^6.0.0   <-- yeh add karo
+  
+  Phir terminal mein run karo:
+    flutter pub get
+  
+  ═══════════════════════════════════════════════════════════
+  iOS SETUP (ios/Runner/Info.plist mein add karo):
+  ═══════════════════════════════════════════════════════════
+  
+  <key>CFBundleURLTypes</key>
+  <array>
+    <dict>
+      <key>CFBundleTypeRole</key>
+      <string>Editor</string>
+      <key>CFBundleURLSchemes</key>
+      <array>
+        <string>servease</string>
+      </array>
+    </dict>
+  </array>
+  
+  ═══════════════════════════════════════════════════════════
+

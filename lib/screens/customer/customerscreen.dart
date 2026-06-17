@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:frontfile_servease/models/customer/customer_model.dart';
 import 'package:frontfile_servease/screens/customer/customer_profile_screen.dart';
-import 'package:frontfile_servease/screens/customer/my_bookings_screen.dart';
 import 'package:frontfile_servease/screens/customer/notification_screen.dart';
 import 'package:frontfile_servease/screens/customer/provider_detail_screen.dart';
 import 'package:frontfile_servease/screens/customer/provider_list_screen.dart';
+import 'package:frontfile_servease/screens/customer/navbar.dart';
 import 'package:frontfile_servease/services/customer/customerserviceali.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:frontfile_servease/theme/app_theme.dart';
@@ -20,7 +20,6 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
   final box = GetStorage();
   CustomerHomeData? _data;
   bool _isLoading = true;
-  int _currentNav = 0;
 
   int get _userId => box.read('user_id') ?? 0;
 
@@ -37,33 +36,6 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
       _data = data;
       _isLoading = false;
     });
-  }
-
-  void _onNavTap(int index) {
-    if (index == 1) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => const ProvidersListScreen(selectedCategory: 'all'),
-        ),
-      );
-      return;
-    }
-    if (index == 2) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const MyBookingsScreen()),
-      ).then((_) => setState(() {}));
-      return;
-    }
-    if (index == 3) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => const CustomerProfileScreen()),
-      );
-      return;
-    }
-    setState(() => _currentNav = index);
   }
 
   @override
@@ -91,7 +63,7 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
                 ),
               ),
             ),
-      bottomNavigationBar: _buildBottomNav(),
+      bottomNavigationBar: const CustomerNavBar(currentIndex: 0),
     );
   }
 
@@ -326,80 +298,6 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
           const SizedBox(height: 10),
           ...providers.map((p) => _ProviderCard(provider: p)).toList(),
         ],
-      ),
-    );
-  }
-
-  Widget _buildBottomNav() {
-    const items = [
-      {'icon': Icons.home_outlined, 'label': 'Home'},
-      {'icon': Icons.search, 'label': 'Search'},
-      {'icon': Icons.calendar_today_outlined, 'label': 'Bookings'},
-      {'icon': Icons.person_outline, 'label': 'Profile'},
-    ];
-    return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black12,
-            blurRadius: 8,
-            offset: Offset(0, -2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 6),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: List.generate(items.length, (i) {
-              final isSelected = _currentNav == i;
-              return GestureDetector(
-                onTap: () => _onNavTap(i),
-                behavior: HitTestBehavior.opaque,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        items[i]['icon'] as IconData,
-                        color: isSelected
-                            ? AppColors.primaryGreen
-                            : AppColors.textMuted,
-                        size: 22,
-                      ),
-                      const SizedBox(height: 3),
-                      Text(
-                        items[i]['label'] as String,
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: isSelected
-                              ? AppColors.primaryGreen
-                              : AppColors.textMuted,
-                          fontWeight: isSelected
-                              ? FontWeight.w600
-                              : FontWeight.normal,
-                        ),
-                      ),
-                      const SizedBox(height: 3),
-                      AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        width: isSelected ? 4 : 0,
-                        height: isSelected ? 4 : 0,
-                        decoration: const BoxDecoration(
-                          color: AppColors.primaryGreen,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            }),
-          ),
-        ),
       ),
     );
   }

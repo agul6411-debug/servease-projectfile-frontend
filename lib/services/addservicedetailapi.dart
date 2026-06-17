@@ -1,9 +1,10 @@
+import 'package:frontfile_servease/services/app_config.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class AddServiceDetailApi {
   // ── Change this to your actual base URL ──────────────────────────
-  static const String _baseUrl = 'http://localhost:3000/api';
+  static String get _baseUrl => "${AppConfig.baseUrl}/api";
 
   static Map<String, String> get _headers => {
     'Content-Type': 'application/json',

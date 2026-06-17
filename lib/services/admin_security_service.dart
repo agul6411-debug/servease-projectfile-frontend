@@ -1,8 +1,9 @@
+import 'package:frontfile_servease/services/app_config.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class AdminSecurityService {
-  static const String _base = "http://localhost:3000/api/admin";
+  static String get _base => "${AppConfig.baseUrl}/api/admin";
 
   static Future<List<Map<String, dynamic>>> fetchAll() async {
     try {

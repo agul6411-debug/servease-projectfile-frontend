@@ -1,6 +1,8 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:frontfile_servease/services/providerpagereg_service.dart';
+import 'package:frontfile_servease/services/auth/auth_service.dart';
+import 'package:frontfile_servease/screens/auth/otp_verify_screen.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -136,49 +138,69 @@ class _ProviderPageregState extends State<ProviderPagereg> {
       return;
     }
     if (_cnicFrontBytes == null || _cnicBackBytes == null) {
-      _showSnack(
-        'Please upload both CNIC front and back images.',
-        isError: true,
-      );
+      _showSnack('Please upload both CNIC front and back images.', isError: true);
       return;
     }
 
+    // Step 1: Send OTP
     setState(() => _isLoading = true);
-    try {
-      final result = await ProviderService().registerProviderWeb(
-        {
-          'full_name': _fullNameCtrl.text.trim(),
-          'email': _emailCtrl.text.trim(),
-          'phone': _phoneCtrl.text.trim(),
-          'cnic': _cnicCtrl.text.trim(),
-          'address': _addressCtrl.text.trim(),
-          'password': _passwordCtrl.text,
-          'role': 'provider',
-          'category': _selectedCategory,
-          'service_name': _selectedService,
-          'years_of_experience': int.tryParse(_yearsExpCtrl.text.trim()) ?? 0,
-          'bio': _bioCtrl.text.trim(),
-        },
-        cnicFrontBytes: _cnicFrontBytes!,
-        cnicFrontName: _cnicFrontName ?? 'front.jpg',
-        cnicBackBytes: _cnicBackBytes!,
-        cnicBackName: _cnicBackName ?? 'back.jpg',
-      );
-      if (!mounted) return;
-      setState(() => _isLoading = false);
-      if (result['success'] == true) {
-        _showSnack('Registration successful!');
-        await Future.delayed(const Duration(seconds: 1));
-        if (!mounted) return;
-        Navigator.pop(context);
-      } else {
-        _showSnack(result['message'] ?? 'Registration failed', isError: true);
-      }
-    } catch (e) {
-      if (!mounted) return;
-      setState(() => _isLoading = false);
-      _showSnack('An error occurred. Please try again.', isError: true);
+    final otpResult = await AuthService.sendOtp(
+      email: _emailCtrl.text.trim(),
+      fullName: _fullNameCtrl.text.trim(),
+    );
+    setState(() => _isLoading = false);
+
+    if (otpResult['success'] != true) {
+      _showSnack(otpResult['message'] ?? 'Failed to send OTP', isError: true);
+      return;
     }
+
+    if (!mounted) return;
+
+    // Step 2: OTP verify
+    Get.to(() => OtpVerifyScreen(
+      email: _emailCtrl.text.trim(),
+      fullName: _fullNameCtrl.text.trim(),
+      onVerified: () async {
+        Get.back();
+        setState(() => _isLoading = true);
+        try {
+          final result = await ProviderService().registerProviderWeb(
+            {
+              'full_name': _fullNameCtrl.text.trim(),
+              'email': _emailCtrl.text.trim(),
+              'phone': _phoneCtrl.text.trim(),
+              'cnic': _cnicCtrl.text.trim(),
+              'address': _addressCtrl.text.trim(),
+              'password': _passwordCtrl.text,
+              'role': 'provider',
+              'category': _selectedCategory,
+              'service_name': _selectedService,
+              'years_of_experience': int.tryParse(_yearsExpCtrl.text.trim()) ?? 0,
+              'bio': _bioCtrl.text.trim(),
+            },
+            cnicFrontBytes: _cnicFrontBytes!,
+            cnicFrontName: _cnicFrontName ?? 'front.jpg',
+            cnicBackBytes: _cnicBackBytes!,
+            cnicBackName: _cnicBackName ?? 'back.jpg',
+          );
+          if (!mounted) return;
+          setState(() => _isLoading = false);
+          if (result['success'] == true) {
+            _showSnack('Registration successful! Awaiting admin approval.');
+            await Future.delayed(const Duration(seconds: 1));
+            if (!mounted) return;
+            Get.offAllNamed('/login_screen');
+          } else {
+            _showSnack(result['message'] ?? 'Registration failed', isError: true);
+          }
+        } catch (e) {
+          if (!mounted) return;
+          setState(() => _isLoading = false);
+          _showSnack('An error occurred. Please try again.', isError: true);
+        }
+      },
+    ));
   }
 
   InputDecoration _dec({

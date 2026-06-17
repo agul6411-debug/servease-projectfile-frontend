@@ -1,9 +1,10 @@
+import 'package:frontfile_servease/services/app_config.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 
 class ProviderService {
-  static const String baseUrl = "http://localhost:3000";
+  static const String baseUrl = AppConfig.baseUrl;
 
   // REGISTER PROVIDER — Web (Uint8List)
   Future<Map<String, dynamic>> registerProviderWeb(

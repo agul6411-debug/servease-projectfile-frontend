@@ -1,6 +1,7 @@
 // Provider list screen
 import 'package:flutter/material.dart';
 import 'package:frontfile_servease/models/customer/customer_model.dart';
+import 'package:frontfile_servease/screens/customer/navbar.dart';
 import 'package:frontfile_servease/screens/customer/provider_detail_screen.dart';
 import 'package:frontfile_servease/services/customer/customerserviceali.dart';
 
@@ -78,6 +79,7 @@ class _ProvidersListScreenState extends State<ProvidersListScreen> {
         ),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
+      bottomNavigationBar: const CustomerNavBar(currentIndex: 1), // 1 = Search
       body: Column(
         children: [
           // Search

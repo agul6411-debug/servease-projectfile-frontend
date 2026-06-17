@@ -1,10 +1,11 @@
+import 'package:frontfile_servease/services/app_config.dart';
 import 'dart:convert';
 import 'package:frontfile_servease/models/provider_verification_model.dart';
 import 'package:http/http.dart' as http;
 
 class ProviderVerificationService {
-  static const String _baseUrl =
-      'http://localhost:3000/api/admin'; // Replace with your base URL
+
+  static String get _baseUrl => "${AppConfig.baseUrl}/api/admin";
 
   Future<List<ProviderVerificationModel>> getPendingProviders() async {
     final response = await http.get(Uri.parse('$_baseUrl/providers/pending'));

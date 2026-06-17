@@ -1,11 +1,12 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:http/http.dart' as http;
 import 'package:frontfile_servease/routes.dart';
 import 'package:frontfile_servease/theme/app_theme.dart';
 import 'package:frontfile_servease/screens/customer/customer_security_screen.dart';
+import 'package:frontfile_servease/services/customer/customerserviceali.dart';
+
+import 'navbar.dart';
 
 class CustomerProfileScreen extends StatefulWidget {
   const CustomerProfileScreen({super.key});
@@ -25,7 +26,6 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
   late TextEditingController _phoneCtrl;
   late TextEditingController _cityCtrl;
 
-  static const String _base = "http://localhost:3000/api/customer";
   int get _userId => box.read('user_id') ?? 0;
 
   @override
@@ -49,47 +49,35 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
 
   Future<void> _load() async {
     setState(() => _isLoading = true);
-    try {
-      final res = await http.get(Uri.parse("$_base/profile?user_id=$_userId"));
-      if (res.statusCode == 200) {
-        final data = jsonDecode(res.body);
-        setState(() {
-          _profile = data;
-          _nameCtrl.text = data['full_name'] ?? '';
-          _emailCtrl.text = data['email'] ?? '';
-          _phoneCtrl.text = data['phone'] ?? '';
-          _cityCtrl.text = data['address'] ?? '';
-          _isLoading = false;
-        });
-      } else {
-        setState(() => _isLoading = false);
-      }
-    } catch (_) {
-      setState(() => _isLoading = false);
+    final data = await CustomerApiService.fetchProfile(_userId);
+    if (data != null) {
+      setState(() {
+        _profile = data;
+        _nameCtrl.text = data['full_name'] ?? '';
+        _emailCtrl.text = data['email'] ?? '';
+        _phoneCtrl.text = data['phone'] ?? '';
+        _cityCtrl.text = data['address'] ?? '';
+      });
     }
+    setState(() => _isLoading = false);
   }
 
   Future<void> _save() async {
     setState(() => _isSaving = true);
-    try {
-      final res = await http.put(
-        Uri.parse("$_base/profile?user_id=$_userId"),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({
-          "full_name": _nameCtrl.text.trim(),
-          "phone": _phoneCtrl.text.trim(),
-          "address": _cityCtrl.text.trim(),
-        }),
+    final success = await CustomerApiService.updateProfile(
+      userId: _userId,
+      fullName: _nameCtrl.text.trim(),
+      phone: _phoneCtrl.text.trim(),
+      address: _cityCtrl.text.trim(),
+    );
+    if (success && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Profile updated!'),
+          backgroundColor: AppColors.primaryGreen,
+        ),
       );
-      if (res.statusCode == 200 && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Profile updated!'),
-            backgroundColor: AppColors.primaryGreen,
-          ),
-        );
-      }
-    } catch (_) {}
+    }
     setState(() => _isSaving = false);
   }
 
@@ -128,6 +116,7 @@ class _CustomerProfileScreenState extends State<CustomerProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF5F0E8),
+      bottomNavigationBar: const CustomerNavBar(currentIndex: 3),
       body: _isLoading
           ? const Center(
               child: CircularProgressIndicator(color: AppColors.primaryGreen),

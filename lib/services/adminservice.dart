@@ -1,3 +1,4 @@
+import 'package:frontfile_servease/services/app_config.dart';
 import 'dart:convert';
 
 import 'package:frontfile_servease/models/admin_dashboard_model.dart';
@@ -5,7 +6,7 @@ import 'package:frontfile_servease/screens/admin/admindashboard.dart';
 import 'package:http/http.dart' as http;
 
 class AdminService {
-  static const String baseUrl = 'http://localhost:3000';
+  static const String baseUrl = AppConfig.baseUrl;
 
   Future<AdminDashboardModel?> getDashboardStats() async {
     try {

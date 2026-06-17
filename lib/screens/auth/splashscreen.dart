@@ -11,95 +11,99 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     with TickerProviderStateMixin {
-  late AnimationController _logoController;
-  late AnimationController _contentController;
+  late AnimationController _mainCtrl;
+  late AnimationController _pulseCtrl;
 
   late Animation<double> _logoScale;
   late Animation<double> _logoFade;
   late Animation<Offset> _titleSlide;
   late Animation<double> _titleFade;
+  late Animation<double> _taglineFade;
   late Animation<double> _featuresFade;
   late Animation<double> _buttonsFade;
   late Animation<Offset> _buttonsSlide;
+  late Animation<double> _pulse;
 
   @override
   void initState() {
     super.initState();
 
-    _logoController = AnimationController(
+    _mainCtrl = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 1800),
     );
 
-    _contentController = AnimationController(
+    _pulseCtrl = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1000),
-    );
+      duration: const Duration(milliseconds: 1500),
+    )..repeat(reverse: true);
 
-    _logoScale = Tween<double>(begin: 0.5, end: 1.0).animate(
-      CurvedAnimation(parent: _logoController, curve: Curves.elasticOut),
+    _logoScale = Tween<double>(begin: 0.4, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _mainCtrl,
+        curve: const Interval(0.0, 0.4, curve: Curves.elasticOut),
+      ),
     );
-
     _logoFade = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
-        parent: _logoController,
-        curve: const Interval(0.0, 0.5, curve: Curves.easeIn),
+        parent: _mainCtrl,
+        curve: const Interval(0.0, 0.25, curve: Curves.easeIn),
       ),
     );
-
-    _titleSlide = Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero)
+    _titleSlide = Tween<Offset>(begin: const Offset(0, 0.4), end: Offset.zero)
         .animate(
           CurvedAnimation(
-            parent: _contentController,
-            curve: const Interval(0.0, 0.5, curve: Curves.easeOut),
+            parent: _mainCtrl,
+            curve: const Interval(0.3, 0.6, curve: Curves.easeOut),
           ),
         );
-
     _titleFade = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
-        parent: _contentController,
-        curve: const Interval(0.0, 0.5, curve: Curves.easeIn),
+        parent: _mainCtrl,
+        curve: const Interval(0.3, 0.6, curve: Curves.easeIn),
       ),
     );
-
+    _taglineFade = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _mainCtrl,
+        curve: const Interval(0.45, 0.7, curve: Curves.easeIn),
+      ),
+    );
     _featuresFade = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
-        parent: _contentController,
-        curve: const Interval(0.3, 0.7, curve: Curves.easeIn),
+        parent: _mainCtrl,
+        curve: const Interval(0.55, 0.8, curve: Curves.easeIn),
       ),
     );
-
     _buttonsFade = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
-        parent: _contentController,
-        curve: const Interval(0.6, 1.0, curve: Curves.easeIn),
+        parent: _mainCtrl,
+        curve: const Interval(0.75, 1.0, curve: Curves.easeIn),
       ),
     );
-
-    _buttonsSlide = Tween<Offset>(begin: const Offset(0, 0.4), end: Offset.zero)
+    _buttonsSlide = Tween<Offset>(begin: const Offset(0, 0.3), end: Offset.zero)
         .animate(
           CurvedAnimation(
-            parent: _contentController,
-            curve: const Interval(0.6, 1.0, curve: Curves.easeOut),
+            parent: _mainCtrl,
+            curve: const Interval(0.75, 1.0, curve: Curves.easeOut),
           ),
         );
+    _pulse = Tween<double>(
+      begin: 0.95,
+      end: 1.05,
+    ).animate(CurvedAnimation(parent: _pulseCtrl, curve: Curves.easeInOut));
 
-    // Start animations sequentially
-    _logoController.forward().then((_) {
-      _contentController.forward();
-    });
+    _mainCtrl.forward();
 
-    Future.delayed(const Duration(seconds: 3), () {
-      if (mounted) {
-        Get.offNamed('/homepageview');
-      }
+    Future.delayed(const Duration(seconds: 10), () {
+      if (mounted) Get.offNamed('/homepageview');
     });
   }
 
   @override
   void dispose() {
-    _logoController.dispose();
-    _contentController.dispose();
+    _mainCtrl.dispose();
+    _pulseCtrl.dispose();
     super.dispose();
   }
 
@@ -109,208 +113,87 @@ class _SplashScreenState extends State<SplashScreen>
     final isMobile = size.width < 600;
 
     return Scaffold(
-      backgroundColor: AppColors.cream,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              minHeight:
-                  size.height -
-                  MediaQuery.of(context).padding.top -
-                  MediaQuery.of(context).padding.bottom,
-            ),
-            child: IntrinsicHeight(
-              child: Column(
-                children: [
-                  // ── Top gradient background area ──
-                  Container(
-                    width: double.infinity,
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Color(0xFFEAF2E8), Color(0xFFF5F8F0)],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFFF0FAF4), Color(0xFFFFF8EF), Color(0xFFFFF0F5)],
+          ),
+        ),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight:
+                    size.height -
+                    MediaQuery.of(context).padding.top -
+                    MediaQuery.of(context).padding.bottom,
+              ),
+              child: IntrinsicHeight(
+                child: Column(
+                  children: [
+                    // ── Top decorative circles ──
+                    _buildDecorativeTop(),
+
+                    const SizedBox(height: 12),
+
+                    // ── Logo ──
+                    AnimatedBuilder(
+                      animation: _mainCtrl,
+                      builder: (_, child) => FadeTransition(
+                        opacity: _logoFade,
+                        child: ScaleTransition(scale: _logoScale, child: child),
+                      ),
+                      child: ScaleTransition(
+                        scale: _pulse,
+                        child: _buildLogo(isMobile),
                       ),
                     ),
-                    padding: EdgeInsets.only(
-                      top: isMobile ? 48 : 64,
-                      bottom: isMobile ? 32 : 48,
-                    ),
-                    child: Column(
-                      children: [
-                        // ── Animated App Logo ──
-                        AnimatedBuilder(
-                          animation: _logoController,
-                          builder: (_, child) {
-                            return FadeTransition(
-                              opacity: _logoFade,
-                              child: ScaleTransition(
-                                scale: _logoScale,
-                                child: child,
-                              ),
-                            );
-                          },
-                          child: _AppLogo(size: isMobile ? 100 : 120),
-                        ),
 
-                        SizedBox(height: isMobile ? 24 : 32),
+                    const SizedBox(height: 20),
 
-                        // ── Animated Title ──
-                        SlideTransition(
-                          position: _titleSlide,
-                          child: FadeTransition(
-                            opacity: _titleFade,
-                            child: _AppTitle(isMobile: isMobile),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // ── Features Section ──
-                  Expanded(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: isMobile ? 24 : 48,
-                        vertical: isMobile ? 24 : 32,
-                      ),
+                    // ── Title ──
+                    SlideTransition(
+                      position: _titleSlide,
                       child: FadeTransition(
-                        opacity: _featuresFade,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            _FeatureCard(
-                              icon: Icons.verified_user_rounded,
-                              label: 'Verified Professionals',
-                              iconColor: const Color(0xFF2ECC71),
-                              delay: 0,
-                              controller: _contentController,
-                            ),
-                            SizedBox(height: isMobile ? 12 : 16),
-                            _FeatureCard(
-                              icon: Icons.lock_rounded,
-                              label: 'Secure Payments',
-                              iconColor: const Color(0xFFE55A2B),
-                              delay: 100,
-                              controller: _contentController,
-                            ),
-                            SizedBox(height: isMobile ? 12 : 16),
-                            _FeatureCard(
-                              icon: Icons.location_on_rounded,
-                              label: 'Real-time Tracking',
-                              iconColor: const Color(0xFF2ECC71),
-                              delay: 200,
-                              controller: _contentController,
-                            ),
-                          ],
-                        ),
+                        opacity: _titleFade,
+                        child: _buildTitle(isMobile),
                       ),
                     ),
-                  ),
 
-                  // ── Buttons Section ──
-                  SlideTransition(
-                    position: _buttonsSlide,
-                    child: FadeTransition(
-                      opacity: _buttonsFade,
-                      child: Padding(
-                        padding: EdgeInsets.fromLTRB(
-                          isMobile ? 24 : 48,
-                          0,
-                          isMobile ? 24 : 48,
-                          isMobile ? 24 : 36,
-                        ),
-                        child: Column(
-                          children: [
-                            // Get Started Button
-                            GestureDetector(
-                              onTap: () => Get.offNamed('/homepageview'),
-                              child: Container(
-                                width: double.infinity,
-                                padding: EdgeInsets.symmetric(
-                                  vertical: isMobile ? 16 : 18,
-                                ),
-                                decoration: BoxDecoration(
-                                  gradient: const LinearGradient(
-                                    colors: [
-                                      Color(0xFF1A7A3C),
-                                      Color(0xFF2EAA55),
-                                      Color(0xFFF5A623),
-                                    ],
-                                    begin: Alignment.centerLeft,
-                                    end: Alignment.centerRight,
-                                  ),
-                                  borderRadius: BorderRadius.circular(32),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: const Color(
-                                        0xFF2ECC71,
-                                      ).withValues(alpha: 0.3),
-                                      blurRadius: 16,
-                                      offset: const Offset(0, 6),
-                                    ),
-                                  ],
-                                ),
-                                child: Text(
-                                  'Get Started',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: isMobile ? 16 : 18,
-                                    fontWeight: FontWeight.bold,
-                                    letterSpacing: 0.5,
-                                  ),
-                                ),
-                              ),
-                            ),
+                    const SizedBox(height: 8),
 
-                            SizedBox(height: isMobile ? 12 : 16),
+                    // ── Tagline ──
+                    FadeTransition(
+                      opacity: _taglineFade,
+                      child: _buildTagline(isMobile),
+                    ),
 
-                            // Woman empower button
-                            GestureDetector(
-                              onTap: () {},
-                              child: Container(
-                                width: double.infinity,
-                                padding: EdgeInsets.symmetric(
-                                  vertical: isMobile ? 16 : 18,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(32),
-                                  border: Border.all(
-                                    color: Colors.grey.withValues(alpha: 0.3),
-                                    width: 1.5,
-                                  ),
-                                ),
-                                child: Text(
-                                  'Aim To EmPoWer WoMan',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: const Color(0xFF333333),
-                                    fontSize: isMobile ? 15 : 17,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ),
+                    const SizedBox(height: 28),
 
-                            SizedBox(height: isMobile ? 16 : 20),
+                    // ── Feature Chips ──
+                    FadeTransition(
+                      opacity: _featuresFade,
+                      child: _buildFeatureChips(isMobile),
+                    ),
 
-                            // Terms text
-                            Text(
-                              'By continuing, you agree to our Terms & Privacy Policy',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Colors.grey.shade500,
-                                fontSize: isMobile ? 11 : 12,
-                              ),
-                            ),
-                          ],
-                        ),
+                    const Spacer(),
+
+                    // ── Buttons ──
+                    SlideTransition(
+                      position: _buttonsSlide,
+                      child: FadeTransition(
+                        opacity: _buttonsFade,
+                        child: _buildButtons(isMobile),
                       ),
                     ),
-                  ),
-                ],
+
+                    const SizedBox(height: 24),
+                  ],
+                ),
               ),
             ),
           ),
@@ -318,45 +201,114 @@ class _SplashScreenState extends State<SplashScreen>
       ),
     );
   }
-}
 
-// ─────────────────────────────────────────────
-// App Logo Widget
-// ─────────────────────────────────────────────
-class _AppLogo extends StatelessWidget {
-  final double size;
-  const _AppLogo({required this.size});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(size * 0.28),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0xFF2ECC71).withValues(alpha: 0.35),
-            blurRadius: 24,
-            offset: const Offset(0, 8),
+  Widget _buildDecorativeTop() {
+    return SizedBox(
+      height: 80,
+      child: Stack(
+        children: [
+          Positioned(
+            top: -30,
+            right: -20,
+            child: Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: const Color(0xFF1B8B4B).withOpacity(0.08),
+              ),
+            ),
+          ),
+          Positioned(
+            top: -10,
+            left: -30,
+            child: Container(
+              width: 100,
+              height: 100,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: const Color(0xFFFFB300).withOpacity(0.08),
+              ),
+            ),
+          ),
+          Positioned(
+            top: 30,
+            right: 60,
+            child: Container(
+              width: 14,
+              height: 14,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Color(0xFF1B8B4B),
+              ),
+            ),
+          ),
+          Positioned(
+            top: 20,
+            left: 80,
+            child: Container(
+              width: 10,
+              height: 10,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: const Color(0xFFFFB300).withOpacity(0.6),
+              ),
+            ),
           ),
         ],
       ),
-      clipBehavior: Clip.antiAlias,
-      child: Image.asset('assets/logo.png', fit: BoxFit.cover),
     );
   }
-}
 
-// ─────────────────────────────────────────────
-// App Title Widget
-// ─────────────────────────────────────────────
-class _AppTitle extends StatelessWidget {
-  final bool isMobile;
-  const _AppTitle({required this.isMobile});
+  Widget _buildLogo(bool isMobile) {
+    final size = isMobile ? 100.0 : 120.0;
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        // Outer glow ring
+        Container(
+          width: size + 24,
+          height: size + 24,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: const Color(0xFF1B8B4B).withOpacity(0.08),
+          ),
+        ),
+        // Middle ring
+        Container(
+          width: size + 12,
+          height: size + 12,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: const Color(0xFF1B8B4B).withOpacity(0.12),
+          ),
+        ),
+        // Logo
+        Container(
+          width: size,
+          height: size,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF1B8B4B).withOpacity(0.2),
+                blurRadius: 24,
+                offset: const Offset(0, 8),
+              ),
+            ],
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Image.asset('assets/logo.png', fit: BoxFit.contain),
+          ),
+        ),
+      ],
+    );
+  }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildTitle(bool isMobile) {
     return Column(
       children: [
         RichText(
@@ -365,91 +317,211 @@ class _AppTitle extends StatelessWidget {
               TextSpan(
                 text: 'Serv',
                 style: TextStyle(
-                  color: const Color(0xFF2ECC71),
-                  fontSize: isMobile ? 40 : 52,
+                  color: const Color(0xFF1B8B4B),
+                  fontSize: isMobile ? 42 : 54,
                   fontWeight: FontWeight.bold,
-                  letterSpacing: -1,
+                  letterSpacing: -1.5,
                 ),
               ),
               TextSpan(
                 text: 'Ease',
                 style: TextStyle(
-                  color: const Color(0xFFF5A623),
-                  fontSize: isMobile ? 40 : 52,
+                  color: const Color(0xFFFFB300),
+                  fontSize: isMobile ? 42 : 54,
                   fontWeight: FontWeight.bold,
-                  letterSpacing: -1,
+                  letterSpacing: -1.5,
                 ),
               ),
             ],
           ),
         ),
-        SizedBox(height: isMobile ? 8 : 12),
-        Text(
-          'Your trusted platform for home services\n& professional experts',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: Colors.grey.shade600,
-            fontSize: isMobile ? 14 : 16,
-            height: 1.5,
-          ),
-        ),
       ],
     );
   }
-}
 
-// ─────────────────────────────────────────────
-// Feature Card Widget
-// ─────────────────────────────────────────────
-class _FeatureCard extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final Color iconColor;
-  final int delay;
-  final AnimationController controller;
-
-  const _FeatureCard({
-    required this.icon,
-    required this.label,
-    required this.iconColor,
-    required this.delay,
-    required this.controller,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+  Widget _buildTagline(bool isMobile) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: isMobile ? 32.0 : 64.0),
+      child: Column(
+        children: [
+          Text(
+            'Empowering Women Through',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: const Color(0xFF1B8B4B),
+              fontSize: isMobile ? 15 : 17,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.2,
+            ),
+          ),
+          Text(
+            'Home Services',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: const Color(0xFF1B8B4B).withOpacity(0.7),
+              fontSize: isMobile ? 13 : 15,
+              fontWeight: FontWeight.w400,
+            ),
           ),
         ],
       ),
-      child: Row(
-        children: [
-          Container(
-            width: 44,
-            height: 44,
+    );
+  }
+
+  Widget _buildFeatureChips(bool isMobile) {
+    final features = [
+      {
+        'icon': Icons.verified_rounded,
+        'label': 'CNIC Verified',
+        'color': const Color(0xFF1B8B4B),
+        'bg': const Color(0xFFE8F5E9),
+      },
+      {
+        'icon': Icons.security_rounded,
+        'label': 'Safe & Secure',
+        'color': const Color(0xFF1565C0),
+        'bg': const Color(0xFFE3F2FD),
+      },
+      {
+        'icon': Icons.star_rounded,
+        'label': 'Top Rated',
+        'color': const Color(0xFFE65100),
+        'bg': const Color(0xFFFFF3E0),
+      },
+      {
+        'icon': Icons.favorite_rounded,
+        'label': 'Women First',
+        'color': const Color(0xFFC2185B),
+        'bg': const Color(0xFFFCE4EC),
+      },
+    ];
+
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: isMobile ? 16.0 : 32.0),
+      child: Wrap(
+        alignment: WrapAlignment.center,
+        spacing: 10,
+        runSpacing: 10,
+        children: features.map((f) {
+          return Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             decoration: BoxDecoration(
-              color: iconColor.withValues(alpha: 0.12),
-              borderRadius: BorderRadius.circular(12),
+              color: f['bg'] as Color,
+              borderRadius: BorderRadius.circular(50),
+              border: Border.all(color: (f['color'] as Color).withOpacity(0.2)),
             ),
-            child: Icon(icon, color: iconColor, size: 24),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  f['icon'] as IconData,
+                  color: f['color'] as Color,
+                  size: 16,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  f['label'] as String,
+                  style: TextStyle(
+                    color: f['color'] as Color,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildButtons(bool isMobile) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: isMobile ? 24.0 : 48.0),
+      child: Column(
+        children: [
+          // Get Started
+          GestureDetector(
+            onTap: () => Get.offNamed('/homepageview'),
+            child: Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(vertical: isMobile ? 16 : 18),
+              decoration: BoxDecoration(
+                color: const Color(0xFF1B8B4B),
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF1B8B4B).withOpacity(0.3),
+                    blurRadius: 16,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    'Get Started',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: isMobile ? 16 : 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  const Icon(
+                    Icons.arrow_forward_rounded,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                ],
+              ),
+            ),
           ),
-          const SizedBox(width: 16),
+
+          const SizedBox(height: 12),
+
+          // Empowerment badge
+          Container(
+            width: double.infinity,
+            padding: EdgeInsets.symmetric(vertical: isMobile ? 14 : 16),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFCE4EC),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: const Color(0xFFC2185B).withOpacity(0.2),
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.favorite_rounded,
+                  color: Color(0xFFC2185B),
+                  size: 18,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Aimed to Empower Women',
+                  style: TextStyle(
+                    color: const Color(0xFFC2185B),
+                    fontSize: isMobile ? 14 : 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // Terms
           Text(
-            label,
-            style: const TextStyle(
-              color: Color(0xFF222222),
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
+            'By continuing, you agree to our Terms & Privacy Policy',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Colors.grey.shade500,
+              fontSize: isMobile ? 11 : 12,
             ),
           ),
         ],
