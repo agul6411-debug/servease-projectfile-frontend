@@ -1,9 +1,10 @@
+import 'package:frontfile_servease/services/app_config.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/acceptance_model.dart';
 
 class AcceptanceService {
-  static const String baseUrl = "http://localhost:3000/api/provider";
+  static String get baseUrl => "${AppConfig.baseUrl}/api/provider";
 
   Future<List<AcceptanceModel>> getAcceptanceList() async {
     try {

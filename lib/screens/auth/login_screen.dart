@@ -325,7 +325,7 @@ class _LoginScreenState extends State<LoginScreen>
                             ),
 
                             GestureDetector(
-                              onTap: () {},
+                              onTap: () => Get.toNamed('/forgot_password'),
                               child: Text(
                                 'Forgot?',
                                 style: TextStyle(

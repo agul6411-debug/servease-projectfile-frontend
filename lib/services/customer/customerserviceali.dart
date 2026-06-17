@@ -1,9 +1,10 @@
+import 'package:frontfile_servease/services/app_config.dart';
 import 'dart:convert';
 import 'package:frontfile_servease/models/customer/customer_model.dart';
 import 'package:http/http.dart' as http;
 
 class CustomerApiService {
-  static const String baseUrl = "http://localhost:3000/api/customer";
+  static String get baseUrl => "${AppConfig.baseUrl}/api/customer";
 
   static Map<String, String> get _headers => {
     "Content-Type": "application/json",
@@ -220,6 +221,87 @@ class CustomerApiService {
       return res.statusCode == 200;
     } catch (e) {
       return false;
+    }
+  }
+
+  // GET customer profile
+  static Future<Map<String, dynamic>?> fetchProfile(int userId) async {
+    try {
+      final res = await http.get(
+        Uri.parse("$baseUrl/profile?user_id=$userId"),
+        headers: _headers,
+      );
+      if (res.statusCode == 200) return jsonDecode(res.body);
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  // PUT update profile
+  static Future<bool> updateProfile({
+    required int userId,
+    required String fullName,
+    required String phone,
+    required String address,
+  }) async {
+    try {
+      final res = await http.put(
+        Uri.parse("$baseUrl/profile?user_id=$userId"),
+        headers: _headers,
+        body: jsonEncode({
+          'full_name': fullName,
+          'phone': phone,
+          'address': address,
+        }),
+      );
+      return res.statusCode == 200;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // PUT change password
+  static Future<Map<String, dynamic>> changePassword({
+    required int userId,
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    try {
+      final res = await http.put(
+        Uri.parse("$baseUrl/change-password?user_id=$userId"),
+        headers: _headers,
+        body: jsonEncode({
+          'current_password': currentPassword,
+          'new_password': newPassword,
+        }),
+      );
+      final data = jsonDecode(res.body);
+      return {
+        'success': res.statusCode == 200,
+        'message': data['message'] ?? '',
+      };
+    } catch (e) {
+      return {'success': false, 'message': 'Server error'};
+    }
+  }
+
+  // POST forgot password
+  static Future<Map<String, dynamic>> forgotPassword(String email) async {
+    try {
+      // Auth route use karo — /api/auth/forgot-password
+      final res = await http.post(
+        Uri.parse("${AppConfig.baseUrl}/api/auth/forgot-password"),
+        headers: _headers,
+        body: jsonEncode({'email': email}),
+      );
+      final data = jsonDecode(res.body);
+      return {
+        'success': res.statusCode == 200,
+        'message': data['message'] ?? '',
+      };
+    } catch (e) {
+      return {'success': false, 'message': 'Server error'};
     }
   }
 }

@@ -1,10 +1,11 @@
+import 'package:frontfile_servease/services/app_config.dart';
 import 'dart:convert';
 import 'package:frontfile_servease/models/all_user_model.dart';
 import 'package:http/http.dart' as http;
 
 class UserService {
   // ✅ Apna base URL yahan set karein
-  static const String baseUrl = 'http://localhost:3000/api';
+  static String get baseUrl => "${AppConfig.baseUrl}/api";
 
   // ─── Headers ──────────────────────────────────────────────
   static Map<String, String> get _headers => {

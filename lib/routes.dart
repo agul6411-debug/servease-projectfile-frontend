@@ -10,6 +10,9 @@ import 'package:frontfile_servease/screens/admin/allusers.dart';
 import 'package:frontfile_servease/screens/admin/provider_verificationscreen.dart';
 import 'package:frontfile_servease/screens/admin/userdetail.dart';
 import 'package:frontfile_servease/screens/auth/splashscreen.dart';
+import 'package:frontfile_servease/screens/auth/forgot_password_screen.dart';
+import 'package:frontfile_servease/screens/auth/reset_password_screen.dart';
+import 'package:frontfile_servease/screens/auth/otp_verify_screen.dart';
 import 'package:frontfile_servease/screens/auth/homepageview.dart';
 import 'package:get/get.dart';
 import 'package:frontfile_servease/screens/auth/login_screen.dart';
@@ -58,6 +61,8 @@ class AppRoutes {
   static const String adminCommissions = '/admin_commissions';
   static const String adminBookings = '/admin_bookings';
   static const String adminSecurityDeposits = '/admin_security_deposits';
+  static const String forgotPassword = '/forgot_password';
+  static const String resetPassword = '/reset_password';
   static final List<GetPage<dynamic>> pages = [
     GetPage(name: splash, page: () => SplashScreen()),
     GetPage(name: homepageview, page: () => HomePage()),
@@ -87,7 +92,9 @@ class AppRoutes {
       name: providerHomeScreen,
       page: () {
         final box = GetStorage();
-        final userId = box.read('user_id') ?? 0;
+        final userId = (box.read('user_id') ?? 0) is int
+            ? box.read('user_id') as int
+            : int.tryParse(box.read('user_id').toString()) ?? 0;
         return ProviderHomeScreen(providerId: userId);
       },
     ),
@@ -97,5 +104,17 @@ class AppRoutes {
     ),
     GetPage(name: adminCommissions, page: () => const AdminCommissionScreen()),
     GetPage(name: adminBookings, page: () => const AdminBookingsScreen()),
+    GetPage(name: forgotPassword, page: () => const ForgotPasswordScreen()),
+    GetPage(
+      name: resetPassword,
+      page: () {
+        final args = Get.arguments as Map<String, dynamic>?;
+        final token = args?['token'] ?? '';
+        return ResetPasswordScreen(token: token);
+      },
+    ),
   ];
 }
+// NOTE: Forgot Password aur OTP Screen routes yahan manually add karo:
+// 
+// Imports add karo routes.dart ke upar:

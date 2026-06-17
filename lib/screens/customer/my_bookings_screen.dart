@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:frontfile_servease/screens/customer/navbar.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:frontfile_servease/models/customer/customer_model.dart';
 import 'package:frontfile_servease/services/customer/customerserviceali.dart';
@@ -74,6 +75,9 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
         ),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
+      bottomNavigationBar: const CustomerNavBar(
+        currentIndex: 2,
+      ), // 2 = Bookings
       body: Column(
         children: [
           Container(

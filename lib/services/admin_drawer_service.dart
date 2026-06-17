@@ -1,10 +1,11 @@
+import 'package:frontfile_servease/services/app_config.dart';
 import 'dart:convert';
 
 import 'package:frontfile_servease/models/admin_drawer_model.dart';
 import 'package:http/http.dart' as http;
 
 class AdminDrawerService {
-  final String baseUrl = 'http://localhost:3000/api/admin/dashboard';
+  String get baseUrl => "${AppConfig.baseUrl}/api/admin/dashboard";
 
   Future<AdminDrawerModel?> getDrawerData() async {
     try {

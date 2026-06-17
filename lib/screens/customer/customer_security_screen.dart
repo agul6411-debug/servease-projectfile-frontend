@@ -1,6 +1,5 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:frontfile_servease/services/customer/customerserviceali.dart';
 import 'package:frontfile_servease/theme/app_theme.dart';
 
 class CustomerSecurityScreen extends StatefulWidget {
@@ -17,8 +16,6 @@ class _CustomerSecurityScreenState extends State<CustomerSecurityScreen> {
   final _confirmCtrl = TextEditingController();
   bool _showCurrent = false, _showNew = false, _showConfirm = false;
   bool _isSaving = false;
-
-  static const String _base = "http://localhost:3000/api/customer";
 
   @override
   void dispose() {
@@ -38,26 +35,18 @@ class _CustomerSecurityScreenState extends State<CustomerSecurityScreen> {
       return;
     }
     setState(() => _isSaving = true);
-    try {
-      final res = await http.put(
-        Uri.parse("$_base/change-password?user_id=${widget.userId}"),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({
-          "current_password": _currentCtrl.text,
-          "new_password": _newCtrl.text,
-        }),
-      );
-      final data = jsonDecode(res.body);
-      if (res.statusCode == 200) {
-        _showSnack('Password changed successfully!', AppColors.primaryGreen);
-        _currentCtrl.clear();
-        _newCtrl.clear();
-        _confirmCtrl.clear();
-      } else {
-        _showSnack(data['message'] ?? 'Failed to change password', Colors.red);
-      }
-    } catch (_) {
-      _showSnack('Server error', Colors.red);
+    final result = await CustomerApiService.changePassword(
+      userId: widget.userId,
+      currentPassword: _currentCtrl.text,
+      newPassword: _newCtrl.text,
+    );
+    if (result['success']) {
+      _showSnack('Password changed successfully!', AppColors.primaryGreen);
+      _currentCtrl.clear();
+      _newCtrl.clear();
+      _confirmCtrl.clear();
+    } else {
+      _showSnack(result['message'] ?? 'Failed to change password', Colors.red);
     }
     setState(() => _isSaving = false);
   }
@@ -322,8 +311,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   bool _isSending = false;
   bool _sent = false;
 
-  static const String _base = "http://localhost:3000/api/customer";
-
   Future<void> _sendReset() async {
     if (_emailCtrl.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -335,27 +322,15 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       return;
     }
     setState(() => _isSending = true);
-    try {
-      final res = await http.post(
-        Uri.parse("$_base/forgot-password"),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode({"email": _emailCtrl.text.trim()}),
-      );
-      if (res.statusCode == 200) {
-        setState(() => _sent = true);
-      } else {
-        final data = jsonDecode(res.body);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(data['message'] ?? 'Failed'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    } catch (_) {
+    final result = await CustomerApiService.forgotPassword(
+      _emailCtrl.text.trim(),
+    );
+    if (result['success']) {
+      setState(() => _sent = true);
+    } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Server error'),
+        SnackBar(
+          content: Text(result['message'] ?? 'Failed'),
           backgroundColor: Colors.red,
         ),
       );

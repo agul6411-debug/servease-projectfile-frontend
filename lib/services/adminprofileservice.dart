@@ -1,3 +1,4 @@
+import 'package:frontfile_servease/services/app_config.dart';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
@@ -7,12 +8,12 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 
 class AdminProfileService {
-  static const String baseUrl = "http://localhost:3000/api/admin";
+  static String get baseUrl => "${AppConfig.baseUrl}/api/admin";
 
   // GET PROFILE
   Future<AdminProfileModel?> getProfile(int id) async {
     try {
-      final response = await http.get(Uri.parse("$baseUrl/profile/3"));
+      final response = await http.get(Uri.parse("$baseUrl/profile/$id"));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -39,7 +40,7 @@ class AdminProfileService {
     try {
       var request = http.MultipartRequest(
         "PUT",
-        Uri.parse("$baseUrl/profile/update/3"),
+        Uri.parse("$baseUrl/profile/update/$id"),
       );
 
       request.fields["full_name"] = fullName;
@@ -78,7 +79,7 @@ class AdminProfileService {
   }) async {
     try {
       final response = await http.put(
-        Uri.parse("$baseUrl/profile/reset-password/3"),
+        Uri.parse("$baseUrl/profile/reset-password/$id"),
 
         headers: {"Content-Type": "application/json"},
 

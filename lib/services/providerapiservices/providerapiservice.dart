@@ -1,3 +1,4 @@
+import 'package:frontfile_servease/services/app_config.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
@@ -5,7 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:frontfile_servease/models/providermodel/providermodelapi.dart';
 
 class ProviderApiService {
-  static const String baseUrl = "http://localhost:3000/api/providerside";
+  static String get baseUrl => "${AppConfig.baseUrl}/api/providerside";
 
   static Map<String, String> get _headers => {
     "Content-Type": "application/json",
@@ -289,6 +290,44 @@ class ProviderApiService {
       return 'pending';
     } catch (e) {
       return 'pending';
+    }
+  }
+
+  // CHANGE PASSWORD
+  static Future<Map<String, dynamic>> changePassword({
+    required int providerId,
+    required String currentPassword,
+    required String newPassword,
+  }) async {
+    try {
+      final res = await http.put(
+        Uri.parse("$baseUrl/profile/change-password"),
+        headers: _headers,
+        body: jsonEncode({
+          'provider_id': providerId,
+          'current_password': currentPassword,
+          'new_password': newPassword,
+        }),
+      );
+      final data = jsonDecode(res.body);
+      return {'success': res.statusCode == 200, 'message': data['message'] ?? ''};
+    } catch (e) {
+      return {'success': false, 'message': 'Server error'};
+    }
+  }
+
+  // FORGOT PASSWORD
+  static Future<Map<String, dynamic>> forgotPassword(String email) async {
+    try {
+      final res = await http.post(
+        Uri.parse("${AppConfig.baseUrl}/api/auth/forgot-password"),
+        headers: _headers,
+        body: jsonEncode({'email': email}),
+      );
+      final data = jsonDecode(res.body);
+      return {'success': res.statusCode == 200, 'message': data['message'] ?? ''};
+    } catch (e) {
+      return {'success': false, 'message': 'Server error'};
     }
   }
 }
