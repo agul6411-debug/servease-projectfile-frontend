@@ -11,6 +11,7 @@ import 'package:frontfile_servease/screens/admin/provider_verificationscreen.dar
 import 'package:frontfile_servease/screens/admin/userdetail.dart';
 import 'package:frontfile_servease/screens/auth/splashscreen.dart';
 import 'package:frontfile_servease/screens/auth/forgot_password_screen.dart';
+import 'package:frontfile_servease/screens/admin/admin_service_requests_screen.dart';
 import 'package:frontfile_servease/screens/auth/reset_password_screen.dart';
 import 'package:frontfile_servease/screens/auth/otp_verify_screen.dart';
 import 'package:frontfile_servease/screens/auth/homepageview.dart';
@@ -62,6 +63,7 @@ class AppRoutes {
   static const String adminBookings = '/admin_bookings';
   static const String adminSecurityDeposits = '/admin_security_deposits';
   static const String forgotPassword = '/forgot_password';
+  static const String adminServiceRequests = '/admin_service_requests';
   static const String resetPassword = '/reset_password';
   static final List<GetPage<dynamic>> pages = [
     GetPage(name: splash, page: () => SplashScreen()),
@@ -105,6 +107,7 @@ class AppRoutes {
     GetPage(name: adminCommissions, page: () => const AdminCommissionScreen()),
     GetPage(name: adminBookings, page: () => const AdminBookingsScreen()),
     GetPage(name: forgotPassword, page: () => const ForgotPasswordScreen()),
+    GetPage(name: adminServiceRequests, page: () => const AdminServiceRequestsScreen()),
     GetPage(
       name: resetPassword,
       page: () {
