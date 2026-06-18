@@ -4,6 +4,7 @@ import 'package:frontfile_servease/screens/admin/admin_navbar.dart';
 import 'package:frontfile_servease/screens/admin/admindrawer.dart';
 import 'package:frontfile_servease/services/adminservice.dart';
 import 'package:frontfile_servease/theme/app_theme.dart';
+import 'package:frontfile_servease/services/service_request_service.dart';
 import 'package:frontfile_servease/routes.dart';
 import 'package:get/get.dart';
 
@@ -406,6 +407,13 @@ class _AdminDashboardState extends State<AdminDashboard> {
         'icon': Icons.book_online_outlined,
         'color': const Color(0xFF6A1B9A),
         'route': AppRoutes.adminBookings,
+      },
+      {
+        'title': 'Service Requests',
+        'sub': 'Custom service approvals',
+        'icon': Icons.miscellaneous_services_outlined,
+        'color': const Color(0xFF00897B),
+        'route': AppRoutes.adminServiceRequests,
       },
     ];
 

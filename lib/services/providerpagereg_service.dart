@@ -16,7 +16,7 @@ class ProviderService {
     try {
       final request = http.MultipartRequest(
         'POST',
-        Uri.parse("$baseUrl/api/auth/register/provider"),
+        Uri.parse("$baseUrl/register/provider"),
       );
 
       data.forEach((key, value) {
