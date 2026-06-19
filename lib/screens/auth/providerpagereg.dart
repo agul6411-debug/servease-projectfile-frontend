@@ -97,6 +97,8 @@ class _ProviderPageregState extends State<ProviderPagereg> {
     return null;
   }
 
+  
+
   String? _confirmPassVal(String? v) {
     if (v == null || v.isEmpty) return 'Please confirm password';
     if (v != _passwordCtrl.text) return 'Passwords do not match';
@@ -509,11 +511,13 @@ class _ProviderPageregState extends State<ProviderPagereg> {
                                   ),
                                 ],
                               ),
+                              
                             ),
                             const Expanded(child: SizedBox()),
                           ],
                         ),
                         const SizedBox(height: 24),
+                        
 
                         // Professional Info
                         const Text(
