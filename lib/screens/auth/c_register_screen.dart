@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:projectfile/services/auth_service.dart';
-import 'package:projectfile/theme.dart';
+import 'package:frontfile_servease/services/auth_service.dart';
+import 'package:frontfile_servease/theme.dart';
 
 
 class CustomerSignupPage extends StatefulWidget {

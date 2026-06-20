@@ -1,9 +1,9 @@
+import 'package:frontfile_servease/screens/auth/c_register_screen.dart';
+import 'package:frontfile_servease/screens/auth/p_register_screen.dart';
+import 'package:frontfile_servease/screens/auth/register_screen.dart';
+import 'package:frontfile_servease/screens/auth/signin_screen.dart';
+import 'package:frontfile_servease/screens/auth/splashscreen.dart';
 import 'package:get/get.dart';
-import 'package:projectfile/screens/auth/c_register_screen.dart';
-import 'package:projectfile/screens/auth/p_register_screen.dart';
-import 'package:projectfile/screens/auth/signin_screen.dart';
-import 'package:projectfile/screens/auth/signup_screen.dart';
-import 'package:projectfile/screens/auth/splash_screen.dart';
 
 
 

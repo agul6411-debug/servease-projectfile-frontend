@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:frontfile_servease/routes/routes.dart';
+import 'package:frontfile_servease/theme.dart';
 import 'package:get/get.dart';
-import 'package:projectfile/routes/routes.dart';
-import 'package:projectfile/theme.dart';
 
 
 class SplashScreen extends StatefulWidget {
