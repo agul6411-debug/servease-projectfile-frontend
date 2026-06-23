@@ -22,7 +22,7 @@ class _CustomerPageregState extends State<CustomerPagereg> {
 
   bool _showPassword = false;
   bool _showConfirmPassword = false;
-  bool _agreeToTerms = false;
+  bool _acceptedTerms = false;
   bool _isLoading = false;
 
   @override
@@ -71,52 +71,79 @@ class _CustomerPageregState extends State<CustomerPagereg> {
 
   // ── Submit using AuthService ─────────────────
   Future<void> _handleCreateAccount() async {
-    if (!_formKey.currentState!.validate()) return;
+  if (!_formKey.currentState!.validate()) {
+    return;
+  }
 
-    if (!_agreeToTerms) {
-      _showSnack(
-        'Please agree to Terms and Conditions and Privacy Policy.',
-        isError: true,
+  if (!_acceptedTerms) {
+    Get.snackbar(
+      'Error',
+      'Please accept Terms and Conditions',
+      backgroundColor: Colors.red,
+      colorText: Colors.white,
+      snackPosition: SnackPosition.BOTTOM,
+    );
+    return;
+  }
+
+  setState(() {
+    _isLoading = true;
+  });
+
+  try {
+    final result = await CustomerService().registerCustomer(
+      _fullNameController.text,
+      _emailController.text,
+      _phoneController.text,
+      _cnicController.text,
+      _addressController.text,
+      _passwordController.text,
+    );
+
+    if (!mounted) return;
+
+    if (result['success'] == true) {
+      Get.snackbar(
+        'Success',
+        result['message'] ?? 'Customer registered successfully',
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        duration: const Duration(seconds: 2),
       );
-      return;
+
+      await Future.delayed(const Duration(seconds: 2));
+
+      if (!mounted) return;
+
+      Get.offAllNamed('/customer_page');
+    } else {
+      Get.snackbar(
+        'Error',
+        result['message'] ?? 'Registration failed',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
     }
+  } catch (e) {
+    if (!mounted) return;
 
-    setState(() => _isLoading = true);
-
-    try {
-      final result = await CustomerService().registerCustomer(
-        _fullNameController.text.trim(),
-        _emailController.text.trim(),
-        _phoneController.text.trim(),
-        _cnicController.text.trim(),
-        _addressController.text.trim(),
-        _passwordController.text,
-      );
-
-      if (!mounted) return;
-      setState(() => _isLoading = false);
-
-      // ── SUCCESS CASE ──
-      if (result == 'Registration successful') {
-        _showSnack('Account created successfully! Redirecting...');
-
-        await Future.delayed(const Duration(seconds: 1));
-
-        if (!mounted) return;
-
-        Get.offAllNamed('/customer_home_screen');
-      }
-      // ── ERROR CASE ──
-      else {
-        _showSnack(result, isError: true);
-      }
-    } catch (e) {
-      if (!mounted) return;
-      setState(() => _isLoading = false);
-
-      _showSnack('An error occurred. Please try again.', isError: true);
+    Get.snackbar(
+      'Error',
+      'An error occurred. Please try again.',
+      backgroundColor: Colors.red,
+      colorText: Colors.white,
+      snackPosition: SnackPosition.BOTTOM,
+    );
+  } finally {
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
+}
 
   void _showSnack(String msg, {bool isError = false}) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -460,7 +487,7 @@ class _CustomerPageregState extends State<CustomerPagereg> {
                                   width: 20,
                                   height: 20,
                                   child: Checkbox(
-                                    value: _agreeToTerms,
+                                    value: _acceptedTerms,
                                     activeColor: const Color(0xFF1A5C35),
                                     side: const BorderSide(
                                       color: Color(0xFF555555),
@@ -470,7 +497,7 @@ class _CustomerPageregState extends State<CustomerPagereg> {
                                       borderRadius: BorderRadius.circular(3),
                                     ),
                                     onChanged: (val) => setState(
-                                      () => _agreeToTerms = val ?? false,
+                                      () => _acceptedTerms = val ?? false,
                                     ),
                                   ),
                                 ),

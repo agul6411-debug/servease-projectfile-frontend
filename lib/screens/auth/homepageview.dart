@@ -93,14 +93,16 @@ class _HomePageState extends State<HomePage> {
                 // SERVICES
                 _ServicesSection(key: _servicesKey),
 
-                // HOW IT WORKS
-                _HowItWorksSection(key: _howKey),
-
+                
                 // WHY SERVEASE
                 const _WhySection(),
 
                 // FOOTER
                 const _Footer(),
+
+                // HOW IT WORKS
+                _HowItWorksSection(key: _howKey),
+
               ],
             ),
           ),
@@ -261,12 +263,13 @@ class _HeroSection extends StatelessWidget {
     return Container(
       constraints: const BoxConstraints(minHeight: 520),
       decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [Color(0xFF0D1F1C), Color.fromARGB(255, 105, 219, 53)],
-          stops: [0.0, 0.55, 1.0],
-        ),
+        gradient: const LinearGradient(
+          colors: [
+               Color(0xFF1E8E4A),
+               Color(0xFFFFB300),
+               Color(0xFF0A7A3C),
+                  ],
+             ),
       ),
       child: Stack(
         children: [
