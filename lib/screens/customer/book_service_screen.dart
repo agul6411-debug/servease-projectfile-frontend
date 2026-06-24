@@ -192,7 +192,7 @@ class _BookServiceScreenState extends State<BookServiceScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Service select
-                  _label('Select Service'),
+                  _label('Select Service from list'),
                   const SizedBox(height: 6),
                   DropdownButtonFormField<int>(
                     value: _selectedServiceIndex,

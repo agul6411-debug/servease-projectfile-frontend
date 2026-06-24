@@ -230,7 +230,7 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
               ),
               SizedBox(height: 4),
               Text(
-                'All workers verified for your safety',
+                'All workers verified for your safety and security',
                 style: TextStyle(color: Colors.white70, fontSize: 11),
               ),
             ],

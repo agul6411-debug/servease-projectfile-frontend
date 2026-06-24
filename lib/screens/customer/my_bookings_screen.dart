@@ -19,7 +19,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
 
   int get _customerId => box.read('user_id') ?? 0;
 
-  final _filters = ['All', 'Active', 'Completed'];
+  final _filters = ['All', 'Active users', 'Completed Bookings'];
 
   @override
   void initState() {
@@ -44,7 +44,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
 
   List<CustomerBooking> get _filtered {
     switch (_filter) {
-      case 'Active':
+      case 'Active users':
         return _bookings
             .where(
               (b) => [
@@ -55,7 +55,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
               ].contains(b.status),
             )
             .toList();
-      case 'Completed':
+      case 'Completed Bookings':
         return _bookings.where((b) => b.status == 'completed').toList();
       default:
         return _bookings;
