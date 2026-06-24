@@ -22,6 +22,7 @@ class _ProviderPageregState extends State<ProviderPagereg> {
   final _cnicCtrl = TextEditingController();
   final _addressCtrl = TextEditingController();
   final _passwordCtrl = TextEditingController();
+  final _dateofbirthCtrl = TextEditingController();
   final _confirmPassCtrl = TextEditingController();
   final _yearsExpCtrl = TextEditingController();
   final _bioCtrl = TextEditingController();
@@ -56,6 +57,7 @@ class _ProviderPageregState extends State<ProviderPagereg> {
     _cnicCtrl.dispose();
     _addressCtrl.dispose();
     _passwordCtrl.dispose();
+    _dateofbirthCtrl.dispose();
     _confirmPassCtrl.dispose();
     _yearsExpCtrl.dispose();
     _bioCtrl.dispose();
@@ -112,6 +114,11 @@ class _ProviderPageregState extends State<ProviderPagereg> {
     return null;
   }
 
+  String? _dateVal(String? v) {
+    if (v == null || v.trim().isEmpty) return 'Date of birth is required';
+    return null;
+  }
+
   Future<void> _pickImage(bool isFront) async {
     final picked = await _picker.pickImage(
       source: ImageSource.gallery,
@@ -138,7 +145,10 @@ class _ProviderPageregState extends State<ProviderPagereg> {
       return;
     }
     if (_cnicFrontBytes == null || _cnicBackBytes == null) {
-      _showSnack('Please upload both CNIC front and back images.', isError: true);
+      _showSnack(
+        'Please upload both CNIC front and back images.',
+        isError: true,
+      );
       return;
     }
 
@@ -158,49 +168,56 @@ class _ProviderPageregState extends State<ProviderPagereg> {
     if (!mounted) return;
 
     // Step 2: OTP verify
-    Get.to(() => OtpVerifyScreen(
-      email: _emailCtrl.text.trim(),
-      fullName: _fullNameCtrl.text.trim(),
-      onVerified: () async {
-        Get.back();
-        setState(() => _isLoading = true);
-        try {
-          final result = await ProviderService().registerProviderWeb(
-            {
-              'full_name': _fullNameCtrl.text.trim(),
-              'email': _emailCtrl.text.trim(),
-              'phone': _phoneCtrl.text.trim(),
-              'cnic': _cnicCtrl.text.trim(),
-              'address': _addressCtrl.text.trim(),
-              'password': _passwordCtrl.text,
-              'role': 'provider',
-              'category': _selectedCategory,
-              'service_name': _selectedService,
-              'years_of_experience': int.tryParse(_yearsExpCtrl.text.trim()) ?? 0,
-              'bio': _bioCtrl.text.trim(),
-            },
-            cnicFrontBytes: _cnicFrontBytes!,
-            cnicFrontName: _cnicFrontName ?? 'front.jpg',
-            cnicBackBytes: _cnicBackBytes!,
-            cnicBackName: _cnicBackName ?? 'back.jpg',
-          );
-          if (!mounted) return;
-          setState(() => _isLoading = false);
-          if (result['success'] == true) {
-            _showSnack('Registration successful! Awaiting admin approval.');
-            await Future.delayed(const Duration(seconds: 1));
+    Get.to(
+      () => OtpVerifyScreen(
+        email: _emailCtrl.text.trim(),
+        fullName: _fullNameCtrl.text.trim(),
+        onVerified: () async {
+          Get.back();
+          setState(() => _isLoading = true);
+          try {
+            final result = await ProviderService().registerProviderWeb(
+              {
+                'full_name': _fullNameCtrl.text.trim(),
+                'email': _emailCtrl.text.trim(),
+                'phone': _phoneCtrl.text.trim(),
+                'cnic': _cnicCtrl.text.trim(),
+                'address': _addressCtrl.text.trim(),
+                'password': _passwordCtrl.text,
+                'date_of_birth': _dateofbirthCtrl.text.trim(),
+                'role': 'provider',
+                'category': _selectedCategory,
+                'service_name': _selectedService,
+                'years_of_experience':
+                    int.tryParse(_yearsExpCtrl.text.trim()) ?? 0,
+                'bio': _bioCtrl.text.trim(),
+              },
+              cnicFrontBytes: _cnicFrontBytes!,
+              cnicFrontName: _cnicFrontName ?? 'front.jpg',
+              cnicBackBytes: _cnicBackBytes!,
+              cnicBackName: _cnicBackName ?? 'back.jpg',
+            );
             if (!mounted) return;
-            Get.offAllNamed('/login_screen');
-          } else {
-            _showSnack(result['message'] ?? 'Registration failed', isError: true);
+            setState(() => _isLoading = false);
+            if (result['success'] == true) {
+              _showSnack('Registration successful! Awaiting admin approval.');
+              await Future.delayed(const Duration(seconds: 1));
+              if (!mounted) return;
+              Get.offAllNamed('/login_screen');
+            } else {
+              _showSnack(
+                result['message'] ?? 'Registration failed',
+                isError: true,
+              );
+            }
+          } catch (e) {
+            if (!mounted) return;
+            setState(() => _isLoading = false);
+            _showSnack('An error occurred. Please try again.', isError: true);
           }
-        } catch (e) {
-          if (!mounted) return;
-          setState(() => _isLoading = false);
-          _showSnack('An error occurred. Please try again.', isError: true);
-        }
-      },
-    ));
+        },
+      ),
+    );
   }
 
   InputDecoration _dec({
@@ -499,9 +516,20 @@ class _ProviderPageregState extends State<ProviderPagereg> {
                                 ),
                                 validator: _passVal,
                               ),
+                              _label('Date of Birth'),
+                              TextFormField(
+                                controller: _dateofbirthCtrl,
+                                obscureText: false,
+                                decoration: _dec(
+                                  hint: 'Enter your date of birth',
+                                  icon: Icons.calendar_today,
+                                ),
+                                validator: _dateVal,
+                              ),
                             ],
                           ),
                         ),
+
                         const SizedBox(height: 16),
 
                         // Confirm Password

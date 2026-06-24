@@ -21,9 +21,14 @@ class AuthService {
         headers: _headers,
         body: jsonEncode({"email": email, "full_name": fullName}),
       );
+
+      print("Status Code: ${res.statusCode}");
+      print("Response: ${res.body}");
+
       return jsonDecode(res.body);
     } catch (e) {
-      return {"success": false, "message": "Network error"};
+      print("ERROR: $e");
+      return {"success": false, "message": e.toString()};
     }
   }
 
@@ -38,9 +43,14 @@ class AuthService {
         headers: _headers,
         body: jsonEncode({"email": email, "otp": otp}),
       );
+
+      print("Status: ${res.statusCode}");
+      print("Body: ${res.body}");
+
       return jsonDecode(res.body);
     } catch (e) {
-      return {"success": false, "message": "Network error"};
+      print("ERROR: $e");
+      return {"success": false, "message": e.toString()};
     }
   }
 

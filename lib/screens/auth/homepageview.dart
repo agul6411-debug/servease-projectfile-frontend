@@ -704,7 +704,7 @@ class _Footer extends StatelessWidget {
                   ),
                   const SizedBox(width: 12),
                   Text(
-                    'Ayesha Liaquat, Ayesha farooq, sahrish Saleem',
+                    'Ayesha Liaquat, Ayesha Farooq, Sahrish Saleem',
                     style: TextStyle(
                       fontSize: 11,
                       color: Colors.white.withOpacity(0.3),
