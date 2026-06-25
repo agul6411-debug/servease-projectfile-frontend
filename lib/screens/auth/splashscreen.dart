@@ -261,29 +261,20 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Widget _buildLogo(bool isMobile) {
-    final size = isMobile ? 100.0 : 120.0;
+    final size = isMobile ? 120.0 : 140.0;
+
     return Stack(
       alignment: Alignment.center,
       children: [
-        // Outer glow ring
         Container(
-          width: size + 24,
-          height: size + 24,
+          width: size + 20,
+          height: size + 20,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: const Color(0xFF1B8B4B).withOpacity(0.08),
           ),
         ),
-        // Middle ring
-        Container(
-          width: size + 12,
-          height: size + 12,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: const Color(0xFF1B8B4B).withOpacity(0.12),
-          ),
-        ),
-        // Logo
+
         Container(
           width: size,
           height: size,
@@ -299,9 +290,12 @@ class _SplashScreenState extends State<SplashScreen>
             ],
           ),
           clipBehavior: Clip.antiAlias,
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Image.asset('assets/logo.png', fit: BoxFit.contain),
+          child: Image.asset(
+            'assets/logo.png',
+            width: size,
+            height: size,
+            fit: BoxFit.cover,
+            filterQuality: FilterQuality.high,
           ),
         ),
       ],
