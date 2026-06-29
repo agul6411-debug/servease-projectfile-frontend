@@ -1,36 +1,35 @@
 // App routes
 
-import 'package:frontfile_servease/screens/admin/admin_commission_screen.dart';
-import 'package:frontfile_servease/screens/admin/adminbookingscreen.dart';
-import 'package:frontfile_servease/screens/admin/servicemanagement.dart';
-import 'package:frontfile_servease/screens/admin/admindashboard.dart';
-import 'package:frontfile_servease/screens/admin/adminnotification.dart';
-import 'package:frontfile_servease/screens/admin/adminprofile.dart';
-import 'package:frontfile_servease/screens/admin/allusers.dart';
-import 'package:frontfile_servease/screens/admin/provider_verificationscreen.dart';
-import 'package:frontfile_servease/screens/admin/userdetail.dart';
-import 'package:frontfile_servease/screens/auth/splashscreen.dart';
-import 'package:frontfile_servease/screens/auth/forgot_password_screen.dart';
-import 'package:frontfile_servease/screens/admin/admin_service_requests_screen.dart';
-import 'package:frontfile_servease/screens/auth/reset_password_screen.dart';
-import 'package:frontfile_servease/screens/auth/otp_verify_screen.dart';
-import 'package:frontfile_servease/screens/auth/homepageview.dart';
+import 'package:frontfile_servease/features/admin/screens/admin_commission_screen.dart';
+import 'package:frontfile_servease/features/admin/screens/adminbookingscreen.dart';
+import 'package:frontfile_servease/features/admin/screens/servicemanagement.dart';
+import 'package:frontfile_servease/features/admin/screens/admindashboard.dart';
+import 'package:frontfile_servease/features/admin/screens/adminnotification.dart';
+import 'package:frontfile_servease/features/admin/screens/adminprofile.dart';
+import 'package:frontfile_servease/features/admin/screens/allusers.dart';
+import 'package:frontfile_servease/features/admin/screens/provider_verificationscreen.dart';
+import 'package:frontfile_servease/features/admin/screens/userdetail.dart';
+import 'package:frontfile_servease/features/auth/screens/splashscreen.dart';
+import 'package:frontfile_servease/features/auth/screens/forgot_password_screen.dart';
+import 'package:frontfile_servease/features/admin/screens/admin_service_requests_screen.dart';
+import 'package:frontfile_servease/features/auth/screens/reset_password_screen.dart';
+import 'package:frontfile_servease/features/auth/screens/otp_verify_screen.dart';
+import 'package:frontfile_servease/features/auth/screens/homepageview.dart';
 import 'package:get/get.dart';
-import 'package:frontfile_servease/screens/auth/login_screen.dart';
-import 'package:frontfile_servease/screens/auth/register_screen.dart';
-import 'package:frontfile_servease/screens/customer/customerscreen.dart';
-import 'package:frontfile_servease/screens/auth/customerpagereg.dart';
-import 'package:frontfile_servease/screens/auth/providerpagereg.dart';
-import 'package:frontfile_servease/screens/admin/admindrawer.dart';
-import 'package:frontfile_servease/screens/admin/CNIC__view.dart';
-import 'package:frontfile_servease/screens/admin/acceptance.dart';
-import 'package:frontfile_servease/screens/admin/admin_navbar.dart';
-import 'package:frontfile_servease/screens/admin/adminsettings.dart';
-import 'package:frontfile_servease/screens/admin/blockorunblock.dart';
-import 'package:frontfile_servease/screens/admin/admin_complaints.dart';
-import 'package:frontfile_servease/screens/provider/provider_home_screen.dart';
+import 'package:frontfile_servease/features/auth/screens/login_screen.dart';
+import 'package:frontfile_servease/features/auth/screens/register_screen.dart';
+import 'package:frontfile_servease/features/customer/screens/customerscreen.dart';
+import 'package:frontfile_servease/features/auth/screens/customerpagereg.dart';
+import 'package:frontfile_servease/features/auth/screens/providerpagereg.dart';
+import 'package:frontfile_servease/features/admin/screens/admindrawer.dart';
+import 'package:frontfile_servease/features/admin/screens/acceptance.dart';
+import 'package:frontfile_servease/features/admin/screens/admin_navbar.dart';
+import 'package:frontfile_servease/features/admin/screens/adminsettings.dart';
+import 'package:frontfile_servease/features/admin/screens/blockorunblock.dart';
+import 'package:frontfile_servease/features/admin/screens/admin_complaints.dart';
+import 'package:frontfile_servease/features/provider/screens/provider_home_screen.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:frontfile_servease/screens/admin/admin_security_deposits_screen.dart';
+import 'package:frontfile_servease/features/admin/screens/admin_security_deposits_screen.dart';
 
 class AppRoutes {
   static const String splash = '/';
@@ -49,7 +48,6 @@ class AppRoutes {
   static const String verifyPage = '/verify';
   static const String providerverficationpage = '/provider_verficationscreen';
   static const String admindrawer = '/admindrawer';
-  static const String cnicview = '/CNICview';
   static const String acceptance = '/acceptance';
   static const String allusers = '/allusers';
   static const String userdetail = '/userdetail';
@@ -79,7 +77,7 @@ class AppRoutes {
     GetPage(name: customerPage, page: () => CustomerPagereg()),
     GetPage(name: providerPagereg, page: () => ProviderPagereg()),
     GetPage(name: admindrawer, page: () => AdminDrawer()),
-    GetPage(name: cnicview, page: () => CNICview()),
+
     GetPage(name: acceptance, page: () => Acceptance()),
     GetPage(name: allusers, page: () => AllUsers()),
     GetPage(name: userdetail, page: () => UserDetail()),
@@ -107,7 +105,10 @@ class AppRoutes {
     GetPage(name: adminCommissions, page: () => const AdminCommissionScreen()),
     GetPage(name: adminBookings, page: () => const AdminBookingsScreen()),
     GetPage(name: forgotPassword, page: () => const ForgotPasswordScreen()),
-    GetPage(name: adminServiceRequests, page: () => const AdminServiceRequestsScreen()),
+    GetPage(
+      name: adminServiceRequests,
+      page: () => const AdminServiceRequestsScreen(),
+    ),
     GetPage(
       name: resetPassword,
       page: () {

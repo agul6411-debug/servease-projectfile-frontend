@@ -1,19 +1,21 @@
-import 'package:frontfile_servease/services/app_config.dart';
+import 'package:frontfile_servease/core/services/app_config.dart';
 import 'dart:convert';
+import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 
 class AddServiceDetailApi {
-  // ── Change this to your actual base URL ──────────────────────────
   static String get _baseUrl => "${AppConfig.baseUrl}/api";
 
-  static Map<String, String> get _headers => {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
-    // Add Authorization header if needed:
-    // 'Authorization': 'Bearer $token',
-  };
+  static Map<String, String> get _headers {
+    final token = GetStorage().read('auth_token') ?? '';
+    return {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+    };
+  }
 
-  // ── GET all services ──────────────────────────────────────────────
+  // GET all services
   static Future<List<dynamic>> getServices() async {
     final response = await http.get(
       Uri.parse('$_baseUrl/services'),
@@ -21,7 +23,6 @@ class AddServiceDetailApi {
     );
     if (response.statusCode == 200) {
       final body = jsonDecode(response.body);
-      // Support both {"data": [...]} and [...] response shapes
       if (body is List) return body;
       if (body is Map && body['data'] is List) return body['data'] as List;
       return [];
@@ -29,7 +30,7 @@ class AddServiceDetailApi {
     throw Exception('Failed to load services: ${response.statusCode}');
   }
 
-  // ── GET service details ───────────────────────────────────────────
+  // GET service details
   static Future<Map<String, dynamic>> fetchServiceDetail(int id) async {
     final response = await http.get(
       Uri.parse('$_baseUrl/services/$id'),
@@ -38,14 +39,15 @@ class AddServiceDetailApi {
     if (response.statusCode == 200) {
       final body = jsonDecode(response.body);
       if (body is Map<String, dynamic>) return body;
-      if (body is Map && body['data'] is Map)
+      if (body is Map && body['data'] is Map) {
         return body['data'] as Map<String, dynamic>;
+      }
       throw Exception('Unexpected response format for service details');
     }
     throw Exception('Failed to load service details: ${response.statusCode}');
   }
 
-  // ── POST create service ───────────────────────────────────────────
+  // POST create service
   static Future<Map<String, dynamic>> createService({
     required String name,
     required String description,
@@ -72,7 +74,7 @@ class AddServiceDetailApi {
     throw Exception('Failed to create service: ${response.statusCode}');
   }
 
-  // ── PUT update service ────────────────────────────────────────────
+  // PUT update service
   static Future<Map<String, dynamic>> updateService({
     required int id,
     required String name,
@@ -100,7 +102,7 @@ class AddServiceDetailApi {
     throw Exception('Failed to update service: ${response.statusCode}');
   }
 
-  // ── PATCH toggle active status ────────────────────────────────────
+  // PATCH toggle active status
   static Future<void> toggleActive({
     required int id,
     required bool isActive,
@@ -115,7 +117,7 @@ class AddServiceDetailApi {
     }
   }
 
-  // ── DELETE service ────────────────────────────────────────────────
+  // DELETE service
   static Future<void> deleteService(int id) async {
     final response = await http.delete(
       Uri.parse('$_baseUrl/services/$id'),

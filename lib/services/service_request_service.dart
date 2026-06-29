@@ -1,14 +1,19 @@
 import 'dart:convert';
-import 'package:frontfile_servease/services/app_config.dart';
+import 'package:frontfile_servease/core/services/app_config.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 
 class ServiceRequestService {
   static String get baseUrl => "${AppConfig.baseUrl}/api";
 
-  static Map<String, String> get _headers => {
-    "Content-Type": "application/json",
-    "Accept": "application/json",
-  };
+  static Map<String, String> get _headers {
+    final token = GetStorage().read('auth_token') ?? '';
+    return {
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+      "Authorization": "Bearer $token",
+    };
+  }
 
   // Provider — Submit Custom Service Request
   static Future<Map<String, dynamic>> submitRequest({
