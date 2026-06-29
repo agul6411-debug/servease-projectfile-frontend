@@ -261,7 +261,7 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   Widget _buildLogo(bool isMobile) {
-    final size = isMobile ? 120.0 : 140.0;
+    final size = isMobile ? 220.0 : 260.0;
 
     return Stack(
       alignment: Alignment.center,
@@ -292,9 +292,7 @@ class _SplashScreenState extends State<SplashScreen>
           clipBehavior: Clip.antiAlias,
           child: Image.asset(
             'assets/logo.png',
-            width: size,
-            height: size,
-            fit: BoxFit.cover,
+            fit: BoxFit.contain,
             filterQuality: FilterQuality.high,
           ),
         ),

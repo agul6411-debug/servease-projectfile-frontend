@@ -169,7 +169,7 @@ class _Nav extends StatelessWidget {
                   borderRadius: BorderRadius.circular(100),
                 ),
                 child: const Text(
-                  'Join Free',
+                  'Register',
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.w700,

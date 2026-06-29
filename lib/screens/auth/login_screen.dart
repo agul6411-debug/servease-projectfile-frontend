@@ -66,7 +66,7 @@ class _LoginScreenState extends State<LoginScreen>
       Get.snackbar(
         'Error',
         'Email and password required',
-        snackPosition: SnackPosition.TOP,
+        snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
@@ -92,7 +92,7 @@ class _LoginScreenState extends State<LoginScreen>
         Get.snackbar(
           'Success',
           'Login successful as $role',
-          snackPosition: SnackPosition.TOP,
+          snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.green,
           colorText: Colors.white,
         );
@@ -120,7 +120,7 @@ class _LoginScreenState extends State<LoginScreen>
         Get.snackbar(
           'Error',
           result['message'] ?? 'Login failed',
-          snackPosition: SnackPosition.TOP,
+          snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.red,
           colorText: Colors.white,
         );
@@ -132,7 +132,7 @@ class _LoginScreenState extends State<LoginScreen>
       Get.snackbar(
         'Error',
         'Server error',
-        snackPosition: SnackPosition.TOP,
+        snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
