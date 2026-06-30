@@ -79,37 +79,7 @@ class _EarningsScreenState extends State<EarningsScreen> {
           _buildPayButton(),
           ProviderBottomNavBar(
             currentIndex: 2,
-            onTap: (index) {
-              if (index == 0) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) =>
-                        ProviderHomeScreen(providerId: widget.providerId),
-                  ),
-                );
-                return;
-              }
-              if (index == 1) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => MyJobsScreen(providerId: widget.providerId),
-                  ),
-                );
-                return;
-              }
-              if (index == 3) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) =>
-                        ProviderProfileScreen(providerId: widget.providerId),
-                  ),
-                );
-                return;
-              }
-            },
+            providerId: widget.providerId,
           ),
         ],
       ),

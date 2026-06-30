@@ -1,6 +1,8 @@
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:frontfile_servease/routes.dart';
 import 'package:frontfile_servease/core/theme/app_theme.dart';
 import 'package:frontfile_servease/features/provider/screens/provider_home_screen.dart';
@@ -9,6 +11,9 @@ import 'package:frontfile_servease/features/provider/screens/my_jobs_screen.dart
 import 'package:frontfile_servease/features/provider/screens/earningscreen.dart';
 import 'package:frontfile_servease/features/provider/screens/provider_notifications_screen.dart';
 import 'package:frontfile_servease/features/provider/services/provider_profile_service.dart';
+import 'package:frontfile_servease/features/provider/screens/provider_reviews_screen.dart';
+import 'package:frontfile_servease/features/provider/screens/provider_security_screen.dart';
+import 'package:frontfile_servease/core/services/app_config.dart';
 
 class ProviderProfileScreen extends StatefulWidget {
   final int providerId;
@@ -79,36 +84,7 @@ class _ProviderProfileScreenState extends State<ProviderProfileScreen> {
             ),
       bottomNavigationBar: ProviderBottomNavBar(
         currentIndex: 3,
-        onTap: (index) {
-          if (index == 0) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) =>
-                    ProviderHomeScreen(providerId: widget.providerId),
-              ),
-            );
-            return;
-          }
-          if (index == 1) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => MyJobsScreen(providerId: widget.providerId),
-              ),
-            );
-            return;
-          }
-          if (index == 2) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => EarningsScreen(providerId: widget.providerId),
-              ),
-            );
-            return;
-          }
-        },
+        providerId: widget.providerId,
       ),
     );
   }
@@ -135,15 +111,37 @@ class _ProviderProfileScreenState extends State<ProviderProfileScreen> {
               color: Colors.white.withValues(alpha: 0.25),
               shape: BoxShape.circle,
             ),
-            child: Center(
-              child: Text(
-                _initials,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(36),
+              child: (_profile != null &&
+                      _profile!['profile_image'] != null &&
+                      _profile!['profile_image'].toString().isNotEmpty)
+                  ? Image.network(
+                      _profile!['profile_image'].toString().startsWith('http')
+                          ? _profile!['profile_image'].toString()
+                          : "${AppConfig.baseUrl}${_profile!['profile_image']}",
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => Center(
+                        child: Text(
+                          _initials,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 26,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    )
+                  : Center(
+                      child: Text(
+                        _initials,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 26,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
             ),
           ),
           const SizedBox(height: 12),
@@ -341,14 +339,103 @@ class _ProviderProfileScreenState extends State<ProviderProfileScreen> {
                 ),
               ),
             ),
-            onTap: () {},
+            onTap: () {
+              showModalBottomSheet(
+                context: context,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                ),
+                builder: (_) => Container(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: _profile?['approval_status'] == 'approved'
+                              ? Colors.green.shade50
+                              : Colors.orange.shade50,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          _profile?['approval_status'] == 'approved'
+                              ? Icons.verified_user_rounded
+                              : Icons.pending_actions_rounded,
+                          color: _profile?['approval_status'] == 'approved'
+                              ? Colors.green
+                              : Colors.orange,
+                          size: 40,
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        _profile?['approval_status'] == 'approved'
+                            ? 'CNIC Verified'
+                            : 'Verification Pending',
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textDark,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        _profile?['approval_status'] == 'approved'
+                            ? 'Your identity documents have been verified. You have full access to ServEase provider features.'
+                            : 'Your CNIC documents are currently under review by the administration. You will be notified once the verification is complete.',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.grey.shade600,
+                          height: 1.4,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 20),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () => Navigator.pop(context),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primaryGreen,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                          ),
+                          child: const Text('Close'),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
           ),
           _menuDivider(),
           _menuItem(
             icon: Icons.star_outline,
             iconColor: AppColors.accentYellow,
             title: 'My Reviews',
-            onTap: () {},
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => ProviderReviewsScreen(providerId: widget.providerId),
+              ),
+            ),
+          ),
+          _menuDivider(),
+          _menuItem(
+            icon: Icons.lock_outline,
+            iconColor: Colors.teal,
+            title: 'Security & Password',
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => ProviderSecurityScreen(providerId: widget.providerId),
+              ),
+            ),
           ),
           _menuDivider(),
           _menuItem(
@@ -466,6 +553,9 @@ class _EditProviderProfileScreenState extends State<EditProviderProfileScreen> {
   late TextEditingController _rateCtrl;
   bool _isSaving = false;
 
+  Uint8List? _newImageBytes;
+  String? _newImageName;
+
   @override
   void initState() {
     super.initState();
@@ -488,6 +578,33 @@ class _EditProviderProfileScreenState extends State<EditProviderProfileScreen> {
     super.dispose();
   }
 
+  Future<void> _pickImage() async {
+    final picked = await ImagePicker().pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 50,
+    );
+    if (picked != null) {
+      final bytes = await picked.readAsBytes();
+      setState(() {
+        _newImageBytes = bytes;
+        _newImageName = picked.name;
+      });
+    }
+  }
+
+  Widget _avatarFallback() {
+    return Center(
+      child: Text(
+        _nameCtrl.text.isNotEmpty ? _nameCtrl.text[0].toUpperCase() : 'P',
+        style: const TextStyle(
+          color: AppColors.primaryGreen,
+          fontSize: 28,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
   Future<void> _save() async {
     setState(() => _isSaving = true);
     final success = await ProviderProfileService.updateProfile(
@@ -497,6 +614,8 @@ class _EditProviderProfileScreenState extends State<EditProviderProfileScreen> {
       address: _addressCtrl.text,
       bio: _bioCtrl.text,
       hourlyRate: int.tryParse(_rateCtrl.text) ?? 0,
+      imageBytes: _newImageBytes,
+      imageName: _newImageName,
     );
     setState(() => _isSaving = false);
     if (success && mounted) {
@@ -528,46 +647,53 @@ class _EditProviderProfileScreenState extends State<EditProviderProfileScreen> {
           children: [
             // Avatar
             Center(
-              child: Stack(
-                children: [
-                  Container(
-                    width: 72,
-                    height: 72,
-                    decoration: BoxDecoration(
-                      color: AppColors.primaryGreen.withValues(alpha: 0.15),
-                      shape: BoxShape.circle,
+              child: GestureDetector(
+                onTap: _pickImage,
+                child: Stack(
+                  children: [
+                    Container(
+                      width: 72,
+                      height: 72,
+                      decoration: BoxDecoration(
+                        color: AppColors.primaryGreen.withValues(alpha: 0.15),
+                        shape: BoxShape.circle,
+                        border: Border.all(color: AppColors.primaryGreen, width: 1.5),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(36),
+                        child: _newImageBytes != null
+                            ? Image.memory(_newImageBytes!, fit: BoxFit.cover)
+                            : (widget.profile['profile_image'] != null &&
+                                    widget.profile['profile_image'].toString().isNotEmpty)
+                                ? Image.network(
+                                    widget.profile['profile_image'].toString().startsWith('http')
+                                        ? widget.profile['profile_image'].toString()
+                                        : "${AppConfig.baseUrl}${widget.profile['profile_image']}",
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (_, __, ___) => _avatarFallback(),
+                                  )
+                                : _avatarFallback(),
+                      ),
                     ),
-                    child: Center(
-                      child: Text(
-                        _nameCtrl.text.isNotEmpty
-                            ? _nameCtrl.text[0].toUpperCase()
-                            : 'P',
-                        style: const TextStyle(
+                    Positioned(
+                      bottom: 0,
+                      right: 0,
+                      child: Container(
+                        width: 24,
+                        height: 24,
+                        decoration: const BoxDecoration(
                           color: AppColors.primaryGreen,
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.camera_alt,
+                          color: Colors.white,
+                          size: 14,
                         ),
                       ),
                     ),
-                  ),
-                  Positioned(
-                    bottom: 0,
-                    right: 0,
-                    child: Container(
-                      width: 24,
-                      height: 24,
-                      decoration: const BoxDecoration(
-                        color: AppColors.primaryGreen,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.edit,
-                        color: Colors.white,
-                        size: 14,
-                      ),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 24),

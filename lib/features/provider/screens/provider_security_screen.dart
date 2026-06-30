@@ -60,9 +60,9 @@ class _ProviderSecurityScreenState extends State<ProviderSecurityScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F0E8),
+      backgroundColor: const Color(0xFFF8F9FA),
       appBar: AppBar(
-        backgroundColor: AppColors.primary,
+        backgroundColor: AppColors.primaryGreen,
         title: const Text(
           'Security',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
@@ -80,10 +80,12 @@ class _ProviderSecurityScreenState extends State<ProviderSecurityScreen> {
                 borderRadius: BorderRadius.circular(14),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    blurRadius: 6,
+                    color: Colors.black.withValues(alpha: 0.03),
+                    blurRadius: 10,
+                    offset: const Offset(0, 3),
                   ),
                 ],
+                border: Border.all(color: Colors.grey.shade100),
               ),
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -95,12 +97,12 @@ class _ProviderSecurityScreenState extends State<ProviderSecurityScreen> {
                         width: 36,
                         height: 36,
                         decoration: BoxDecoration(
-                          color: AppColors.primary.withValues(alpha: 0.1),
+                          color: AppColors.primaryGreen.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: const Icon(
                           Icons.lock_outline,
-                          color: AppColors.primary,
+                          color: AppColors.primaryGreen,
                           size: 18,
                         ),
                       ),
@@ -108,8 +110,9 @@ class _ProviderSecurityScreenState extends State<ProviderSecurityScreen> {
                       const Text(
                         'Change Password',
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 15,
                           fontWeight: FontWeight.bold,
+                          color: AppColors.textDark,
                         ),
                       ),
                     ],
@@ -139,12 +142,13 @@ class _ProviderSecurityScreenState extends State<ProviderSecurityScreen> {
                   ElevatedButton(
                     onPressed: _isSaving ? null : _changePassword,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      minimumSize: const Size(double.infinity, 50),
+                      backgroundColor: AppColors.primaryGreen,
+                      foregroundColor: Colors.white,
+                      minimumSize: const Size(double.infinity, 48),
+                      elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      elevation: 0,
                     ),
                     child: _isSaving
                         ? const CircularProgressIndicator(
@@ -172,10 +176,12 @@ class _ProviderSecurityScreenState extends State<ProviderSecurityScreen> {
                 borderRadius: BorderRadius.circular(14),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    blurRadius: 6,
+                    color: Colors.black.withValues(alpha: 0.03),
+                    blurRadius: 10,
+                    offset: const Offset(0, 3),
                   ),
                 ],
+                border: Border.all(color: Colors.grey.shade100),
               ),
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -187,12 +193,12 @@ class _ProviderSecurityScreenState extends State<ProviderSecurityScreen> {
                         width: 36,
                         height: 36,
                         decoration: BoxDecoration(
-                          color: Colors.orange.withValues(alpha: 0.1),
+                          color: AppColors.secondary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: const Icon(
                           Icons.help_outline,
-                          color: Colors.orange,
+                          color: AppColors.secondary,
                           size: 18,
                         ),
                       ),
@@ -200,8 +206,9 @@ class _ProviderSecurityScreenState extends State<ProviderSecurityScreen> {
                       const Text(
                         'Forgot Password?',
                         style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 15,
                           fontWeight: FontWeight.bold,
+                          color: AppColors.textDark,
                         ),
                       ),
                     ],
@@ -210,8 +217,8 @@ class _ProviderSecurityScreenState extends State<ProviderSecurityScreen> {
                   const Text(
                     'Forgot your current password? Send a reset link to your registered email.',
                     style: TextStyle(
-                      fontSize: 13,
-                      color: AppColors.mutedForeground,
+                      fontSize: 12,
+                      color: AppColors.textMuted,
                       height: 1.5,
                     ),
                   ),
@@ -224,10 +231,10 @@ class _ProviderSecurityScreenState extends State<ProviderSecurityScreen> {
                       ),
                     ),
                     icon: const Icon(Icons.email_outlined, size: 16),
-                    label: const Text('Reset via Email'),
+                    label: const Text('Reset via Email', style: TextStyle(fontWeight: FontWeight.bold)),
                     style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.primary,
-                      side: const BorderSide(color: AppColors.primary),
+                      foregroundColor: AppColors.primaryGreen,
+                      side: const BorderSide(color: AppColors.primaryGreen),
                       minimumSize: const Size(double.infinity, 46),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
@@ -257,7 +264,7 @@ class _ProviderSecurityScreenState extends State<ProviderSecurityScreen> {
           style: const TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w600,
-            color: AppColors.mutedForeground,
+            color: AppColors.textMuted,
           ),
         ),
         const SizedBox(height: 6),
@@ -266,7 +273,7 @@ class _ProviderSecurityScreenState extends State<ProviderSecurityScreen> {
           obscureText: !show,
           decoration: InputDecoration(
             filled: true,
-            fillColor: const Color(0xFFFFF8EF),
+            fillColor: const Color(0xFFF8F9FA),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide(color: Colors.grey.shade200),
@@ -274,6 +281,10 @@ class _ProviderSecurityScreenState extends State<ProviderSecurityScreen> {
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide(color: Colors.grey.shade200),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: const BorderSide(color: AppColors.primaryGreen, width: 1.5),
             ),
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 14,
@@ -285,7 +296,7 @@ class _ProviderSecurityScreenState extends State<ProviderSecurityScreen> {
                     ? Icons.visibility_outlined
                     : Icons.visibility_off_outlined,
                 size: 18,
-                color: AppColors.mutedForeground,
+                color: AppColors.textMuted,
               ),
               onPressed: toggle,
             ),
@@ -342,9 +353,9 @@ class _ProviderForgotPasswordScreenState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F0E8),
+      backgroundColor: const Color(0xFFF8F9FA),
       appBar: AppBar(
-        backgroundColor: AppColors.primary,
+        backgroundColor: AppColors.primaryGreen,
         title: const Text(
           'Reset Password',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
@@ -367,26 +378,26 @@ class _ProviderForgotPasswordScreenState
           width: 64,
           height: 64,
           decoration: BoxDecoration(
-            color: AppColors.primary.withValues(alpha: 0.1),
+            color: AppColors.primaryGreen.withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
           child: const Icon(
             Icons.lock_reset,
-            color: AppColors.primary,
+            color: AppColors.primaryGreen,
             size: 32,
           ),
         ),
         const SizedBox(height: 20),
         const Text(
           'Forgot your password?',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textDark),
         ),
         const SizedBox(height: 8),
         const Text(
           'Enter your registered email and we\'ll send a reset link.',
           style: TextStyle(
             fontSize: 13,
-            color: AppColors.mutedForeground,
+            color: AppColors.textMuted,
             height: 1.5,
           ),
         ),
@@ -396,7 +407,7 @@ class _ProviderForgotPasswordScreenState
           style: TextStyle(
             fontSize: 11,
             fontWeight: FontWeight.w700,
-            color: AppColors.mutedForeground,
+            color: AppColors.textMuted,
             letterSpacing: 0.5,
           ),
         ),
@@ -407,7 +418,7 @@ class _ProviderForgotPasswordScreenState
           decoration: InputDecoration(
             hintText: 'your@email.com',
             hintStyle: const TextStyle(
-              color: AppColors.mutedForeground,
+              color: AppColors.textMuted,
               fontSize: 13,
             ),
             filled: true,
@@ -415,7 +426,7 @@ class _ProviderForgotPasswordScreenState
             prefixIcon: const Icon(
               Icons.email_outlined,
               size: 18,
-              color: AppColors.mutedForeground,
+              color: AppColors.textMuted,
             ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
@@ -424,6 +435,10 @@ class _ProviderForgotPasswordScreenState
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
               borderSide: BorderSide(color: Colors.grey.shade200),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(color: AppColors.primaryGreen, width: 1.5),
             ),
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 14,
@@ -435,7 +450,8 @@ class _ProviderForgotPasswordScreenState
         ElevatedButton(
           onPressed: _isSending ? null : _sendReset,
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primary,
+            backgroundColor: AppColors.primaryGreen,
+            foregroundColor: Colors.white,
             minimumSize: const Size(double.infinity, 52),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
@@ -492,7 +508,7 @@ class _ProviderForgotPasswordScreenState
           textAlign: TextAlign.center,
           style: const TextStyle(
             fontSize: 13,
-            color: AppColors.mutedForeground,
+            color: AppColors.textMuted,
             height: 1.5,
           ),
         ),
@@ -500,7 +516,8 @@ class _ProviderForgotPasswordScreenState
         ElevatedButton(
           onPressed: () => Navigator.pop(context),
           style: ElevatedButton.styleFrom(
-            backgroundColor: AppColors.primary,
+            backgroundColor: AppColors.primaryGreen,
+            foregroundColor: Colors.white,
             minimumSize: const Size(double.infinity, 50),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),

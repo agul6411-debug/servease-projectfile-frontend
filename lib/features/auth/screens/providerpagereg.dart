@@ -7,6 +7,8 @@ import 'package:frontfile_servease/features/auth/screens/otp_verify_screen.dart'
 import 'package:frontfile_servease/core/theme/app_theme.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:flutter/foundation.dart';
+import 'package:frontfile_servease/features/auth/screens/cnic_scanner_screen.dart';
 
 class ProviderPagereg extends StatefulWidget {
   const ProviderPagereg({super.key});
@@ -138,6 +140,89 @@ class _ProviderPageregState extends State<ProviderPagereg> {
     }
   }
 
+  void _showImageSourceSheet(bool isFront) {
+    if (kIsWeb) {
+      _pickImage(isFront);
+      return;
+    }
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(height: 16),
+              const Text(
+                "Choose Option",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.foreground,
+                ),
+              ),
+              const SizedBox(height: 12),
+              ListTile(
+                leading: const Icon(
+                  Icons.document_scanner_outlined,
+                  color: AppColors.primary,
+                ),
+                title: const Text("Scan Card (Auto-capture)"),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _scanCnicCard(isFront);
+                },
+              ),
+              ListTile(
+                leading: const Icon(
+                  Icons.photo_library_outlined,
+                  color: AppColors.primary,
+                ),
+                title: const Text("Choose from Gallery"),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  _pickImage(isFront);
+                },
+              ),
+              const SizedBox(height: 16),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _scanCnicCard(bool isFront) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const CnicScannerScreen()),
+    );
+
+    if (result != null && result is Map<String, dynamic>) {
+      final detectedCnic = result['cnic'] as String;
+      final imageFile = result['image'] as XFile;
+      final bytes = await imageFile.readAsBytes();
+
+      setState(() {
+        _cnicCtrl.text = detectedCnic;
+        if (isFront) {
+          _cnicFrontBytes = bytes;
+          _cnicFrontName = imageFile.name;
+        } else {
+          _cnicBackBytes = bytes;
+          _cnicBackName = imageFile.name;
+        }
+      });
+
+      _showSnack("CNIC scanned and auto-filled successfully!", isError: false);
+    }
+  }
+
   Future<void> _handleSubmit() async {
     if (!_formKey.currentState!.validate()) return;
     if (!_agreeToTerms) {
@@ -147,6 +232,22 @@ class _ProviderPageregState extends State<ProviderPagereg> {
     if (_cnicFrontBytes == null || _cnicBackBytes == null) {
       _showSnack(
         'Please upload both CNIC front and back images.',
+        isError: true,
+      );
+      return;
+    }
+
+    // Client-side image format validation before OTP
+    final allowedExtensions = ['.jpg', '.jpeg', '.png', '.webp'];
+    final frontName = _cnicFrontName?.toLowerCase() ?? '';
+    final backName = _cnicBackName?.toLowerCase() ?? '';
+
+    bool isFrontValid = allowedExtensions.any((ext) => frontName.endsWith(ext)) || frontName.isEmpty;
+    bool isBackValid = allowedExtensions.any((ext) => backName.endsWith(ext)) || backName.isEmpty;
+
+    if (!isFrontValid || !isBackValid) {
+      _showSnack(
+        'Only JPG, JPEG, PNG and WEBP images are allowed for CNIC.',
         isError: true,
       );
       return;
@@ -346,7 +447,7 @@ class _ProviderPageregState extends State<ProviderPagereg> {
   Widget _imagePreview(Uint8List? bytes, bool isFront) {
     final uploaded = bytes != null;
     return GestureDetector(
-      onTap: () => _pickImage(isFront),
+      onTap: () => _showImageSourceSheet(isFront),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         height: 130,

@@ -35,6 +35,8 @@ dependencies:
   get_storage: ^2.1.1
   image_picker: ^1.1.2 
   http: ^1.2.0
+  camera: ^0.11.0
+  google_mlkit_text_recognition: ^0.13.0
   
   cupertino_icons: ^1.0.8
   cached_network_image: ^3.4.1

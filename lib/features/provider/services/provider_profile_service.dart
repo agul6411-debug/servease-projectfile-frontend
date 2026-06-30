@@ -42,23 +42,59 @@ class ProviderProfileService {
     required String address,
     required String bio,
     required int hourlyRate,
+    Uint8List? imageBytes,
+    String? imageName,
   }) async {
     try {
-      final res = await http.put(
+      final token = GetStorage().read('auth_token') ?? '';
+      final request = http.MultipartRequest(
+        'PUT',
         Uri.parse("$_baseUrl/profile?provider_id=$providerId"),
-        headers: _headers,
-        body: jsonEncode({
-          "full_name": fullName,
-          "phone": phone,
-          "address": address,
-          "bio": bio,
-          "hourly_rate": hourlyRate,
-        }),
       );
+      if (token.isNotEmpty) {
+        request.headers['Authorization'] = 'Bearer $token';
+      }
+      request.headers['Accept'] = 'application/json';
+
+      request.fields['full_name'] = fullName;
+      request.fields['phone'] = phone;
+      request.fields['address'] = address;
+      request.fields['bio'] = bio;
+      request.fields['hourly_rate'] = hourlyRate.toString();
+
+      if (imageBytes != null && imageName != null) {
+        request.files.add(
+          http.MultipartFile.fromBytes(
+            'profile_image',
+            imageBytes,
+            filename: imageName,
+          ),
+        );
+      }
+
+      final streamedResponse = await request.send();
+      final res = await http.Response.fromStream(streamedResponse);
       return res.statusCode == 200;
     } catch (e) {
       debugPrint('updateProfile error: $e');
       return false;
+    }
+  }
+
+  // GET: Provider Reviews
+  static Future<List<dynamic>?> getReviews(int providerId) async {
+    try {
+      final res = await http.get(
+        Uri.parse("$_baseUrl/profile/reviews?provider_id=$providerId"),
+        headers: _headers,
+      );
+      if (res.statusCode == 200) {
+        return jsonDecode(res.body) as List<dynamic>;
+      }
+      return null;
+    } catch (e) {
+      debugPrint('getReviews error: $e');
+      return null;
     }
   }
 }

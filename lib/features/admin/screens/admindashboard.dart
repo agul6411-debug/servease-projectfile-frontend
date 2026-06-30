@@ -250,7 +250,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
         'icon': Icons.payments_outlined,
         'color': const Color(0xFF00695C),
         'bg': const Color(0xFFE0F2F1),
-        'title': 'Commission (10%)',
+        'title': 'Commission (${dashboardData?.commissionRate.toStringAsFixed(0) ?? 10}%)',
         'value':
             'RS ${dashboardData?.commissionEarned.toStringAsFixed(0) ?? 0}',
         'sub': 'Verified commissions',

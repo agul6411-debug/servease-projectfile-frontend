@@ -29,9 +29,8 @@ class _PayCommissionScreenState extends State<PayCommissionScreen> {
   bool _isSubmitting = false;
 
   final _methods = [
-    {'name': 'JazzCash', 'number': '0314-7549904'},
-    {'name': 'EasyPaisa', 'number': '0314-7549904'},
-    {'name': 'Bank Transfer', 'number': 'HBL – Account: 00427901781803'},
+    {'name': 'JazzCash', 'number': '0325-7199904'},
+    {'name': 'EasyPaisa', 'number': '0325-7199904'},
   ];
 
   Future<void> _pickScreenshot() async {
@@ -241,37 +240,7 @@ class _PayCommissionScreenState extends State<PayCommissionScreen> {
       ),
       bottomNavigationBar: ProviderBottomNavBar(
         currentIndex: 2,
-        onTap: (index) {
-          if (index == 0) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) =>
-                    ProviderHomeScreen(providerId: widget.providerId),
-              ),
-            );
-            return;
-          }
-          if (index == 1) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => MyJobsScreen(providerId: widget.providerId),
-              ),
-            );
-            return;
-          }
-          if (index == 3) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) =>
-                    ProviderProfileScreen(providerId: widget.providerId),
-              ),
-            );
-            return;
-          }
-        },
+        providerId: widget.providerId,
       ),
     );
   }

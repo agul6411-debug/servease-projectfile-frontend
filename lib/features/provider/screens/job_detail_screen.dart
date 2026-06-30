@@ -65,21 +65,21 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
       _statusSteps.indexWhere((s) => s['status'] == _currentStatus);
 
   Future<void> _updateStatus(String newStatus) async {
-    final success = await ProviderApiService.updateJobStatus(
+    final result = await ProviderApiService.updateJobStatus(
       widget.job.id,
       newStatus,
     );
-    if (success && mounted) {
+    if (result['success'] == true && mounted) {
       setState(() => _currentStatus = newStatus);
-      if (newStatus == 'completed') {
-        // Check if commission needed
+      if (newStatus == 'completed' && result['commission_triggered'] == true) {
+        final amount = (result['commission_amount'] as num?)?.toDouble() ?? 
+            widget.job.price * (widget.commissionRate ?? 0.10);
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (_) => PayCommissionScreen(
               providerId: widget.providerId,
-              commissionAmount:
-                  widget.job.price * (widget.commissionRate ?? 0.10),
+              commissionAmount: amount,
             ),
           ),
         );
@@ -123,38 +123,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
           _buildReportButton(),
           ProviderBottomNavBar(
             currentIndex: 1,
-            onTap: (index) {
-              if (index == 0) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) =>
-                        ProviderHomeScreen(providerId: widget.providerId),
-                  ),
-                );
-                return;
-              }
-              if (index == 2) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) =>
-                        EarningsScreen(providerId: widget.providerId),
-                  ),
-                );
-                return;
-              }
-              if (index == 3) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) =>
-                        ProviderProfileScreen(providerId: widget.providerId),
-                  ),
-                );
-                return;
-              }
-            },
+            providerId: widget.providerId,
           ),
         ],
       ),

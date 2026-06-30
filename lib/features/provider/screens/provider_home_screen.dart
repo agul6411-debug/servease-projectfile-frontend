@@ -30,6 +30,7 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
   bool _isLoading = true;
   String? _error;
   int _currentNavIndex = 0;
+  int _securityDepositAmount = 500;
 
   @override
   void initState() {
@@ -41,24 +42,32 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
   void _startSecurityDepositTimer() {
     Timer(const Duration(seconds: 5), () async {
       if (!mounted) return;
-      final status = await ProviderApiService.getSecurityDepositStatus(
+      final data = await ProviderApiService.getSecurityDepositStatus(
         widget.providerId,
       );
-      if (status == 'pending' && mounted) {
-        _showSecurityDepositReminder();
+      final status = data['status'] ?? 'pending';
+      final amount = double.tryParse(data['amount']?.toString() ?? '500')?.toInt() ?? 500;
+      final required = data['required'] ?? 1;
+
+      setState(() {
+        _securityDepositAmount = amount;
+      });
+
+      if (status == 'pending' && required != 0 && mounted) {
+        _showSecurityDepositReminder(amount);
       }
     });
   }
 
-  void _showSecurityDepositReminder() {
+  void _showSecurityDepositReminder(int amount) {
     showDialog(
       context: context,
       barrierDismissible: true,
       builder: (ctx) => AlertDialog(
         title: const Text('Security Deposit Required'),
-        content: const Text(
-          'To start offering your services to customers, you need to send RS 500 as a security deposit to the admin. '
-          'JazzCash/EasyPaisa number: 0314-7549904. Upload a screenshot after payment.',
+        content: Text(
+          'To start offering your services to customers, you need to send RS $amount as a security deposit to the admin. '
+          'JazzCash/EasyPaisa number: 0325-7199904. Upload a screenshot after payment.',
         ),
         actions: [
           TextButton(
@@ -75,7 +84,7 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
                 context,
                 MaterialPageRoute(
                   builder: (_) =>
-                      SecurityDepositScreen(providerId: widget.providerId),
+                      SecurityDepositScreen(providerId: widget.providerId, amount: amount),
                 ),
               );
             },
@@ -175,8 +184,8 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
         context: context,
         builder: (ctx) => AlertDialog(
           title: const Text('Security Deposit Required'),
-          content: const Text(
-            'Please submit a RS 500 security deposit before accepting jobs. Once the admin verifies your payment, you will be able to accept jobs.',
+          content: Text(
+            'Please submit a RS $_securityDepositAmount security deposit before accepting jobs. Once the admin verifies your payment, you will be able to accept jobs.',
           ),
           actions: [
             TextButton(
@@ -193,7 +202,7 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
                   context,
                   MaterialPageRoute(
                     builder: (_) =>
-                        SecurityDepositScreen(providerId: widget.providerId),
+                        SecurityDepositScreen(providerId: widget.providerId, amount: _securityDepositAmount),
                   ),
                 );
               },
@@ -299,189 +308,259 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.bgGrey,
-      appBar: _buildAppBar(),
+      backgroundColor: const Color(0xFFF8F9FA),
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            icon: Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.15),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.notifications_outlined, color: Colors.white, size: 20),
+            ),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) =>
+                    ProviderNotificationsScreen(providerId: widget.providerId),
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+        ],
+      ),
       body: _isLoading
           ? const Center(
               child: CircularProgressIndicator(color: AppColors.primaryGreen),
             )
           : _error != null
-          ? _buildError()
-          : RefreshIndicator(
-              color: AppColors.primaryGreen,
-              onRefresh: _loadDashboardData,
-              child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildStatsGrid(),
-                    _buildCommissionBanner(),
-                    _buildJobRequestsSection(),
-                    const SizedBox(height: 24),
-                  ],
+              ? _buildError()
+              : RefreshIndicator(
+                  color: AppColors.primaryGreen,
+                  onRefresh: _loadDashboardData,
+                  child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildGradientHeader(),
+                        const SizedBox(height: 16),
+                        _buildCommissionBanner(),
+                        const SizedBox(height: 16),
+                        _buildJobRequestsSection(),
+                        const SizedBox(height: 24),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
-            ),
       bottomNavigationBar: _buildBottomNav(),
     );
   }
 
-  AppBar _buildAppBar() {
-    return AppBar(
-      backgroundColor: AppColors.primaryGreen,
-      elevation: 0,
-      title: Row(
+  Widget _buildGradientHeader() {
+    final welcomeName = _stats?.providerName ?? 'Provider';
+    return Container(
+      width: double.infinity,
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFF07462F), // Deep forest green
+            Color(0xFF0F6846), // Premium emerald green
+            Color(0xFF198F62), // Vibrant mint emerald
+          ],
+        ),
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(32),
+          bottomRight: Radius.circular(32),
+        ),
+      ),
+      padding: const EdgeInsets.fromLTRB(16, 64, 16, 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 28,
-            height: 28,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: const Center(
-              child: Text(
-                'S',
-                style: TextStyle(
-                  color: AppColors.primaryGreen,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.12),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.home_repair_service_rounded,
+                  color: Colors.white,
+                  size: 18,
                 ),
               ),
-            ),
-          ),
-          const SizedBox(width: 8),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+              const SizedBox(width: 8),
               const Text(
-                'ServEase Provider',
+                'ServEase Pro',
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 15,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.5,
                 ),
               ),
-              if (_stats != null)
-                Text(
-                  'Welcome, ${_stats!.providerName} 👋',
-                  style: const TextStyle(color: Colors.white70, fontSize: 11),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
                 ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 7,
+                      height: 7,
+                      decoration: const BoxDecoration(
+                        color: Color(0xFF00E676),
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0xFF00E676),
+                            blurRadius: 4,
+                            spreadRadius: 1,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                    const Text(
+                      'Online',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
-        ],
-      ),
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.notifications_outlined, color: Colors.white),
-          onPressed: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) =>
-                  ProviderNotificationsScreen(providerId: widget.providerId),
+          const SizedBox(height: 20),
+          Text(
+            'Welcome back,',
+            style: TextStyle(
+              color: Colors.white.withValues(alpha: 0.7),
+              fontSize: 13,
             ),
           ),
-        ),
-        Container(
-          margin: const EdgeInsets.only(right: 12),
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: BoxDecoration(
-            color: Colors.white24,
-            borderRadius: BorderRadius.circular(12),
+          const SizedBox(height: 3),
+          Text(
+            '$welcomeName 👋',
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 0.2,
+            ),
           ),
-          child: Row(
-            children: [
-              Container(
-                width: 8,
-                height: 8,
-                decoration: const BoxDecoration(
-                  color: Colors.greenAccent,
-                  shape: BoxShape.circle,
-                ),
-              ),
-              const SizedBox(width: 4),
-              const Text(
-                'Online',
-                style: TextStyle(color: Colors.white, fontSize: 11),
-              ),
-            ],
-          ),
-        ),
-      ],
+          const SizedBox(height: 20),
+          _buildStatsGridInsideHeader(),
+        ],
+      ),
     );
   }
 
-  Widget _buildStatsGrid() {
+  Widget _buildStatsGridInsideHeader() {
     if (_stats == null) return const SizedBox();
-    return Padding(
-      padding: const EdgeInsets.all(12),
-      child: GridView.count(
-        crossAxisCount: 2,
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
-        childAspectRatio: 2.2,
-        children: [
-          _statCard(
-            label: 'New Requests',
-            value: '${_stats!.newRequests}',
-            isHighlight: false,
-          ),
-          _statCard(
-            label: 'This Month',
-            value: 'RS ${_stats!.earningsThisMonth.toStringAsFixed(0)}',
-            isHighlight: true,
-          ),
-          _statCard(
-            label: 'Jobs Done',
-            value: '${_stats!.jobsDone}',
-            isHighlight: false,
-          ),
-          _ratingCard(_stats!.rating),
-        ],
-      ),
+    return GridView.count(
+      crossAxisCount: 2,
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      crossAxisSpacing: 10,
+      mainAxisSpacing: 10,
+      childAspectRatio: 2.3,
+      children: [
+        _statCard(
+          label: 'New Requests',
+          value: '${_stats!.newRequests}',
+          icon: Icons.notifications_active_outlined,
+          iconColor: const Color(0xFF1976D2),
+          bgIconColor: const Color(0xFFE3F2FD),
+        ),
+        _statCard(
+          label: 'This Month',
+          value: 'RS ${_stats!.earningsThisMonth.toStringAsFixed(0)}',
+          icon: Icons.monetization_on_outlined,
+          iconColor: AppColors.primaryGreen,
+          bgIconColor: const Color(0xFFE8F5E9),
+        ),
+        _statCard(
+          label: 'Jobs Done',
+          value: '${_stats!.jobsDone}',
+          icon: Icons.done_all_outlined,
+          iconColor: const Color(0xFFE64A19),
+          bgIconColor: const Color(0xFFFBE9E7),
+        ),
+        _ratingCard(_stats!.rating),
+      ],
     );
   }
 
   Widget _statCard({
     required String label,
     required String value,
-    required bool isHighlight,
+    required IconData icon,
+    required Color iconColor,
+    required Color bgIconColor,
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.cardBg,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
+        padding: const EdgeInsets.all(10),
+        child: Row(
           children: [
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: isHighlight
-                    ? AppColors.accentYellow
-                    : AppColors.primaryGreen,
+            Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: bgIconColor,
+                shape: BoxShape.circle,
               ),
+              child: Icon(icon, color: iconColor, size: 16),
             ),
-            const SizedBox(height: 2),
-            Text(
-              label,
-              style: const TextStyle(fontSize: 11, color: AppColors.textMuted),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    value,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textDark,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 1),
+                  Text(
+                    label,
+                    style: const TextStyle(fontSize: 9, color: AppColors.textMuted),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -492,40 +571,43 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
   Widget _ratingCard(double rating) {
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.cardBg,
-        borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
+        padding: const EdgeInsets.all(10),
+        child: Row(
           children: [
-            Row(
-              children: [
-                Text(
-                  rating.toStringAsFixed(1),
-                  style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.accentYellow,
-                  ),
-                ),
-                const SizedBox(width: 4),
-                const Icon(Icons.star, color: AppColors.accentYellow, size: 20),
-              ],
+            Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFFDE7),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.star, color: Colors.amber, size: 16),
             ),
-            const SizedBox(height: 2),
-            const Text(
-              'Rating',
-              style: TextStyle(fontSize: 11, color: AppColors.textMuted),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    rating.toStringAsFixed(1),
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textDark,
+                    ),
+                  ),
+                  const SizedBox(height: 1),
+                  const Text(
+                    'Rating',
+                    style: TextStyle(fontSize: 9, color: AppColors.textMuted),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -535,63 +617,120 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
 
   Widget _buildCommissionBanner() {
     if (_stats == null) return const SizedBox();
+    final pending = _stats!.pendingCommission;
+    final hasPending = pending > 0;
+    
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Container(
         decoration: BoxDecoration(
-          color: AppColors.lightYellow,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: AppColors.yellowBorder),
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.02),
+              blurRadius: 8,
+              offset: const Offset(0, 3),
+            ),
+          ],
+          border: Border.all(color: hasPending ? const Color(0xFFFFE0B2) : Colors.grey.shade100),
         ),
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                const Icon(
-                  Icons.info_outline,
-                  color: AppColors.accentYellow,
-                  size: 16,
-                ),
-                const SizedBox(width: 6),
-                const Text(
-                  'Commission Status',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 13,
-                    color: AppColors.textDark,
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: hasPending ? const Color(0xFFFFF3E0) : const Color(0xFFE8F5E9),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    hasPending ? Icons.warning_amber_rounded : Icons.verified_user_outlined,
+                    color: hasPending ? const Color(0xFFEF6C00) : AppColors.primaryGreen,
+                    size: 16,
                   ),
                 ),
-              ],
-            ),
-            const SizedBox(height: 6),
-            Text(
-              '${_stats!.totalJobsCompleted} jobs completed · '
-              '${_stats!.commissionRate.toStringAsFixed(0)}% commission applies from job 3 onwards. '
-              'Next commission due after next job.',
-              style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
-            ),
-            const SizedBox(height: 8),
-            const Divider(height: 1, color: AppColors.yellowBorder),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Pending commission',
-                  style: TextStyle(fontSize: 12, color: AppColors.textMuted),
-                ),
+                const SizedBox(width: 8),
                 Text(
-                  'RS ${_stats!.pendingCommission.toStringAsFixed(0)}',
+                  hasPending ? 'Commission Payment Due' : 'Commission Status',
                   style: const TextStyle(
-                    fontSize: 13,
                     fontWeight: FontWeight.bold,
+                    fontSize: 13,
                     color: AppColors.textDark,
                   ),
                 ),
+                const Spacer(),
+                if (hasPending)
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => PayCommissionScreen(
+                            providerId: widget.providerId,
+                            commissionAmount: pending,
+                          ),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFEF6C00),
+                      foregroundColor: Colors.white,
+                      elevation: 0,
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      minimumSize: Size.zero,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
+                    child: const Text(
+                      'Pay Now',
+                      style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+                    ),
+                  ),
               ],
             ),
+            const SizedBox(height: 10),
+            Text(
+              hasPending
+                  ? 'You have a pending commission of RS ${pending.toStringAsFixed(0)}. Please pay this to continue accepting new job requests.'
+                  : 'Great job! You have completed ${_stats!.totalJobsCompleted} jobs. Your commission rate is ${_stats!.commissionRate.toStringAsFixed(0)}% (applies from the 3rd job onwards).',
+              style: const TextStyle(fontSize: 11, color: AppColors.textMuted, height: 1.4),
+            ),
+            if (!hasPending) ...[
+              const SizedBox(height: 10),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(4),
+                child: LinearProgressIndicator(
+                  value: (_stats!.totalJobsCompleted >= 2) ? 1.0 : (_stats!.totalJobsCompleted / 2.0),
+                  backgroundColor: Colors.grey.shade100,
+                  valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF00E676)),
+                  minHeight: 4,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    '${_stats!.totalJobsCompleted}/2 Free Jobs Completed',
+                    style: const TextStyle(fontSize: 9, color: AppColors.textMuted, fontWeight: FontWeight.w500),
+                  ),
+                  Text(
+                    _stats!.totalJobsCompleted >= 2 ? 'Commission Active' : 'Free Trial',
+                    style: TextStyle(
+                      fontSize: 9,
+                      color: _stats!.totalJobsCompleted >= 2 ? const Color(0xFFEF6C00) : AppColors.primaryGreen,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ],
           ],
         ),
       ),
@@ -600,17 +739,23 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
 
   Widget _buildJobRequestsSection() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'New Job Requests',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textDark,
-            ),
+          const Row(
+            children: [
+              Icon(Icons.pending_actions_rounded, color: AppColors.primaryGreen, size: 18),
+              SizedBox(width: 6),
+              Text(
+                'Active Job Requests',
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.textDark,
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 10),
           if (_jobRequests.isEmpty)
@@ -618,20 +763,48 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
               width: double.infinity,
               padding: const EdgeInsets.all(32),
               decoration: BoxDecoration(
-                color: AppColors.cardBg,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Column(
-                children: [
-                  Icon(
-                    Icons.work_outline,
-                    size: 40,
-                    color: AppColors.textMuted,
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.grey.shade100),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.02),
+                    blurRadius: 8,
+                    offset: const Offset(0, 3),
                   ),
-                  SizedBox(height: 8),
+                ],
+              ),
+              child: Column(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade50,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.work_outline_rounded,
+                      size: 32,
+                      color: Colors.grey.shade400,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
                   Text(
-                    'No new job requests',
-                    style: TextStyle(color: AppColors.textMuted),
+                    'No active requests',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.grey.shade600,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    'You are all caught up! New requests will appear here.',
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: Colors.grey.shade400,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
                 ],
               ),
@@ -645,17 +818,18 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
 
   Widget _buildJobCard(JobRequest job) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
+      margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
-        color: AppColors.cardBg,
-        borderRadius: BorderRadius.circular(10),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
+            color: Colors.black.withValues(alpha: 0.02),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
           ),
         ],
+        border: Border.all(color: Colors.grey.shade100),
       ),
       child: Padding(
         padding: const EdgeInsets.all(14),
@@ -673,98 +847,116 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
                       Text(
                         job.customerName,
                         style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
                           color: AppColors.textDark,
                         ),
                       ),
-                      Text(
-                        job.serviceType,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: AppColors.textMuted,
+                      const SizedBox(height: 2),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: AppColors.primaryGreen.withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          job.serviceType,
+                          style: const TextStyle(
+                            fontSize: 9,
+                            color: AppColors.primaryGreen,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ],
                   ),
                 ),
-                if (job.isNew)
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 3,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.newBadge.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(4),
-                    ),
-                    child: const Text(
-                      'New',
-                      style: TextStyle(
-                        color: AppColors.newBadge,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      'RS ${job.price.toStringAsFixed(0)}',
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.primaryGreen,
                       ),
                     ),
-                  ),
+                    if (job.isNew) ...[
+                      const SizedBox(height: 4),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFFFEBEE),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: const Text(
+                          'NEW',
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontSize: 8,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
               ],
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
+            const Divider(height: 1, color: Color(0xFFF1F3F5)),
+            const SizedBox(height: 10),
             Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.calendar_today_outlined,
                   size: 12,
-                  color: AppColors.textMuted,
+                  color: Colors.grey.shade500,
                 ),
-                const SizedBox(width: 4),
+                const SizedBox(width: 5),
                 Text(
-                  '${job.scheduledDate}, ${job.scheduledTime}',
-                  style: const TextStyle(
-                    fontSize: 11,
-                    color: AppColors.textMuted,
+                  '${job.scheduledDate} at ${job.scheduledTime}',
+                  style: TextStyle(
+                    fontSize: 10,
+                    color: Colors.grey.shade600,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
                 const SizedBox(width: 12),
-                const Icon(
+                Icon(
                   Icons.location_on_outlined,
-                  size: 12,
-                  color: AppColors.textMuted,
+                  size: 13,
+                  color: Colors.grey.shade500,
                 ),
-                const SizedBox(width: 4),
+                const SizedBox(width: 3),
                 Expanded(
                   child: Text(
                     job.location,
-                    style: const TextStyle(
-                      fontSize: 11,
-                      color: AppColors.textMuted,
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: Colors.grey.shade600,
+                      fontWeight: FontWeight.w500,
                     ),
+                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 6),
-            Text(
-              'RS ${job.price.toStringAsFixed(0)}',
-              style: const TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
-                color: AppColors.textDark,
-              ),
-            ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 14),
             Row(
               children: [
                 Expanded(
-                  child: OutlinedButton.icon(
+                  child: ElevatedButton.icon(
                     onPressed: () => _handleAccept(job.id),
-                    icon: const Icon(Icons.check, size: 16),
-                    label: const Text('Accept'),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.white,
+                    icon: const Icon(Icons.check_rounded, size: 14),
+                    label: const Text('Accept', style: TextStyle(fontWeight: FontWeight.bold)),
+                    style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primaryGreen,
-                      side: const BorderSide(color: AppColors.primaryGreen),
+                      foregroundColor: Colors.white,
+                      elevation: 0,
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
@@ -774,13 +966,14 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: OutlinedButton.icon(
+                  child: ElevatedButton.icon(
                     onPressed: () => _handleDecline(job.id),
-                    icon: const Icon(Icons.close, size: 16),
-                    label: const Text('Decline'),
-                    style: OutlinedButton.styleFrom(
+                    icon: const Icon(Icons.close_rounded, size: 14),
+                    label: const Text('Decline', style: TextStyle(fontWeight: FontWeight.bold)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey.shade100,
                       foregroundColor: AppColors.declineRed,
-                      side: const BorderSide(color: AppColors.declineRed),
+                      elevation: 0,
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
@@ -854,38 +1047,7 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
   Widget _buildBottomNav() {
     return ProviderBottomNavBar(
       currentIndex: _currentNavIndex,
-      onTap: (index) {
-        if (index == 1) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => MyJobsScreen(providerId: widget.providerId),
-            ),
-          );
-          return;
-        }
-        if (index == 2) {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) => EarningsScreen(providerId: widget.providerId),
-            ),
-          );
-          return;
-        }
-        if (index == 3) {
-          // Profile
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (_) =>
-                  ProviderProfileScreen(providerId: widget.providerId),
-            ),
-          );
-          return;
-        }
-        setState(() => _currentNavIndex = index);
-      },
+      providerId: widget.providerId,
     );
   }
 }

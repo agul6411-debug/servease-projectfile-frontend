@@ -1,14 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:frontfile_servease/core/theme/app_theme.dart';
+import 'package:frontfile_servease/features/provider/screens/provider_home_screen.dart';
+import 'package:frontfile_servease/features/provider/screens/my_jobs_screen.dart';
+import 'package:frontfile_servease/features/provider/screens/earningscreen.dart';
+import 'package:frontfile_servease/features/provider/screens/provider_profile_screen.dart';
 
 class ProviderBottomNavBar extends StatelessWidget {
   final int currentIndex;
-  final ValueChanged<int> onTap;
+  final int providerId;
+  final ValueChanged<int>? onTap;
 
   const ProviderBottomNavBar({
     super.key,
     required this.currentIndex,
-    required this.onTap,
+    required this.providerId,
+    this.onTap,
   });
 
   static const List<Map<String, dynamic>> _items = [
@@ -39,8 +45,35 @@ class ProviderBottomNavBar extends StatelessWidget {
             children: List.generate(_items.length, (i) {
               final isSelected = currentIndex == i;
               return GestureDetector(
-                onTap: () => onTap(i),
-
+                onTap: () {
+                  if (onTap != null) {
+                    onTap!(i);
+                  } else {
+                    if (i == currentIndex) return;
+                    Widget screen;
+                    switch (i) {
+                      case 0:
+                        screen = ProviderHomeScreen(providerId: providerId);
+                        break;
+                      case 1:
+                        screen = MyJobsScreen(providerId: providerId);
+                        break;
+                      case 2:
+                        screen = EarningsScreen(providerId: providerId);
+                        break;
+                      case 3:
+                        screen = ProviderProfileScreen(providerId: providerId);
+                        break;
+                      default:
+                        return;
+                    }
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (_) => screen),
+                      (route) => false,
+                    );
+                  }
+                },
                 behavior: HitTestBehavior.opaque,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 12),

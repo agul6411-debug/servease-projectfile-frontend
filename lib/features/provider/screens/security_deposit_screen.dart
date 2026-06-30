@@ -6,7 +6,8 @@ import 'package:frontfile_servease/core/theme/app_theme.dart';
 
 class SecurityDepositScreen extends StatefulWidget {
   final int providerId;
-  const SecurityDepositScreen({super.key, required this.providerId});
+  final int amount;
+  const SecurityDepositScreen({super.key, required this.providerId, this.amount = 500});
 
   @override
   State<SecurityDepositScreen> createState() => _SecurityDepositScreenState();
@@ -18,7 +19,7 @@ class _SecurityDepositScreenState extends State<SecurityDepositScreen> {
   String? _screenshotName;
   bool _isSubmitting = false;
 
-  static const String _accountNumber = '0314-7549904';
+  static const String _accountNumber = '0325-7199904';
 
   final _methods = ['JazzCash', 'EasyPaisa'];
 
@@ -126,17 +127,17 @@ class _SecurityDepositScreenState extends State<SecurityDepositScreen> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    'RS 500',
-                    style: TextStyle(
+                  Text(
+                    'RS ${widget.amount}',
+                    style: const TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
                       color: AppColors.textDark,
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    'To start providing services to customers, please send a one-time RS 500 security deposit to the number below and upload your payment screenshot.',
+                  Text(
+                    'To start providing services to customers, please send a one-time RS ${widget.amount} security deposit to the number below and upload your payment screenshot.',
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 12, color: AppColors.textMuted),
                   ),

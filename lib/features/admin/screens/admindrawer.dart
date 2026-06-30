@@ -42,7 +42,7 @@ class _AdminDrawerState extends State<AdminDrawer> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      backgroundColor: AppColors.cream,
+      backgroundColor: Colors.white,
       child: Column(
         children: [
           // HEADER
@@ -56,7 +56,7 @@ class _AdminDrawerState extends State<AdminDrawer> {
             ),
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [AppColors.success, AppColors.softPink],
+                colors: [AppColors.primary, AppColors.primaryLight],
               ),
             ),
             child: Column(
@@ -183,10 +183,8 @@ class _AdminDrawerState extends State<AdminDrawer> {
                     _menuTile(
                       icon: Icons.dashboard_outlined,
                       title: "Dashboard",
-                      onTap: () {
-                        Get.toNamed(AppRoutes.adminDashboard);
-                      },
-                      selected: true,
+                      route: AppRoutes.adminDashboard,
+                      onTap: () => Get.offAllNamed(AppRoutes.adminDashboard),
                     ),
 
                     const SizedBox(height: 12),
@@ -197,17 +195,15 @@ class _AdminDrawerState extends State<AdminDrawer> {
                       icon: Icons.verified_user_outlined,
                       title: "Provider Verification",
                       badge: '${drawerData?.pendingProviders ?? 0}',
-                      onTap: () {
-                        Get.offAllNamed(AppRoutes.providerverficationpage);
-                      },
+                      route: AppRoutes.providerverficationpage,
+                      onTap: () => Get.offAllNamed(AppRoutes.providerverficationpage),
                     ),
 
                     _menuTile(
                       icon: Icons.approval_outlined,
                       title: "Approve / Reject",
-                      onTap: () {
-                        Get.offAllNamed(AppRoutes.acceptance);
-                      },
+                      route: AppRoutes.acceptance,
+                      onTap: () => Get.offAllNamed(AppRoutes.acceptance),
                     ),
 
                     const SizedBox(height: 12),
@@ -217,17 +213,15 @@ class _AdminDrawerState extends State<AdminDrawer> {
                     _menuTile(
                       icon: Icons.people_outline,
                       title: "All Users",
-                      onTap: () {
-                        Get.offAllNamed(AppRoutes.allusers);
-                      },
+                      route: AppRoutes.allusers,
+                      onTap: () => Get.offAllNamed(AppRoutes.allusers),
                     ),
 
                     _menuTile(
                       icon: Icons.block_outlined,
                       title: "Block / Unblock",
-                      onTap: () {
-                        Get.offAndToNamed(AppRoutes.blockorunblock);
-                      },
+                      route: AppRoutes.blockorunblock,
+                      onTap: () => Get.offAllNamed(AppRoutes.blockorunblock),
                     ),
 
                     const SizedBox(height: 12),
@@ -238,9 +232,8 @@ class _AdminDrawerState extends State<AdminDrawer> {
                       icon: Icons.report_problem_outlined,
                       title: "Complaint Handling",
                       badge: '${drawerData?.pendingComplaints ?? 0}',
-                      onTap: () {
-                        Get.offAllNamed(AppRoutes.complainhandling);
-                      },
+                      route: AppRoutes.complainhandling,
+                      onTap: () => Get.offAllNamed(AppRoutes.complainhandling),
                     ),
 
                     const SizedBox(height: 12),
@@ -250,27 +243,29 @@ class _AdminDrawerState extends State<AdminDrawer> {
                     _menuTile(
                       icon: Icons.miscellaneous_services_outlined,
                       title: "Service Management",
-                      onTap: () {
-                        Get.toNamed(AppRoutes.servicemanagement);
-                      },
+                      route: AppRoutes.servicemanagement,
+                      onTap: () => Get.offAllNamed(AppRoutes.servicemanagement),
                     ),
                     _menuTile(
                       icon: Icons.payments_outlined,
                       title: "Commission Payments",
                       badge: '${drawerData?.pendingCommissions ?? 0}',
-                      onTap: () => Get.toNamed(AppRoutes.adminCommissions),
+                      route: AppRoutes.adminCommissions,
+                      onTap: () => Get.offAllNamed(AppRoutes.adminCommissions),
                     ),
                     _menuTile(
                       icon: Icons.payments_outlined,
                       title: "Security Deposits",
                       badge: '${drawerData?.pendingSecurityDeposits ?? 0}',
-                      onTap: () => Get.toNamed(AppRoutes.adminSecurityDeposits),
+                      route: AppRoutes.adminSecurityDeposits,
+                      onTap: () => Get.offAllNamed(AppRoutes.adminSecurityDeposits),
                     ),
 
                     _menuTile(
                       icon: Icons.book_online_outlined,
                       title: "Booking Management",
-                      onTap: () => Get.toNamed(AppRoutes.adminBookings),
+                      route: AppRoutes.adminBookings,
+                      onTap: () => Get.offAllNamed(AppRoutes.adminBookings),
                     ),
                     const SizedBox(height: 12),
 
@@ -348,14 +343,15 @@ class _AdminDrawerState extends State<AdminDrawer> {
     required IconData icon,
     required String title,
     String? badge,
-    bool selected = false,
+    required String route,
     required VoidCallback onTap,
   }) {
+    final bool selected = Get.currentRoute == route;
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
         color: selected
-            ? AppColors.softPink.withValues(alpha: 0.2)
+            ? AppColors.primary.withValues(alpha: 0.1)
             : Colors.transparent,
         borderRadius: BorderRadius.circular(18),
       ),
@@ -364,7 +360,7 @@ class _AdminDrawerState extends State<AdminDrawer> {
         leading: CircleAvatar(
           radius: 18,
           backgroundColor: selected
-              ? AppColors.mediumRed
+              ? AppColors.primary
               : Colors.grey.shade200,
           child: Icon(
             icon,
@@ -374,12 +370,16 @@ class _AdminDrawerState extends State<AdminDrawer> {
         ),
         title: Text(
           title,
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: selected ? FontWeight.bold : FontWeight.w500,
+            color: selected ? AppColors.primary : AppColors.textDark,
+          ),
         ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (badge != null)
+            if (badge != null && badge != "0")
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
@@ -400,7 +400,11 @@ class _AdminDrawerState extends State<AdminDrawer> {
 
             const SizedBox(width: 8),
 
-            const Icon(Icons.arrow_forward_ios, size: 15, color: Colors.grey),
+            Icon(
+              Icons.arrow_forward_ios,
+              size: 13,
+              color: selected ? AppColors.primary : Colors.grey,
+            ),
           ],
         ),
         onTap: onTap,

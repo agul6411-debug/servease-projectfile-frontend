@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:frontfile_servease/routes.dart';
 import 'package:frontfile_servease/features/admin/screens/admindrawer.dart';
@@ -18,6 +19,14 @@ class AdminComplaintsScreen extends StatefulWidget {
 class _AdminComplaintsScreenState extends State<AdminComplaintsScreen>
     with SingleTickerProviderStateMixin {
   static String get _base => "${AppConfig.baseUrl}/api/admin";
+
+  Map<String, String> get _headers {
+    final token = GetStorage().read('auth_token') ?? '';
+    return {
+      "Content-Type": "application/json",
+      if (token.isNotEmpty) "Authorization": "Bearer $token",
+    };
+  }
 
 
   late TabController _tabController;
@@ -40,7 +49,10 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen>
 
   Future<void> _loadComplaints() async {
     try {
-      final res = await http.get(Uri.parse("$_base/complaints"));
+      final res = await http.get(
+        Uri.parse("$_base/complaints"),
+        headers: _headers,
+      );
       if (res.statusCode == 200) {
         final data = jsonDecode(res.body);
         setState(
@@ -55,7 +67,10 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen>
 
   Future<void> _loadRatings() async {
     try {
-      final res = await http.get(Uri.parse("$_base/ratings"));
+      final res = await http.get(
+        Uri.parse("$_base/ratings"),
+        headers: _headers,
+      );
       if (res.statusCode == 200) {
         final data = jsonDecode(res.body);
         setState(
@@ -135,7 +150,7 @@ class _AdminComplaintsScreenState extends State<AdminComplaintsScreen>
     try {
       final res = await http.put(
         Uri.parse("$_base/complaints/$complaintId/action"),
-        headers: {"Content-Type": "application/json"},
+        headers: _headers,
         body: jsonEncode({
           "action": action,
           "admin_response": responseCtrl.text.trim().isEmpty

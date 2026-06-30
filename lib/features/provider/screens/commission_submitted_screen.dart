@@ -107,41 +107,9 @@ class CommissionSubmittedScreen extends StatelessWidget {
       ),
       bottomNavigationBar: ProviderBottomNavBar(
         currentIndex: 0,
-        onTap: (index) {
-          final box = GetStorage();
-          final userId = box.read('user_id') ?? 0;
-          if (index == 0) {
-            Get.offAllNamed(AppRoutes.providerHomeScreen);
-            return;
-          }
-          if (index == 1) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => MyJobsScreen(providerId: userId),
-              ),
-            );
-            return;
-          }
-          if (index == 2) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => EarningsScreen(providerId: userId),
-              ),
-            );
-            return;
-          }
-          if (index == 3) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => ProviderProfileScreen(providerId: userId),
-              ),
-            );
-            return;
-          }
-        },
+        providerId: (GetStorage().read('user_id') ?? 0) is int
+            ? GetStorage().read('user_id') as int
+            : int.tryParse(GetStorage().read('user_id').toString()) ?? 0,
       ),
     );
   }

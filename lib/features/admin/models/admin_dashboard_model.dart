@@ -7,6 +7,7 @@ class AdminDashboardModel {
   final int openComplaints;
   final int pendingProviders;
   final double commissionEarned;
+  final double commissionRate;
   final int securityDeposits;
   final double securityAmount;
   final double totalEarnings;
@@ -22,6 +23,7 @@ class AdminDashboardModel {
     required this.openComplaints,
     required this.pendingProviders,
     required this.commissionEarned,
+    required this.commissionRate,
     required this.securityDeposits,
     required this.securityAmount,
     required this.totalEarnings,
@@ -41,6 +43,9 @@ class AdminDashboardModel {
         commissionEarned: double.parse(
           json['commissionEarned']?.toString() ?? '0',
         ),
+        commissionRate: double.tryParse(
+          json['commissionRate']?.toString() ?? '10',
+        ) ?? 10.0,
         securityDeposits: json['securityDeposits'] ?? 0,
         securityAmount: double.parse(json['securityAmount']?.toString() ?? '0'),
         totalEarnings: double.parse(json['totalEarnings']?.toString() ?? '0'),

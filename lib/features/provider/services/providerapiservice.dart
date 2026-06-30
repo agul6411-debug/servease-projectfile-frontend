@@ -103,17 +103,18 @@ class ProviderApiService {
   }
 
   // UPDATE JOB STATUS
-  static Future<bool> updateJobStatus(int jobId, String status) async {
+  static Future<Map<String, dynamic>> updateJobStatus(int jobId, String status) async {
     try {
       final response = await http.put(
         Uri.parse("$baseUrl/jobs/$jobId/status"),
         headers: _headers,
         body: jsonEncode({"status": status}),
       );
-      return response.statusCode == 200;
+      final body = jsonDecode(response.body);
+      return {'success': response.statusCode == 200, ...body};
     } catch (e) {
       debugPrint('updateJobStatus error: $e');
-      return false;
+      return {'success': false, 'message': e.toString()};
     }
   }
 
@@ -301,20 +302,19 @@ class ProviderApiService {
   }
 
   // SECURITY DEPOSIT — STATUS
-  static Future<String> getSecurityDepositStatus(int providerId) async {
+  static Future<Map<String, dynamic>> getSecurityDepositStatus(int providerId) async {
     try {
       final response = await http.get(
         Uri.parse("$baseUrl/security-deposit/status?provider_id=$providerId"),
         headers: _headers,
       );
       if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        return data['status'] ?? 'pending';
+        return jsonDecode(response.body) as Map<String, dynamic>;
       }
-      return 'pending';
+      return {'status': 'pending', 'amount': 500};
     } catch (e) {
       debugPrint('getSecurityDepositStatus error: $e');
-      return 'pending';
+      return {'status': 'pending', 'amount': 500};
     }
   }
 

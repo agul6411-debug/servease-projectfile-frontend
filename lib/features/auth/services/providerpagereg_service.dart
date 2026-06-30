@@ -2,6 +2,7 @@ import 'package:frontfile_servease/core/services/app_config.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 
 class ProviderService {
   static const String baseUrl = AppConfig.baseUrl;
@@ -29,6 +30,7 @@ class ProviderService {
           'cnic_front',
           cnicFrontBytes,
           filename: cnicFrontName,
+          contentType: MediaType('image', cnicFrontName.toLowerCase().endsWith('.png') ? 'png' : 'jpeg'),
         ),
       );
       request.files.add(
@@ -36,6 +38,7 @@ class ProviderService {
           'cnic_back',
           cnicBackBytes,
           filename: cnicBackName,
+          contentType: MediaType('image', cnicBackName.toLowerCase().endsWith('.png') ? 'png' : 'jpeg'),
         ),
       );
 
