@@ -16,7 +16,7 @@ class AppColors {
   static const Color popover = Color(0xFFFFFBF5);
   static const Color popoverForeground = Color(0xFF3B2F2A);
 
-  // Primary — browns
+  // Primary — brown
   static const Color primary = Color(0xFF6F4E37); // coffee brown
   static const Color onPrimary = Color(0xFFFFFFFF);
 
@@ -70,6 +70,25 @@ class AppColors {
   static const Color chart3 = Color(0xFFD8E983); // lime
   static const Color chart4 = Color(0xFFAEB877); // olive
   static const Color chart5 = Color(0xFFFFFBB1); // pale yellow
+
+  // ---- Legacy aliases (screen compatibility) ----
+  static const Color cream = Color(0xFFF1E9DA);
+  static const Color softPink = Color(0xFFF2C4C4);
+  static const Color primaryGreen = Color(0xFF4A7C59);
+  static const Color declineRed = error;
+  static const Color bgGrey = Color(0xFFF5EFE6);
+  static const Color textMuted = mutedForeground;
+  static const Color cardBg = card;
+  static const Color accentYellow = Color(0xFFD8B96A);
+  static const Color lightYellow = highlight;
+  static const Color yellowBorder = Color(0xFFE8D5A0);
+  static const Color newBadge = success;
+  static const Color warningBg = Color(0xFFF5EDD0);
+  static const Color errorBg = Color(0xFFF8D7D4);
+  static const Color mediumRed = Color(0xFFD07070);
+  static const Color successBg = Color(0xFFE4F0DE);
+  static const Color darkMaroon = Color(0xFF4E342E);
+  static const Color textDark = foreground;
 
   // ---- Sidebar ----
   static const Color sidebar = Color(0xFFF1E9DA);
