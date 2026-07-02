@@ -1,91 +1,85 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-/// Orange & Green — Soft Pastel Theme
+/// Brown & Beige — Primary Theme
+/// Accent palette: A5C89E (sage), FFFBB1 (pale yellow), D8E983 (lime), AEB877 (olive)
 class AppColors {
   AppColors._();
 
-  static const Color background = Color(0xFFFFFBF5); // warm white
-  static const Color foreground = Color(0xFF2D2A24); // soft dark brown-black
+  // ---- Core brown & beige base ----
+  static const Color background = Color(0xFFF5EFE6); // warm beige
+  static const Color foreground = Color(0xFF3B2F2A); // deep brown text
 
-  static const Color card = Color(0xFFFFF8EF); // creamy white
-  static const Color cardForeground = Color(0xFF2D2A24);
+  static const Color card = Color(0xFFFFFBF5); // soft cream card
+  static const Color cardForeground = Color(0xFF3B2F2A);
 
-  static const Color popover = Color(0xFFFFF8EF);
-  static const Color popoverForeground = Color(0xFF2D2A24);
+  static const Color popover = Color(0xFFFFFBF5);
+  static const Color popoverForeground = Color(0xFF3B2F2A);
 
-  // Orange as primary
-  static const Color primary = Color(0xFFE8845A); // soft pastel orange
-  static const Color primaryForeground = Color(0xFFFFFFFF);
+  // Primary — browns
+  static const Color primary = Color(0xFF6F4E37); // coffee brown
+  static const Color onPrimary = Color(0xFFFFFFFF);
 
-  // Green as secondary
-  static const Color secondary = Color(0xFF7DBF8E); // soft pastel green
-  static const Color secondaryForeground = Color(0xFFFFFFFF);
+  // Secondary — beige/olive accent
+  static const Color secondary = Color(0xFFAEB877); // olive
+  static const Color secondaryBackground = Color(0xFFF1EFD8); // pale olive bg
+  static const Color onSecondary = Color(0xFF3B2F2A);
 
-  static const Color muted = Color(0xFFF5EDE3); // light warm peach
-  static const Color mutedForeground = Color(0xFF9A8878); // muted brown-grey
+  static const Color muted = Color(0xFFE9DFCF); // muted beige
+  static const Color mutedForeground = Color(0xFF8A7B6C); // muted brown-grey
 
-  static const Color accent = Color(0xFFD4EDD9); // light mint green
-  static const Color accentForeground = Color(0xFF2D5C3A); // deep green
+  // Accent — sage / lime from palette
+  static const Color accent = Color(0xFFA5C89E); // sage green
+  static const Color onAccent = Color(0xFF234B2E);
 
-  static const Color destructive = Color(0xFFE05C5C); // soft red
-  static const Color destructiveForeground = Color(0xFFFFFFFF);
+  static const Color accentSecondary = Color(0xFFD8E983); // lime
+  static const Color onAccentSecondary = Color(0xFF3B3F1A);
 
-  static const Color border = Color(0xFFEDD9C8); // warm peach border
+  static const Color highlight = Color(0xFFFFFBB1); // pale yellow
+  static const Color onHighlight = Color(0xFF5C5320);
+
+  // ---- States ----
+  static const Color active = Color(0xFF6F4E37); // brown for active state
+  static const Color onActive = Color(0xFFFFFFFF);
+
+  static const Color surface = Color(0xFFFFFBF5);
+  static const Color onSurface = Color(0xFF3B2F2A);
+
+  static const Color success = Color(0xFF7DA86B);
+  static const Color onSuccess = Color(0xFFFFFFFF);
+
+  static const Color warning = Color(0xFFD8B96A);
+  static const Color onWarning = Color(0xFF3B2F2A);
+
+  static const Color error = Color(0xFFC0564B);
+  static const Color onError = Color(0xFFFFFFFF);
+
+  static const Color destructive = error;
+  static const Color destructiveForeground = onError;
+
+  static const Color border = Color(0xFFE3D5C0); // beige border
   static const Color input = Colors.transparent;
-  static const Color inputBackground = Color(0xFFFFF2E6); // light orange tint
-  static const Color switchBackground = Color(0xFFC8DFC9); // muted green
+  static const Color inputBackground = Color(0xFFF1E9DA); // light beige tint
+  static const Color switchBackground = Color(0xFFD7CDB8);
 
-  static const Color ring = Color(0xFFE8845A); // orange ring
+  static const Color ring = Color(0xFF6F4E37);
 
-  // Charts
-  static const Color chart1 = Color(0xFFE8845A); // orange
-  static const Color chart2 = Color(0xFF7DBF8E); // green
-  static const Color chart3 = Color(0xFFF5B87A); // light orange
-  static const Color chart4 = Color(0xFFA8D5B0); // light green
-  static const Color chart5 = Color(0xFFD4956A); // deep peach
+  // ---- Charts ----
+  static const Color chart1 = Color(0xFF6F4E37); // brown
+  static const Color chart2 = Color(0xFFA5C89E); // sage
+  static const Color chart3 = Color(0xFFD8E983); // lime
+  static const Color chart4 = Color(0xFFAEB877); // olive
+  static const Color chart5 = Color(0xFFFFFBB1); // pale yellow
 
-  // Sidebar
-  static const Color sidebar = Color(0xFFFFF4EA); // warm cream
-  static const Color sidebarForeground = Color(0xFF2D2A24);
-  static const Color sidebarPrimary = Color(0xFFE8845A);
+  // ---- Sidebar ----
+  static const Color sidebar = Color(0xFFF1E9DA);
+  static const Color sidebarForeground = Color(0xFF3B2F2A);
+  static const Color sidebarPrimary = Color(0xFF6F4E37);
   static const Color sidebarPrimaryForeground = Color(0xFFFFFFFF);
-  static const Color sidebarAccent = Color(0xFFD4EDD9); // mint
-  static const Color sidebarAccentForeground = Color(0xFF2D5C3A);
-  static const Color sidebarBorder = Color(0xFFEDD9C8);
-  static const Color sidebarRing = Color(0xFFE8845A);
-
-  static const Color cream = Color(0xFFFFF4EA); // soft cream background
-  static const Color success = Color(
-    0xFF4CAF50,
-  ); // green used for success states
-
-  static const Color primaryGreen = Color(0xFF1B8B4B); // provider primary green
-  static const Color declineRed = Color(0xFFEF5350); // decline action red
-  static const Color bgGrey = Color(0xFFF7F8FA); // light grey background
-  static const Color textMuted = Color(0xFF757575); // muted text color
-  static const Color cardBg = Color(0xFFFFFFFF); // card background
-  static const Color accentYellow = Color(
-    0xFFFFB300,
-  ); // accent yellow for highlights
-  static const Color lightYellow = Color(0xFFFFF8E1); // pale yellow background
-  static const Color yellowBorder = Color(
-    0xFFFFE082,
-  ); // yellow border for banners
-  static const Color newBadge = Color(
-    0xFF4CAF50,
-  ); // green badge color for new requests
-
-  static const Color softPink = Color(0xFFFFC1D1); // gentle pink accent
-  static const Color warningBg = Color(0xFFFFF3E0); // warm warning background
-  static const Color errorBg = Color(0xFFFFCDD2); // light error background
-  static const Color mediumRed = Color(0xFFE57373); // medium red accent
-  static const Color successBg = Color(
-    0xFFE8F5E9,
-  ); // light green success background
-  static const Color darkMaroon = Color(0xFF4E342E); // deep maroon tone
-  static const Color surface = Color(0xFFF8F9FA); // surface background
-  static const Color textDark = Color(0xFF1C1B1F); // dark text color
+  static const Color sidebarAccent = Color(0xFFA5C89E);
+  static const Color sidebarAccentForeground = Color(0xFF234B2E);
+  static const Color sidebarBorder = Color(0xFFE3D5C0);
+  static const Color sidebarRing = Color(0xFF6F4E37);
 }
 
 /// Border radius tokens
@@ -107,7 +101,7 @@ class AppFontWeights {
   static const FontWeight medium = FontWeight.w500;
 }
 
-/// Light Theme — Soft Pastel Orange & Green
+/// Light Theme — Brown & Beige with sage/lime/olive/yellow accents
 ThemeData get lightTheme => ThemeData(
   useMaterial3: true,
   brightness: Brightness.light,
@@ -115,16 +109,16 @@ ThemeData get lightTheme => ThemeData(
   colorScheme: const ColorScheme.light(
     background: AppColors.background,
     onBackground: AppColors.foreground,
-    surface: AppColors.card,
-    onSurface: AppColors.cardForeground,
+    surface: AppColors.surface,
+    onSurface: AppColors.onSurface,
     primary: AppColors.primary,
-    onPrimary: AppColors.primaryForeground,
+    onPrimary: AppColors.onPrimary,
     secondary: AppColors.secondary,
-    onSecondary: AppColors.secondaryForeground,
+    onSecondary: AppColors.onSecondary,
     tertiary: AppColors.accent,
-    onTertiary: AppColors.accentForeground,
-    error: AppColors.destructive,
-    onError: AppColors.destructiveForeground,
+    onTertiary: AppColors.onAccent,
+    error: AppColors.error,
+    onError: AppColors.onError,
     outline: AppColors.border,
   ),
   dividerColor: AppColors.border,
