@@ -30,8 +30,8 @@ class _CustomerSecurityScreenState extends State<CustomerSecurityScreen> {
       _showSnack('Passwords do not match', Colors.red);
       return;
     }
-    if (_newCtrl.text.length < 6) {
-      _showSnack('Password must be at least 6 characters', Colors.red);
+    if (_newCtrl.text.length < 8) {
+      _showSnack('Password must be at least 8 characters', Colors.red);
       return;
     }
     setState(() => _isSaving = true);

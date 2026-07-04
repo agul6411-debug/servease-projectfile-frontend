@@ -4,6 +4,7 @@ import 'package:frontfile_servease/features/admin/models/acceptance_model.dart';
 import 'package:frontfile_servease/features/admin/services/acceptance_service.dart';
 import 'package:frontfile_servease/features/admin/screens/admindrawer.dart';
 import 'package:frontfile_servease/features/admin/screens/admin_navbar.dart';
+import 'package:get/get.dart';
 
 class Acceptance extends StatefulWidget {
   const Acceptance({super.key});
@@ -43,6 +44,59 @@ class _AcceptanceState extends State<Acceptance> {
         isLoading = false;
       });
     }
+  }
+
+  void _confirmDelete(int id, String name) {
+    showDialog(
+      context: context,
+      builder: (BuildContext ctx) {
+        return AlertDialog(
+          title: const Text("Delete Account Permanently?"),
+          content: Text(
+            "Are you sure you want to permanently delete $name? This will completely remove their user profile, details, and bookings from the database. This action cannot be undone.",
+            style: const TextStyle(fontSize: 14, height: 1.4),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text("Cancel", style: TextStyle(color: Colors.grey)),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(ctx).pop();
+                setState(() => isLoading = true);
+                final success = await service.deleteProvider(id);
+                if (success) {
+                  Get.snackbar(
+                    'Success',
+                    'Provider account deleted permanently',
+                    backgroundColor: AppColors.primary,
+                    colorText: Colors.white,
+                    snackPosition: SnackPosition.BOTTOM,
+                    margin: const EdgeInsets.all(16),
+                  );
+                  fetchData();
+                } else {
+                  setState(() => isLoading = false);
+                  Get.snackbar(
+                    'Error',
+                    'Failed to delete provider account',
+                    backgroundColor: Colors.red,
+                    colorText: Colors.white,
+                    snackPosition: SnackPosition.BOTTOM,
+                    margin: const EdgeInsets.all(16),
+                  );
+                }
+              },
+              child: const Text(
+                "Delete Permanently",
+                style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -98,7 +152,7 @@ class _AcceptanceState extends State<Acceptance> {
           : providers.isEmpty
           ? const Center(
               child: Text(
-                "No pending providers found.",
+                "No pending or approved providers found.",
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
               ),
             )
@@ -119,7 +173,7 @@ class _AcceptanceState extends State<Acceptance> {
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.05),
+                          color: Colors.black.withOpacity(0.04),
                           blurRadius: 10,
                           offset: const Offset(0, 5),
                         ),
@@ -128,7 +182,7 @@ class _AcceptanceState extends State<Acceptance> {
                     child: Row(
                       children: [
                         CircleAvatar(
-                          radius: 30,
+                          radius: 28,
                           backgroundColor: Colors.orange.shade100,
                           backgroundImage: item.cnicImage.isNotEmpty
                               ? NetworkImage(item.cnicImage)
@@ -138,7 +192,7 @@ class _AcceptanceState extends State<Acceptance> {
                               : null,
                         ),
 
-                        const SizedBox(width: 15),
+                        const SizedBox(width: 12),
 
                         Expanded(
                           child: Column(
@@ -147,37 +201,54 @@ class _AcceptanceState extends State<Acceptance> {
                               Text(
                                 item.fullName,
                                 style: const TextStyle(
-                                  fontSize: 17,
+                                  fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              const SizedBox(height: 5),
+                              const SizedBox(height: 4),
                               Text(
                                 item.email,
-                                style: TextStyle(color: Colors.grey.shade600),
+                                style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
                               ),
                             ],
                           ),
                         ),
 
+                        const SizedBox(width: 8),
+
+                        // Status Badge
                         Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 14,
-                            vertical: 8,
+                            horizontal: 10,
+                            vertical: 6,
                           ),
                           decoration: BoxDecoration(
                             color: item.status == "approved"
                                 ? AppColors.success
                                 : Colors.red,
-                            borderRadius: BorderRadius.circular(14),
+                            borderRadius: BorderRadius.circular(10),
                           ),
                           child: Text(
                             item.status.toUpperCase(),
                             style: const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
+                              fontSize: 10,
                             ),
                           ),
+                        ),
+
+                        const SizedBox(width: 8),
+
+                        // Permanent Delete Button
+                        IconButton(
+                          icon: const Icon(
+                            Icons.delete_forever_rounded,
+                            color: Colors.red,
+                            size: 22,
+                          ),
+                          onPressed: () => _confirmDelete(item.id, item.fullName),
+                          tooltip: "Delete Provider Permanently",
                         ),
                       ],
                     ),

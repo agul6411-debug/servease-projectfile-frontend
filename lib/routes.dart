@@ -119,6 +119,4 @@ class AppRoutes {
     ),
   ];
 }
-// NOTE: Forgot Password aur OTP Screen routes yahan manually add karo:
-// 
-// Imports add karo routes.dart ke upar:
+

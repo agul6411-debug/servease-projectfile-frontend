@@ -4,7 +4,7 @@ import 'package:frontfile_servease/core/theme/app_theme.dart';
 import 'package:get/get.dart';
 import 'package:frontfile_servease/routes.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:http/http.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -26,6 +26,7 @@ class _LoginScreenState extends State<LoginScreen>
   bool _rememberMe = false;
   bool _isLoading = false;
   final box = GetStorage();
+
   @override
   void initState() {
     super.initState();
@@ -53,9 +54,6 @@ class _LoginScreenState extends State<LoginScreen>
     super.dispose();
   }
 
-  // ===============================
-  // LOGIN LOGIC
-  // ===============================
   void _handleSignIn() async {
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
@@ -67,6 +65,7 @@ class _LoginScreenState extends State<LoginScreen>
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,
+        margin: const EdgeInsets.all(16),
       );
       return;
     }
@@ -75,14 +74,9 @@ class _LoginScreenState extends State<LoginScreen>
 
     try {
       final api = ApiService();
-
-      // ONLY ONE CALL
       final result = await api.login(email, password, "customer");
-      // 👆 role can be anything now BUT backend already returns real role
 
       setState(() => _isLoading = false);
-
-      print("LOGIN RESPONSE: $result");
 
       if (result['success'] == true) {
         final role = result['role'];
@@ -91,8 +85,9 @@ class _LoginScreenState extends State<LoginScreen>
           'Success',
           'Login successful as $role',
           snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: Colors.green,
+          backgroundColor: AppColors.primary,
           colorText: Colors.white,
+          margin: const EdgeInsets.all(16),
         );
 
         final token = result['token'];
@@ -104,7 +99,6 @@ class _LoginScreenState extends State<LoginScreen>
         box.write('user_id', userId);
         box.write('user_role', userRole);
 
-        // SAFE NAVIGATION
         if (role == 'admin') {
           Get.offAllNamed(AppRoutes.adminDashboard);
         } else if (role == 'provider') {
@@ -112,7 +106,7 @@ class _LoginScreenState extends State<LoginScreen>
         } else if (role == 'customer') {
           Get.offAllNamed(AppRoutes.customerHomeScreen);
         } else {
-          Get.snackbar("Error", "Unknown role");
+          Get.snackbar("Error", "Unknown role", margin: const EdgeInsets.all(16));
         }
       } else {
         Get.snackbar(
@@ -121,18 +115,18 @@ class _LoginScreenState extends State<LoginScreen>
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.red,
           colorText: Colors.white,
+          margin: const EdgeInsets.all(16),
         );
       }
     } catch (e) {
       setState(() => _isLoading = false);
-      print("LOGIN ERROR: $e");
-
       Get.snackbar(
         'Error',
         'Server error',
         snackPosition: SnackPosition.BOTTOM,
         backgroundColor: Colors.red,
         colorText: Colors.white,
+        margin: const EdgeInsets.all(16),
       );
     }
   }
@@ -143,263 +137,292 @@ class _LoginScreenState extends State<LoginScreen>
     final isMobile = size.width < 600;
 
     return Scaffold(
-      backgroundColor: AppColors.cream,
+      backgroundColor: const Color(0xFFF9FBF8),
       appBar: AppBar(
-        title: const Text('Login'),
+        title: Text(
+          'Sign In',
+          style: GoogleFonts.outfit(
+            fontWeight: FontWeight.bold,
+            fontSize: 18,
+            color: AppColors.foreground,
+          ),
+        ),
         leading: Navigator.canPop(context)
             ? IconButton(
-                icon: const Icon(Icons.arrow_back),
+                icon: const Icon(Icons.arrow_back_ios_new_rounded, color: AppColors.foreground, size: 18),
                 onPressed: () => Navigator.of(context).pop(),
               )
             : null,
         backgroundColor: Colors.white,
         elevation: 0,
-        foregroundColor: Colors.black,
+        shape: const Border(
+          bottom: BorderSide(color: Color(0xFFEBF2EC), width: 1),
+        ),
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: FadeTransition(
-            opacity: _fadeAnim,
-            child: SlideTransition(
-              position: _slideAnim,
-              child: Column(
-                children: [
-                  // ── Top area with logo ──
-                  Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.only(
-                      top: isMobile ? 40 : 56,
-                      bottom: isMobile ? 28 : 40,
-                    ),
-                    decoration: const BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Color(0xFFEAF2E8), Color(0xFFF5F8F0)],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                      ),
-                    ),
-                    child: Column(
-                      children: [
-                        Container(
-                          width: isMobile ? 80 : 96,
-                          height: isMobile ? 80 : 96,
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              colors: [AppColors.success, AppColors.softPink],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                            borderRadius: BorderRadius.circular(
-                              isMobile ? 22 : 28,
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color(0xFF2ECC71).withOpacity(0.3),
-                                blurRadius: 20,
-                                offset: const Offset(0, 6),
-                              ),
-                            ],
-                          ),
-                          child: Icon(
-                            Icons.home_rounded,
-                            color: Colors.white,
-                            size: isMobile ? 44 : 52,
-                          ),
-                        ),
-
-                        SizedBox(height: isMobile ? 20 : 28),
-
-                        Text(
-                          'Welcome Back',
-                          style: TextStyle(
-                            color: const Color(0xFF1A1A1A),
-                            fontSize: isMobile ? 28 : 36,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: -0.5,
-                          ),
-                        ),
-
-                        const SizedBox(height: 6),
-
-                        Text(
-                          'Sign in to continue to ServEase',
-                          style: TextStyle(
-                            color: Colors.grey.shade600,
-                            fontSize: isMobile ? 14 : 15,
-                          ),
+        child: Center(
+          child: SingleChildScrollView(
+            child: FadeTransition(
+              opacity: _fadeAnim,
+              child: SlideTransition(
+                position: _slideAnim,
+                child: Center(
+                  child: Container(
+                    constraints: const BoxConstraints(maxWidth: 420),
+                    margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
+                    padding: const EdgeInsets.all(28),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(24),
+                      border: Border.all(color: const Color(0xFFEBF2EC), width: 1.5),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primary.withOpacity(0.04),
+                          blurRadius: 16,
+                          offset: const Offset(0, 8),
                         ),
                       ],
                     ),
-                  ),
-
-                  Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: isMobile ? 24 : 48,
-                      vertical: isMobile ? 28 : 36,
-                    ),
                     child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Email Field
-                        _FieldLabel(label: 'Email'),
-
-                        const SizedBox(height: 8),
-
-                        _InputField(
-                          controller: _emailController,
-                          hint: 'your.email@example.com',
-                          prefixIcon: Icons.mail_outline_rounded,
-                          suffixIcon: Icons.mark_email_read_outlined,
-                          suffixColor: Colors.grey.shade400,
-                          enabled: !_isLoading,
-                          keyboardType: TextInputType.emailAddress,
-                        ),
-
-                        SizedBox(height: isMobile ? 18 : 24),
-
-                        // Password Field
-                        _FieldLabel(label: 'Password'),
-
-                        const SizedBox(height: 8),
-
-                        _InputField(
-                          controller: _passwordController,
-                          hint: 'Enter your password',
-                          prefixIcon: Icons.lock_outline_rounded,
-                          obscureText: _obscurePassword,
-                          enabled: !_isLoading,
-                          suffixWidget: IconButton(
-                            onPressed: _isLoading
-                                ? null
-                                : () {
-                                    setState(() {
-                                      _obscurePassword = !_obscurePassword;
-                                    });
-                                  },
-                            icon: Icon(
-                              _obscurePassword
-                                  ? Icons.visibility_outlined
-                                  : Icons.visibility_off_outlined,
-                              color: Colors.grey.shade500,
-                              size: 20,
+                        // Hero Icon
+                        Center(
+                          child: Container(
+                            width: 64,
+                            height: 64,
+                            decoration: BoxDecoration(
+                              color: AppColors.primary.withOpacity(0.08),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: const Icon(
+                              Icons.lock_person_rounded,
+                              color: AppColors.primary,
+                              size: 32,
                             ),
                           ),
                         ),
+                        const SizedBox(height: 20),
+                        
+                        // Header text
+                        Center(
+                          child: Text(
+                            'Welcome Back',
+                            style: GoogleFonts.outfit(
+                              fontSize: 24,
+                              fontWeight: FontWeight.w900,
+                              color: AppColors.foreground,
+                              letterSpacing: -0.5,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Center(
+                          child: Text(
+                            'Sign in to access your ServEase account',
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.inter(
+                              fontSize: 12,
+                              color: AppColors.mutedForeground,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 28),
 
-                        SizedBox(height: isMobile ? 12 : 16),
+                        // Email Input
+                        Text(
+                          'Email Address',
+                          style: GoogleFonts.inter(
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.foreground,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          controller: _emailController,
+                          keyboardType: TextInputType.emailAddress,
+                          style: GoogleFonts.inter(fontSize: 14),
+                          decoration: InputDecoration(
+                            hintText: 'yourname@example.com',
+                            prefixIcon: const Icon(Icons.mail_outline_rounded, size: 20),
+                            filled: true,
+                            fillColor: const Color(0xFFF9FBF8),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(14),
+                              borderSide: BorderSide.none,
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(14),
+                              borderSide: const BorderSide(color: Color(0xFFEBF2EC), width: 1.2),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(14),
+                              borderSide: const BorderSide(color: AppColors.primary, width: 2),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                          ),
+                        ),
+                        const SizedBox(height: 18),
 
-                        // Remember Me + Forgot
+                        // Password Input
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Row(
-                              children: [
-                                SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: Checkbox(
-                                    value: _rememberMe,
-                                    onChanged: _isLoading
-                                        ? null
-                                        : (v) {
-                                            setState(() {
-                                              _rememberMe = v ?? false;
-                                            });
-                                          },
-                                    activeColor: const Color(0xFF2ECC71),
-                                  ),
-                                ),
-
-                                const SizedBox(width: 8),
-
-                                Text(
-                                  'Remember me',
-                                  style: TextStyle(
-                                    color: Colors.grey.shade700,
-                                    fontSize: isMobile ? 13 : 14,
-                                  ),
-                                ),
-                              ],
+                            Text(
+                              'Password',
+                              style: GoogleFonts.inter(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.foreground,
+                              ),
                             ),
-
                             GestureDetector(
-                              onTap: () => Get.toNamed('/forgot_password'),
+                              onTap: () => Get.toNamed(AppRoutes.forgotPassword),
                               child: Text(
                                 'Forgot?',
-                                style: TextStyle(
-                                  color: const Color(0xFFD44000),
-                                  fontSize: isMobile ? 13 : 14,
-                                  fontWeight: FontWeight.w600,
+                                style: GoogleFonts.inter(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.primary,
                                 ),
                               ),
                             ),
                           ],
                         ),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          controller: _passwordController,
+                          obscureText: _obscurePassword,
+                          style: GoogleFonts.inter(fontSize: 14),
+                          decoration: InputDecoration(
+                            hintText: 'Enter your password',
+                            prefixIcon: const Icon(Icons.lock_outline_rounded, size: 20),
+                            suffixIcon: IconButton(
+                              onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                              icon: Icon(
+                                _obscurePassword
+                                    ? Icons.visibility_outlined
+                                    : Icons.visibility_off_outlined,
+                                size: 18,
+                              ),
+                            ),
+                            filled: true,
+                            fillColor: const Color(0xFFF9FBF8),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(14),
+                              borderSide: BorderSide.none,
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(14),
+                              borderSide: const BorderSide(color: Color(0xFFEBF2EC), width: 1.2),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(14),
+                              borderSide: const BorderSide(color: AppColors.primary, width: 2),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                          ),
+                        ),
+                        const SizedBox(height: 14),
 
-                        SizedBox(height: isMobile ? 24 : 32),
+                        // Remember Me
+                        Row(
+                          children: [
+                            SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: Checkbox(
+                                value: _rememberMe,
+                                activeColor: AppColors.primary,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                side: BorderSide(color: Colors.grey.shade400, width: 1.5),
+                                onChanged: (val) => setState(() => _rememberMe = val ?? false),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Remember me',
+                              style: GoogleFonts.inter(
+                                fontSize: 13,
+                                color: AppColors.mutedForeground,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 24),
 
-                        // SIGN IN BUTTON
+                        // Login button
                         GestureDetector(
                           onTap: _isLoading ? null : _handleSignIn,
-                          child: AnimatedContainer(
-                            duration: const Duration(milliseconds: 200),
+                          child: Container(
                             width: double.infinity,
-                            padding: EdgeInsets.symmetric(
-                              vertical: isMobile ? 16 : 18,
-                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 14),
                             decoration: BoxDecoration(
-                              gradient: const LinearGradient(
-                                colors: [
-                                  Color(0xFF1A7A3C),
-                                  Color(0xFF2ECC71),
-                                  Color(0xFFF5A623),
-                                ],
-                              ),
-                              borderRadius: BorderRadius.circular(32),
+                              color: AppColors.primary,
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.primary.withOpacity(0.2),
+                                  blurRadius: 10,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
                             ),
                             child: _isLoading
                                 ? const Center(
                                     child: SizedBox(
-                                      height: 22,
-                                      width: 22,
+                                      height: 20,
+                                      width: 20,
                                       child: CircularProgressIndicator(
                                         color: Colors.white,
-                                        strokeWidth: 2.5,
+                                        strokeWidth: 2,
                                       ),
                                     ),
                                   )
-                                : Text(
-                                    'Sign In',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: isMobile ? 16 : 17,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                : Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'Sign In',
+                                        style: GoogleFonts.inter(
+                                          color: Colors.white,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 6),
+                                      const Icon(
+                                        Icons.login_rounded,
+                                        color: Colors.white,
+                                        size: 16,
+                                      ),
+                                    ],
                                   ),
                           ),
                         ),
+                        const SizedBox(height: 28),
 
-                        SizedBox(height: isMobile ? 24 : 32),
-
-                        // Create Account
+                        // Register navigation (BUG FIXED ✓)
                         Center(
                           child: GestureDetector(
-                            onTap: () => Get.offNamed('/register'),
+                            onTap: () => Get.offNamed(AppRoutes.registerScreen),
                             child: RichText(
                               text: TextSpan(
-                                style: TextStyle(
-                                  fontSize: isMobile ? 13 : 14,
-                                  color: Colors.grey.shade600,
+                                style: GoogleFonts.inter(
+                                  fontSize: 13,
+                                  color: AppColors.mutedForeground,
                                 ),
                                 children: [
                                   const TextSpan(text: 'New to ServEase? '),
                                   TextSpan(
                                     text: 'Create Account',
                                     style: TextStyle(
-                                      color: const Color(0xFF2ECC71),
+                                      color: AppColors.primary,
                                       fontWeight: FontWeight.bold,
-                                      fontSize: isMobile ? 13 : 14,
                                     ),
                                   ),
                                 ],
@@ -407,88 +430,13 @@ class _LoginScreenState extends State<LoginScreen>
                             ),
                           ),
                         ),
-
-                        SizedBox(height: isMobile ? 16 : 20),
                       ],
                     ),
                   ),
-                ],
+                ),
               ),
             ),
           ),
-        ),
-      ),
-    );
-  }
-}
-
-// ===============================
-// FIELD LABEL
-// ===============================
-
-class _FieldLabel extends StatelessWidget {
-  final String label;
-
-  const _FieldLabel({required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      label,
-      style: const TextStyle(
-        color: Color(0xFF333333),
-        fontSize: 14,
-        fontWeight: FontWeight.w600,
-      ),
-    );
-  }
-}
-
-// ===============================
-// INPUT FIELD
-// ===============================
-
-class _InputField extends StatelessWidget {
-  final TextEditingController controller;
-  final String hint;
-  final IconData prefixIcon;
-  final IconData? suffixIcon;
-  final Color? suffixColor;
-  final Widget? suffixWidget;
-  final bool obscureText;
-  final bool enabled;
-  final TextInputType keyboardType;
-
-  const _InputField({
-    required this.controller,
-    required this.hint,
-    required this.prefixIcon,
-    this.suffixIcon,
-    this.suffixColor,
-    this.suffixWidget,
-    this.obscureText = false,
-    this.enabled = true,
-    this.keyboardType = TextInputType.text,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-      ),
-      child: TextField(
-        controller: controller,
-        enabled: enabled,
-        obscureText: obscureText,
-        keyboardType: keyboardType,
-        decoration: InputDecoration(
-          hintText: hint,
-          prefixIcon: Icon(prefixIcon),
-          suffixIcon:
-              suffixWidget ?? (suffixIcon != null ? Icon(suffixIcon) : null),
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
         ),
       ),
     );

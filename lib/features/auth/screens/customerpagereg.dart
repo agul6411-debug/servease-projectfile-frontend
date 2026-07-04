@@ -60,7 +60,7 @@ class _CustomerPageregState extends State<CustomerPagereg> {
 
   String? _passwordValidator(String? v) {
     if (v == null || v.isEmpty) return 'Password is required';
-    if (v.length < 6) return 'Minimum 6 characters';
+    if (v.length < 8) return 'Minimum 8 characters';
     return null;
   }
 
@@ -198,6 +198,7 @@ class _CustomerPageregState extends State<CustomerPagereg> {
     bool obscure = false,
     Widget? suffix,
     String? Function(String?)? validator,
+    int? maxLength,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -207,6 +208,7 @@ class _CustomerPageregState extends State<CustomerPagereg> {
           controller: controller,
           keyboardType: keyboardType,
           obscureText: obscure,
+          maxLength: maxLength,
           style: const TextStyle(color: Color(0xFF2D2A24), fontSize: 13),
           decoration: _inputDecoration(
             hint: hint,
@@ -260,6 +262,29 @@ class _CustomerPageregState extends State<CustomerPagereg> {
       ),
       child: child,
     );
+  }
+
+  Widget _buildResponsiveRow(BuildContext context, Widget child1, Widget child2) {
+    final isMobile = MediaQuery.of(context).size.width < 600;
+    if (isMobile) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          child1,
+          const SizedBox(height: 14),
+          child2,
+        ],
+      );
+    } else {
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(child: child1),
+          const SizedBox(width: 12),
+          Expanded(child: child2),
+        ],
+      );
+    }
   }
 
   @override
@@ -391,61 +416,47 @@ class _CustomerPageregState extends State<CustomerPagereg> {
                           _card(
                             child: Column(
                               children: [
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Expanded(
-                                      child: _buildField(
-                                        label: 'Full Name',
-                                        controller: _fullNameController,
-                                        hint: 'Your full name',
-                                        icon: Icons.person_outline_rounded,
-                                        validator: (v) =>
-                                            _requiredValidator(v, 'Full name'),
-                                      ),
-                                    ),
-                                    const SizedBox(width: 12),
-                                    Expanded(
-                                      child: _buildField(
-                                        label: 'Email Address',
-                                        controller: _emailController,
-                                        hint: 'your@email.com',
-                                        icon: Icons.mail_outline_rounded,
-                                        keyboardType:
-                                            TextInputType.emailAddress,
-                                        validator: _emailValidator,
-                                      ),
-                                    ),
-                                  ],
+                                _buildResponsiveRow(
+                                  context,
+                                  _buildField(
+                                    label: 'Full Name',
+                                    controller: _fullNameController,
+                                    hint: 'Your full name',
+                                    icon: Icons.person_outline_rounded,
+                                    validator: (v) =>
+                                        _requiredValidator(v, 'Full name'),
+                                  ),
+                                  _buildField(
+                                    label: 'Email Address',
+                                    controller: _emailController,
+                                    hint: 'your@email.com',
+                                    icon: Icons.mail_outline_rounded,
+                                    keyboardType:
+                                        TextInputType.emailAddress,
+                                    validator: _emailValidator,
+                                  ),
                                 ),
                                 const SizedBox(height: 14),
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Expanded(
-                                      child: _buildField(
-                                        label: 'Phone Number',
-                                        controller: _phoneController,
-                                        hint: '03001234567',
-                                        icon: Icons.phone_outlined,
-                                        keyboardType: TextInputType.phone,
-                                        validator: (v) => _requiredValidator(
-                                          v,
-                                          'Phone number',
-                                        ),
-                                      ),
+                                _buildResponsiveRow(
+                                  context,
+                                  _buildField(
+                                    label: 'Phone Number',
+                                    controller: _phoneController,
+                                    hint: '03001234567',
+                                    icon: Icons.phone_outlined,
+                                    keyboardType: TextInputType.phone,
+                                    validator: (v) => _requiredValidator(
+                                      v,
+                                      'Phone number',
                                     ),
-                                    const SizedBox(width: 12),
-                                    Expanded(
-                                      child: _buildField(
-                                        label: 'CNIC Number',
-                                        controller: _cnicController,
-                                        hint: 'XXXXX-XXXXXXX-X',
-                                        icon: Icons.credit_card_outlined,
-                                        validator: _cnicValidator,
-                                      ),
-                                    ),
-                                  ],
+                                  ),
+                                  _buildField(
+                                    label: 'CNIC Number',
+                                    controller: _cnicController,
+                                    hint: 'XXXXX-XXXXXXX-X',
+                                    icon: Icons.credit_card_outlined,
+                                    validator: _cnicValidator,
+                                  ),
                                 ),
                                 const SizedBox(height: 14),
                                 _buildField(
@@ -453,6 +464,7 @@ class _CustomerPageregState extends State<CustomerPagereg> {
                                   controller: _addressController,
                                   hint: 'Enter your address',
                                   icon: Icons.location_on_outlined,
+                                  maxLength: 150,
                                   validator: (v) =>
                                       _requiredValidator(v, 'Address'),
                                 ),
@@ -469,56 +481,49 @@ class _CustomerPageregState extends State<CustomerPagereg> {
                           ),
                           const SizedBox(height: 12),
                           _card(
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  child: _buildField(
-                                    label: 'Password',
-                                    controller: _passwordController,
-                                    hint: 'Min. 6 characters',
-                                    icon: Icons.lock_outline_rounded,
-                                    obscure: !_showPassword,
-                                    suffix: IconButton(
-                                      icon: Icon(
-                                        _showPassword
-                                            ? Icons.visibility_outlined
-                                            : Icons.visibility_off_outlined,
-                                        color: const Color(0xFF9A8878),
-                                        size: 18,
-                                      ),
-                                      onPressed: () => setState(
-                                        () => _showPassword = !_showPassword,
-                                      ),
-                                    ),
-                                    validator: _passwordValidator,
+                            child: _buildResponsiveRow(
+                              context,
+                              _buildField(
+                                label: 'Password',
+                                controller: _passwordController,
+                                hint: 'Min. 8 characters',
+                                icon: Icons.lock_outline_rounded,
+                                obscure: !_showPassword,
+                                suffix: IconButton(
+                                  icon: Icon(
+                                    _showPassword
+                                        ? Icons.visibility_outlined
+                                        : Icons.visibility_off_outlined,
+                                    color: const Color(0xFF9A8878),
+                                    size: 18,
+                                  ),
+                                  onPressed: () => setState(
+                                    () => _showPassword = !_showPassword,
                                   ),
                                 ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: _buildField(
-                                    label: 'Confirm Password',
-                                    controller: _confirmPassController,
-                                    hint: 'Re-enter password',
-                                    icon: Icons.lock_outline_rounded,
-                                    obscure: !_showConfirmPassword,
-                                    suffix: IconButton(
-                                      icon: Icon(
-                                        _showConfirmPassword
-                                            ? Icons.visibility_outlined
-                                            : Icons.visibility_off_outlined,
-                                        color: const Color(0xFF9A8878),
-                                        size: 18,
-                                      ),
-                                      onPressed: () => setState(
-                                        () => _showConfirmPassword =
-                                            !_showConfirmPassword,
-                                      ),
-                                    ),
-                                    validator: _confirmPasswordValidator,
+                                validator: _passwordValidator,
+                              ),
+                              _buildField(
+                                label: 'Confirm Password',
+                                controller: _confirmPassController,
+                                hint: 'Re-enter password',
+                                icon: Icons.lock_outline_rounded,
+                                obscure: !_showConfirmPassword,
+                                suffix: IconButton(
+                                  icon: Icon(
+                                    _showConfirmPassword
+                                        ? Icons.visibility_outlined
+                                        : Icons.visibility_off_outlined,
+                                    color: const Color(0xFF9A8878),
+                                    size: 18,
+                                  ),
+                                  onPressed: () => setState(
+                                    () => _showConfirmPassword =
+                                        !_showConfirmPassword,
                                   ),
                                 ),
-                              ],
+                                validator: _confirmPasswordValidator,
+                              ),
                             ),
                           ),
 

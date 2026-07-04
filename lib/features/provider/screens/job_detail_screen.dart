@@ -89,8 +89,27 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
 
   void _messageCustomer() async {
     final phone = widget.job.customerPhone.replaceAll(RegExp(r'[^0-9]'), '');
-    final url = Uri.parse('https://wa.me/92$phone');
-    if (await canLaunchUrl(url)) await launchUrl(url);
+    String cleanPhone = phone;
+    if (cleanPhone.startsWith('0')) {
+      cleanPhone = cleanPhone.substring(1);
+    }
+    if (!cleanPhone.startsWith('92')) {
+      cleanPhone = '92$cleanPhone';
+    }
+    final url = Uri.parse('https://wa.me/$cleanPhone');
+    try {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } catch (e) {
+      debugPrint("Could not launch WhatsApp: $e");
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Could not open WhatsApp. Make sure it is installed.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   @override

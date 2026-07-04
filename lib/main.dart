@@ -3,10 +3,16 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:frontfile_servease/routes.dart';
 import 'package:frontfile_servease/core/theme/app_theme.dart';
+import 'package:frontfile_servease/core/services/notification_polling_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
+  
+  // Local Notifications initialize aur polling run karein
+  await NotificationPollingService.init();
+  NotificationPollingService.startPolling();
+  
   runApp(const MyApp());
 }
 

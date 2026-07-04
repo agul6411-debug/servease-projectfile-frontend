@@ -96,7 +96,7 @@ class _SplashScreenState extends State<SplashScreen>
 
     _mainCtrl.forward();
 
-    Future.delayed(const Duration(seconds: 2), () {
+    Future.delayed(const Duration(seconds: 3), () {
       if (!mounted) return;
       
       final token = GetStorage().read('auth_token') ?? '';
@@ -136,9 +136,9 @@ class _SplashScreenState extends State<SplashScreen>
         height: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFFF0FAF4), Color(0xFFFFF8EF), Color(0xFFFFF0F5)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFFEBF6EE), Color(0xFFFFFFFF)],
           ),
         ),
         child: SafeArea(

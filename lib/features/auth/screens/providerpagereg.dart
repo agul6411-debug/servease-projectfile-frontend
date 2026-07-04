@@ -104,7 +104,7 @@ class _ProviderPageregState extends State<ProviderPagereg> {
 
   String? _passVal(String? v) {
     if (v == null || v.isEmpty) return 'Password is required';
-    if (v.length < 6) return 'Minimum 6 characters';
+    if (v.length < 8) return 'Minimum 8 characters';
     return null;
   }
 
@@ -397,14 +397,28 @@ class _ProviderPageregState extends State<ProviderPagereg> {
     ),
   );
 
-  Widget _row(Widget left, Widget right) => Row(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Expanded(child: left),
-      const SizedBox(width: 16),
-      Expanded(child: right),
-    ],
-  );
+  Widget _row(Widget left, Widget right) {
+    final isMobile = MediaQuery.of(context).size.width < 600;
+    if (isMobile) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          left,
+          const SizedBox(height: 14),
+          right,
+        ],
+      );
+    } else {
+      return Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(child: left),
+          const SizedBox(width: 16),
+          Expanded(child: right),
+        ],
+      );
+    }
+  }
 
   Widget _eyeBtn(bool visible, VoidCallback onTap) => IconButton(
     icon: Icon(
@@ -699,6 +713,7 @@ class _ProviderPageregState extends State<ProviderPagereg> {
                               label: 'Address',
                               child: TextFormField(
                                 controller: _addressCtrl,
+                                maxLength: 150,
                                 decoration: _dec(
                                   hint: 'Enter your address',
                                   icon: Icons.location_on_outlined,
@@ -899,6 +914,7 @@ class _ProviderPageregState extends State<ProviderPagereg> {
                               child: TextFormField(
                                 controller: _bioCtrl,
                                 maxLines: 4,
+                                maxLength: 150,
                                 decoration: _dec(
                                   hint: 'Tell us about your skills...',
                                   icon: Icons.edit_note_outlined,

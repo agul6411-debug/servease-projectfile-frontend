@@ -7,7 +7,7 @@ class ApiService {
 
   Future login(String email, String password, String role) async {
     final res = await http.post(
-      Uri.parse("$baseUrl/login"), // ← /auth/login
+      Uri.parse("$baseUrl/api/auth/login"),
       headers: {"Content-Type": "application/json"},
       body: jsonEncode({"email": email, "password": password, "role": role}),
     );

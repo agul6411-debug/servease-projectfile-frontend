@@ -73,12 +73,20 @@ class CustomerApiService {
   // GET provider detail
   static Future<ProviderDetail?> fetchProviderDetail(int providerId) async {
     try {
+      final token = GetStorage().read('auth_token') ?? '';
+      final url = token.isNotEmpty
+          ? "$baseUrl/provider/$providerId"
+          : "${AppConfig.baseUrl}/api/auth/public-provider/$providerId";
+
       final res = await http.get(
-        Uri.parse("$baseUrl/provider/$providerId"),
+        Uri.parse(url),
         headers: _headers,
       );
-      if (res.statusCode == 200)
-        return ProviderDetail.fromJson(jsonDecode(res.body));
+      if (res.statusCode == 200) {
+        final decoded = jsonDecode(res.body);
+        final data = decoded['success'] == true ? decoded['data'] : decoded;
+        return ProviderDetail.fromJson(data);
+      }
       return null;
     } catch (e) {
       return null;

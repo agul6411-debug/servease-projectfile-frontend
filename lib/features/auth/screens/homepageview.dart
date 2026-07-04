@@ -1,7 +1,11 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:frontfile_servease/routes.dart';
 import 'package:get/get.dart';
+import 'package:frontfile_servease/features/customer/screens/provider_detail_screen.dart';
 import 'package:frontfile_servease/core/theme/app_theme.dart';
+import 'package:frontfile_servease/core/services/app_config.dart';
+import 'package:http/http.dart' as http;
 
 class ServEaseApp extends StatefulWidget {
   const ServEaseApp({super.key});
@@ -26,11 +30,15 @@ class _HomePageState extends State<HomePage> {
   final _scroll = ScrollController();
   final _howKey = GlobalKey();
   bool _elevated = false;
+  
+  List<dynamic> _realProviders = [];
+  bool _loadingProviders = true;
 
   @override
   void initState() {
     super.initState();
     _scroll.addListener(() => setState(() => _elevated = _scroll.offset > 10));
+    _fetchPublicProviders();
   }
 
   @override
@@ -39,29 +47,56 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
+  Future<void> _fetchPublicProviders() async {
+    try {
+      final response = await http.get(Uri.parse('${AppConfig.baseUrl}/api/auth/public-providers'));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        if (data['success'] == true) {
+          setState(() {
+            _realProviders = data['providers'] ?? [];
+            _loadingProviders = false;
+          });
+        } else {
+          setState(() => _loadingProviders = false);
+        }
+      } else {
+        setState(() => _loadingProviders = false);
+      }
+    } catch (e) {
+      debugPrint("Error fetching public providers: $e");
+      setState(() => _loadingProviders = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFAF8F4),
+      backgroundColor: const Color(0xFFF9FBF8),
       body: Stack(
         children: [
           SingleChildScrollView(
             controller: _scroll,
             child: Column(
               children: [
-                const SizedBox(height: 68),
+                const SizedBox(height: 70),
                 _Hero(
                   onHow: () {
                     final ctx = _howKey.currentContext;
-                    if (ctx != null)
+                    if (ctx != null) {
                       Scrollable.ensureVisible(
                         ctx,
                         duration: const Duration(milliseconds: 600),
                         curve: Curves.easeInOut,
                       );
+                    }
                   },
                 ),
-                const _ServicesRow(),
+                const _ServicesGrid(),
+                _FeaturedProviders(
+                  providers: _realProviders,
+                  isLoading: _loadingProviders,
+                ),
                 _HowSection(key: _howKey),
                 const _StatsStrip(),
                 const _Footer(),
@@ -80,7 +115,7 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-// ── NAV ──────────────────────────────────────────────────────────
+// ── NAV BAR ──────────────────────────────────────────────────────
 class _Nav extends StatelessWidget {
   final bool elevated;
   const _Nav({required this.elevated});
@@ -89,344 +124,670 @@ class _Nav extends StatelessWidget {
   Widget build(BuildContext context) {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 250),
-      height: 68,
+      height: 70,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Colors.white.withOpacity(0.95),
         boxShadow: elevated
             ? [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.07),
-                  blurRadius: 16,
+                  color: Colors.black.withOpacity(0.04),
+                  blurRadius: 12,
                   offset: const Offset(0, 3),
                 ),
               ]
             : [],
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Row(
-          children: [
-            // Logo with dot
-            Row(
-              children: [
-                Container(
-                  width: 8,
-                  height: 8,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: AppColors.primaryGreen,
-                  ),
-                ),
-                const SizedBox(width: 6),
-                RichText(
-                  text: const TextSpan(
-                    children: [
-                      TextSpan(
-                        text: 'Serv',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.textDark,
-                        ),
-                      ),
-                      TextSpan(
-                        text: 'Ease',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w800,
-                          color: AppColors.primaryGreen,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const Spacer(),
-            // Login — text only
-            GestureDetector(
-              onTap: () => Get.toNamed(AppRoutes.loginScreen),
-              child: const Text(
-                'Login',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.textMuted,
-                ),
-              ),
-            ),
-            const SizedBox(width: 16),
-            // Register — pill button
-            GestureDetector(
-              onTap: () => Get.toNamed(AppRoutes.registerScreen),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 18,
-                  vertical: 9,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.primaryGreen,
-                  borderRadius: BorderRadius.circular(100),
-                ),
-                child: const Text(
-                  'Join Free',
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-          ],
+        border: Border(
+          bottom: BorderSide(
+            color: elevated ? Colors.transparent : const Color(0xFFEBF2EC),
+            width: 1,
+          ),
         ),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Row(
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 10,
+                height: 10,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColors.primary,
+                ),
+              ),
+              const SizedBox(width: 8),
+              RichText(
+                text: const TextSpan(
+                  children: [
+                    TextSpan(
+                      text: 'Serv',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w900,
+                        color: AppColors.foreground,
+                      ),
+                    ),
+                    TextSpan(
+                      text: 'Ease',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w900,
+                        color: AppColors.primary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const Spacer(),
+          GestureDetector(
+            onTap: () => Get.toNamed(AppRoutes.loginScreen),
+            child: const Text(
+              'Login',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: AppColors.mutedForeground,
+              ),
+            ),
+          ),
+          const SizedBox(width: 16),
+          GestureDetector(
+            onTap: () => Get.toNamed(AppRoutes.registerScreen),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: AppColors.primary,
+                borderRadius: BorderRadius.circular(100),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primary.withOpacity(0.2),
+                    blurRadius: 8,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: const Text(
+                'Join Free',
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
-// ── HERO ─────────────────────────────────────────────────────────
+// ── HERO SECTION ─────────────────────────────────────────────────
 class _Hero extends StatelessWidget {
   final VoidCallback onHow;
   const _Hero({required this.onHow});
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        // Top green block
-        Container(
-          height: 340,
-          decoration: const BoxDecoration(color: AppColors.primaryGreen),
+    return Container(
+      width: double.infinity,
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color(0xFF0F5A34), // Rich emerald dark green
+            Color(0xFF1B8B4B), // ServEase brand green
+          ],
         ),
-        // Diagonal clip bottom
-        ClipPath(
-          clipper: _DiagonalClipper(),
-          child: Container(height: 380, color: AppColors.primaryGreen),
+        borderRadius: BorderRadius.only(
+          bottomLeft: Radius.circular(32),
+          bottomRight: Radius.circular(32),
         ),
-
-        // Content
-        Padding(
-          padding: const EdgeInsets.fromLTRB(20, 36, 20, 0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Pill badge
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 5,
+      ),
+      padding: const EdgeInsets.fromLTRB(20, 24, 20, 32),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.12),
+              borderRadius: BorderRadius.circular(100),
+            ),
+            child: const Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  '🇵🇰 ',
+                  style: TextStyle(fontSize: 12),
                 ),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(100),
-                ),
-                child: const Text(
-                  '🇵🇰  Pakistan\'s Home Services',
+                Text(
+                  'Pakistan\'s Home Services for Women',
                   style: TextStyle(
                     fontSize: 11,
                     color: Colors.white,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 0.2,
                   ),
                 ),
-              ),
-              const SizedBox(height: 20),
-
-              // Big headline
-              const Text(
-                'Your Home.\nOur Experts.',
-                style: TextStyle(
-                  fontSize: 38,
-                  fontWeight: FontWeight.w900,
-                  color: Colors.white,
-                  height: 1.1,
-                  letterSpacing: -1,
+              ],
+            ),
+          ),
+          const SizedBox(height: 18),
+          const Text(
+            'Your Home.\nOur Experts.',
+            style: TextStyle(
+              fontSize: 36,
+              fontWeight: FontWeight.w900,
+              color: Colors.white,
+              height: 1.1,
+              letterSpacing: -0.5,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            'Book verified female professionals for tailoring, beauty, mehndi, cleaning & tutoring services — right to your doorstep.',
+            style: TextStyle(
+              fontSize: 13,
+              height: 1.6,
+              color: Colors.white.withOpacity(0.85),
+            ),
+          ),
+          const SizedBox(height: 24),
+          
+          // SEARCH BAR
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.12),
+                  blurRadius: 16,
+                  offset: const Offset(0, 8),
                 ),
-              ),
-              const SizedBox(height: 14),
-              Text(
-                'Book verified, trusted professionals for cleaning, tailoring, beauty, tutoring & more — right from your phone.',
-                style: TextStyle(
-                  fontSize: 13,
-                  height: 1.7,
-                  color: Colors.white.withOpacity(0.8),
+              ],
+            ),
+            child: Row(
+              children: [
+                const Icon(
+                  Icons.search_rounded,
+                  color: AppColors.primary,
+                  size: 22,
                 ),
-              ),
-              const SizedBox(height: 28),
-
-              // Two action buttons — different styles
+                const SizedBox(width: 10),
+                Expanded(
+                  child: TextField(
+                    readOnly: true,
+                    onTap: () {
+                      Get.toNamed(AppRoutes.loginScreen);
+                      Get.snackbar(
+                        'Authentication Required',
+                        'Please login or register to search and book services.',
+                        snackPosition: SnackPosition.BOTTOM,
+                        backgroundColor: AppColors.foreground.withOpacity(0.9),
+                        colorText: Colors.white,
+                        margin: const EdgeInsets.all(16),
+                        borderRadius: 12,
+                      );
+                    },
+                    decoration: const InputDecoration(
+                      hintText: 'Search tailoring, cleaning, mehndi...',
+                      hintStyle: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w400,
+                      ),
+                      border: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      contentPadding: EdgeInsets.symmetric(vertical: 12),
+                      filled: false,
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: AppColors.accent.withOpacity(0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.tune_rounded,
+                    color: AppColors.accent,
+                    size: 18,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 24),
+          
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
               GestureDetector(
                 onTap: onHow,
-                child: const Text(
-                  'See how it works',
-                  style: TextStyle(
-                    fontSize: 13,
-                    color: Colors.white,
-                    decoration: TextDecoration.underline,
-                    decorationColor: Colors.white,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 48),
-
-              // Floating card — pulls over diagonal
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(18),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 24,
-                      offset: const Offset(0, 8),
+                child: const Row(
+                  children: [
+                    Text(
+                      'See how it works',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w600,
+                        decoration: TextDecoration.underline,
+                        decorationColor: Colors.white,
+                      ),
+                    ),
+                    SizedBox(width: 4),
+                    Icon(
+                      Icons.arrow_downward_rounded,
+                      color: Colors.white,
+                      size: 14,
                     ),
                   ],
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _MiniStat(value: '50+', label: 'Providers'),
-                    _Divider(),
-                    _MiniStat(value: '10+', label: 'Services'),
-                    _Divider(),
-                    _MiniStat(value: '100%', label: 'Verified'),
-                  ],
-                ),
               ),
-              const SizedBox(height: 40),
+              const Row(
+                children: [
+                  Icon(
+                    Icons.verified_user_rounded,
+                    color: AppColors.accent,
+                    size: 14,
+                  ),
+                  SizedBox(width: 4),
+                  Text(
+                    '100% CNIC Verified',
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
 
-class _DiagonalClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    final path = Path();
-    path.lineTo(0, size.height - 60);
-    path.lineTo(size.width, size.height);
-    path.lineTo(size.width, 0);
-    path.close();
-    return path;
-  }
-
-  @override
-  bool shouldReclip(_) => false;
-}
-
-class _MiniStat extends StatelessWidget {
-  final String value;
-  final String label;
-  const _MiniStat({required this.value, required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.w900,
-            color: AppColors.primaryGreen,
-          ),
-        ),
-        const SizedBox(height: 2),
-        Text(
-          label,
-          style: const TextStyle(fontSize: 11, color: AppColors.textMuted),
-        ),
-      ],
-    );
-  }
-}
-
-class _Divider extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(width: 1, height: 36, color: AppColors.border);
-  }
-}
-
-// ── SERVICES HORIZONTAL SCROLL ───────────────────────────────────
-class _ServicesRow extends StatelessWidget {
-  const _ServicesRow();
+// ── SERVICES GRID ────────────────────────────────────────────────
+class _ServicesGrid extends StatelessWidget {
+  const _ServicesGrid();
 
   static const services = [
-    {'e': '🧵', 'n': 'Tailoring', 'c': 0xFFFCE4EC},
-    {'e': '🪡', 'n': 'Embroidery', 'c': 0xFFE8EAF6},
-    {'e': '🧹', 'n': 'Cleaning', 'c': 0xFFE8F5E9},
-    {'e': '📚', 'n': 'Tutoring', 'c': 0xFFE3F2FD},
-    {'e': '💄', 'n': 'Beauty', 'c': 0xFFFCE4EC},
-    {'e': '🌿', 'n': 'Mehndi', 'c': 0xFFF1F8E9},
-    {'e': '👶', 'n': 'Babysitting', 'c': 0xFFFFF8E1},
-    {'e': '📸', 'n': 'Photography', 'c': 0xFFE0F7FA},
+    {'e': '🧵', 'n': 'Tailoring', 'c': 0xFFFFF2F4, 'b': 0xFFFFCCD5},
+    {'e': '🧹', 'n': 'Cleaning', 'c': 0xFFEBF6EE, 'b': 0xFFC6EAD0},
+    {'e': '💄', 'n': 'Beauty & Parlor', 'c': 0xFFFFF1FD, 'b': 0xFFFCD3FA},
+    {'e': '🌿', 'n': 'Mehndi Artist', 'c': 0xFFF3F9EA, 'b': 0xFFDCEDB9},
+    {'e': '📚', 'n': 'Home Tutor', 'c': 0xFFEDF4FE, 'b': 0xFFC7DEFC},
+    {'e': '👶', 'n': 'Babysitting', 'c': 0xFFFFF9E6, 'b': 0xFFFEE8A2},
   ];
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 32, 0, 16),
+      padding: const EdgeInsets.fromLTRB(20, 32, 20, 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Text(
-              'Browse Services',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w800,
-                color: AppColors.textDark,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Our Core Services',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w900,
+                      color: AppColors.foreground,
+                      letterSpacing: -0.2,
+                    ),
+                  ),
+                  SizedBox(height: 2),
+                  Text(
+                    'Select a category to find specialized partners',
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: AppColors.mutedForeground,
+                    ),
+                  ),
+                ],
               ),
-            ),
+              TextButton(
+                onPressed: () => Get.toNamed(AppRoutes.loginScreen),
+                child: const Text(
+                  'View All',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primary,
+                  ),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 14),
-          SizedBox(
-            height: 100,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              itemCount: services.length,
-              itemBuilder: (_, i) {
-                final s = services[i];
-                return Container(
-                  width: 82,
-                  margin: const EdgeInsets.only(right: 10),
-                  padding: const EdgeInsets.all(12),
+          const SizedBox(height: 16),
+          GridView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: services.length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+              childAspectRatio: 0.95,
+            ),
+            itemBuilder: (_, i) {
+              final s = services[i];
+              return GestureDetector(
+                onTap: () {
+                  Get.toNamed(AppRoutes.loginScreen);
+                  Get.snackbar(
+                    'Authentication Required',
+                    'Please login or register to book ${s['n']}.',
+                    snackPosition: SnackPosition.BOTTOM,
+                    backgroundColor: AppColors.foreground.withOpacity(0.9),
+                    colorText: Colors.white,
+                    margin: const EdgeInsets.all(16),
+                    borderRadius: 12,
+                  );
+                },
+                child: Container(
                   decoration: BoxDecoration(
                     color: Color(s['c'] as int),
-                    borderRadius: BorderRadius.circular(16),
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(
+                      color: Color(s['b'] as int),
+                      width: 1.2,
+                    ),
                   ),
+                  padding: const EdgeInsets.all(10),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text(
-                        s['e'] as String,
-                        style: const TextStyle(fontSize: 26),
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Text(
+                          s['e'] as String,
+                          style: const TextStyle(fontSize: 22),
+                        ),
                       ),
-                      const SizedBox(height: 6),
+                      const SizedBox(height: 8),
                       Text(
                         s['n'] as String,
                         textAlign: TextAlign.center,
                         style: const TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textDark,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.foreground,
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
-                );
-              },
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ── FEATURED PROVIDERS (DYNAMIC OR BEAUTIFUL FALLBACK) ──────────
+class _FeaturedProviders extends StatelessWidget {
+  final List<dynamic> providers;
+  final bool isLoading;
+
+  const _FeaturedProviders({
+    required this.providers,
+    required this.isLoading,
+  });
+
+  static const fallbackProviders = [
+    {
+      'name': 'Ayesha Khan',
+      'service': 'Master Tailor',
+      'rating': 4.9,
+      'jobs_done': 42,
+      'bg': 0xFFFFF2F4,
+      'char': 'A',
+      'color': 0xFFE91E63
+    },
+    {
+      'name': 'Sobia Bibi',
+      'service': 'Home Cleaner',
+      'rating': 4.8,
+      'jobs_done': 29,
+      'bg': 0xFFEBF6EE,
+      'char': 'S',
+      'color': 0xFF2E7D32
+    },
+    {
+      'name': 'Kiran Shahzadi',
+      'service': 'Mehndi Artist',
+      'rating': 5.0,
+      'jobs_done': 18,
+      'bg': 0xFFFFF9E6,
+      'char': 'K',
+      'color': 0xFFF59E0B
+    },
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    // If loading, show circular progress
+    if (isLoading) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 32),
+        child: Center(
+          child: CircularProgressIndicator(color: AppColors.primary),
+        ),
+      );
+    }
+
+    final hasRealData = providers.isNotEmpty;
+    final displayList = hasRealData ? providers : fallbackProviders;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            hasRealData ? 'Meet Our Top-Rated Providers' : 'Sample Verified Partners',
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w900,
+              color: AppColors.foreground,
+              letterSpacing: -0.2,
             ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            hasRealData
+                ? 'Directly active and verified professionals ready to serve you'
+                : 'Verified professionals who offer their services on the platform',
+            style: const TextStyle(
+              fontSize: 11,
+              color: AppColors.mutedForeground,
+            ),
+          ),
+          const SizedBox(height: 16),
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: displayList.length,
+            itemBuilder: (_, i) {
+              final p = displayList[i];
+              final name = p['name'] ?? 'Provider';
+              final service = p['service'] ?? 'Home Specialist';
+              final rating = double.tryParse(p['rating'].toString()) ?? 4.8;
+              final jobs = p['jobs_done'] ?? 10;
+              
+              // Visual styling fallback
+              final char = name.isNotEmpty ? name[0].toUpperCase() : 'P';
+              final bg = i == 0 ? 0xFFFFF2F4 : (i == 1 ? 0xFFEBF6EE : 0xFFFFF9E6);
+              final color = i == 0 ? 0xFFE91E63 : (i == 1 ? 0xFF2E7D32 : 0xFFF59E0B);
+
+              return GestureDetector(
+                onTap: () {
+                  final int providerId = p['id'] ?? 1;
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ProviderDetailScreen(
+                        providerId: providerId,
+                      ),
+                    ),
+                  );
+                },
+                child: Container(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: const Color(0xFFEBF2EC), width: 1.2),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.02),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  padding: const EdgeInsets.all(12),
+                  child: Row(
+                    children: [
+                      // Profile Circle
+                      Container(
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                          color: Color(bg),
+                          shape: BoxShape.circle,
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          char,
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Color(color),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 14),
+                      
+                      // Info
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  name,
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.foreground,
+                                  ),
+                                ),
+                                const SizedBox(width: 6),
+                                const Icon(
+                                  Icons.verified_rounded,
+                                  color: AppColors.primary,
+                                  size: 15,
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              service,
+                              style: const TextStyle(
+                                  fontSize: 11,
+                                  color: AppColors.mutedForeground,
+                                  fontWeight: FontWeight.w500
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.star_rounded,
+                                  color: Colors.amber[700],
+                                  size: 14,
+                                ),
+                                const SizedBox(width: 2),
+                                Text(
+                                  '$rating Rating',
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.foreground,
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                Text(
+                                  '•   $jobs Jobs Done',
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                    color: AppColors.mutedForeground,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      
+                      // Action Button
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: AppColors.primary,
+                          borderRadius: BorderRadius.circular(10),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.primary.withOpacity(0.15),
+                              blurRadius: 4,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                        ),
+                        child: const Text(
+                          'Book Now',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
           ),
         ],
       ),
@@ -442,26 +803,26 @@ class _HowSection extends StatelessWidget {
     {
       'n': '1',
       'title': 'Create Account',
-      'desc': 'Sign up as a customer or provider in under 2 minutes.',
+      'desc': 'Sign up as a customer or partner in under 2 minutes.',
       'icon': Icons.person_add_rounded,
     },
     {
       'n': '2',
-      'title': 'Find a Pro',
-      'desc': 'Browse verified providers filtered by service and location.',
+      'title': 'Choose a Service',
+      'desc': 'Browse verified providers filtered by ratings and rates.',
       'icon': Icons.search_rounded,
     },
     {
       'n': '3',
       'title': 'Book Instantly',
-      'desc': 'Pick a time slot and confirm your booking with one tap.',
+      'desc': 'Pick a date and confirm your booking securely.',
       'icon': Icons.calendar_today_rounded,
     },
     {
       'n': '4',
-      'title': 'Done & Review',
-      'desc': 'Service delivered. Rate your experience and help others.',
-      'icon': Icons.star_rounded,
+      'title': 'Job Done & Pay',
+      'desc': 'Get service, pay cash/transfer, and leave reviews.',
+      'icon': Icons.task_alt_rounded,
     },
   ];
 
@@ -469,7 +830,7 @@ class _HowSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 48),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 36),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -479,7 +840,7 @@ class _HowSection extends StatelessWidget {
                 width: 4,
                 height: 20,
                 decoration: BoxDecoration(
-                  color: AppColors.accentYellow,
+                  color: AppColors.accent,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -488,8 +849,8 @@ class _HowSection extends StatelessWidget {
                 'How It Works',
                 style: TextStyle(
                   fontSize: 18,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.textDark,
+                  fontWeight: FontWeight.w900,
+                  color: AppColors.foreground,
                 ),
               ),
             ],
@@ -501,75 +862,51 @@ class _HowSection extends StatelessWidget {
             return Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Left: number + line
                 Column(
                   children: [
                     Container(
-                      width: 44,
-                      height: 44,
+                      width: 40,
+                      height: 40,
                       decoration: BoxDecoration(
-                        color: i == 0
-                            ? AppColors.primaryGreen
-                            : const Color(0xFFF0F0F0),
+                        color: i == 0 ? AppColors.primary : const Color(0xFFF3F5F3),
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
                         s['icon'] as IconData,
-                        size: 20,
-                        color: i == 0 ? Colors.white : AppColors.textMuted,
+                        size: 18,
+                        color: i == 0 ? Colors.white : AppColors.mutedForeground,
                       ),
                     ),
                     if (!isLast)
                       Container(
                         width: 2,
-                        height: 52,
-                        color: const Color(0xFFEEEEEE),
+                        height: 48,
+                        color: const Color(0xFFEBF2EC),
                       ),
                   ],
                 ),
                 const SizedBox(width: 16),
                 Expanded(
                   child: Padding(
-                    padding: EdgeInsets.only(top: 10, bottom: isLast ? 0 : 36),
+                    padding: EdgeInsets.only(top: 8, bottom: isLast ? 0 : 28),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            Text(
-                              '0${s['n']}',
-                              style: const TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w700,
-                                color: AppColors.textMuted,
-                                letterSpacing: 0.5,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Container(
-                                height: 1,
-                                color: const Color(0xFFF0F0F0),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 4),
                         Text(
                           s['title'] as String,
                           style: const TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700,
-                            color: AppColors.textDark,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.foreground,
                           ),
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 3),
                         Text(
                           s['desc'] as String,
                           style: const TextStyle(
-                            fontSize: 13,
-                            color: AppColors.textMuted,
-                            height: 1.6,
+                            fontSize: 12,
+                            color: AppColors.mutedForeground,
+                            height: 1.5,
                           ),
                         ),
                       ],
@@ -585,22 +922,22 @@ class _HowSection extends StatelessWidget {
   }
 }
 
-// ── STATS STRIP ───────────────────────────────────────────────────
+// ── STATS STRIP ──────────────────────────────────────────────────
 class _StatsStrip extends StatelessWidget {
   const _StatsStrip();
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: AppColors.primaryGreen,
-      padding: const EdgeInsets.symmetric(vertical: 28, horizontal: 20),
+      color: AppColors.primary,
+      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: const [
-          _StatItem(value: '50+', label: 'Providers'),
-          _StatItem(value: '8', label: 'Categories'),
-          _StatItem(value: '100%', label: 'CNIC Verified'),
-          _StatItem(value: '24/7', label: 'Support'),
+          _StatItem(value: '50+', label: 'Verified Partners'),
+          _StatItem(value: '6', label: 'Core Categories'),
+          _StatItem(value: '100%', label: 'CNIC Checked'),
+          _StatItem(value: '24/7', label: 'Safety Support'),
         ],
       ),
     );
@@ -619,7 +956,7 @@ class _StatItem extends StatelessWidget {
         Text(
           value,
           style: const TextStyle(
-            fontSize: 22,
+            fontSize: 20,
             fontWeight: FontWeight.w900,
             color: Colors.white,
           ),
@@ -628,9 +965,9 @@ class _StatItem extends StatelessWidget {
         Text(
           label,
           style: TextStyle(
-            fontSize: 10,
-            color: Colors.white.withOpacity(0.7),
-            letterSpacing: 0.3,
+            fontSize: 9,
+            color: Colors.white.withOpacity(0.75),
+            letterSpacing: 0.2,
           ),
         ),
       ],
@@ -645,8 +982,8 @@ class _Footer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: AppColors.textDark,
-      padding: const EdgeInsets.fromLTRB(20, 28, 20, 36),
+      color: AppColors.foreground,
+      padding: const EdgeInsets.fromLTRB(20, 24, 20, 32),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -657,7 +994,7 @@ class _Footer extends StatelessWidget {
                   text: 'Serv',
                   style: TextStyle(
                     fontSize: 18,
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w900,
                     color: Colors.white,
                   ),
                 ),
@@ -665,52 +1002,41 @@ class _Footer extends StatelessWidget {
                   text: 'Ease',
                   style: TextStyle(
                     fontSize: 18,
-                    fontWeight: FontWeight.w800,
-                    color: AppColors.accentYellow,
+                    fontWeight: FontWeight.w900,
+                    color: AppColors.accent,
                   ),
                 ),
               ],
             ),
           ),
-          const SizedBox(height: 6),
+          const SizedBox(height: 4),
           Text(
-            'Pakistan\'s trusted home services platform',
+            'Connecting homes with skilled, verified female service partners.',
             style: TextStyle(
-              fontSize: 12,
-              color: Colors.white.withOpacity(0.4),
+              fontSize: 11,
+              color: Colors.white.withOpacity(0.5),
             ),
           ),
-          const SizedBox(height: 20),
-          Container(height: 1, color: Colors.white.withOpacity(0.06)),
           const SizedBox(height: 16),
+          Container(height: 1, color: Colors.white.withOpacity(0.08)),
+          const SizedBox(height: 14),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                '© 2026 ServEase',
+                '© 2026 ServEase Pakistan',
                 style: TextStyle(
-                  fontSize: 11,
-                  color: Colors.white.withOpacity(0.3),
+                  fontSize: 10,
+                  color: Colors.white.withOpacity(0.4),
                 ),
               ),
-              Row(
-                children: [
-                  Text(
-                    'Team & Careers',
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: Colors.white.withOpacity(0.3),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Text(
-                    'Ayesha Liaquat, Ayesha farooq, sahrish Saleem',
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: Colors.white.withOpacity(0.3),
-                    ),
-                  ),
-                ],
+              Text(
+                'Women Empowerment Initiative',
+                style: TextStyle(
+                  fontSize: 10,
+                  color: Colors.white.withOpacity(0.4),
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ],
           ),

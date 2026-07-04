@@ -54,8 +54,8 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
       return;
     }
 
-    if (password.length < 6) {
-      Get.snackbar('Error', 'Password must be at least 6 characters',
+    if (password.length < 8) {
+      Get.snackbar('Error', 'Password must be at least 8 characters',
           backgroundColor: AppColors.destructive,
           colorText: Colors.white,
           snackPosition: SnackPosition.BOTTOM);

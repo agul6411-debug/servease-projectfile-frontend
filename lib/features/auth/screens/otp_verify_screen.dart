@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:frontfile_servease/features/auth/services/auth_service.dart';
 import 'package:frontfile_servease/core/theme/app_theme.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class OtpVerifyScreen extends StatefulWidget {
   final String email;
@@ -112,8 +113,14 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
           icon: const Icon(Icons.arrow_back_ios, color: AppColors.foreground),
           onPressed: () => Get.back(),
         ),
-        title: const Text('Verify Email',
-            style: TextStyle(color: AppColors.foreground, fontWeight: FontWeight.w600)),
+        title: Text(
+          'Verify Email',
+          style: GoogleFonts.outfit(
+            color: AppColors.foreground,
+            fontWeight: FontWeight.w700,
+            fontSize: 18,
+          ),
+        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
@@ -134,18 +141,31 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
               ),
             ),
             const SizedBox(height: 32),
-            const Text('Email Verification',
-                style: TextStyle(
-                    fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.foreground)),
+            Text(
+              'Email Verification',
+              style: GoogleFonts.outfit(
+                fontSize: 26,
+                fontWeight: FontWeight.bold,
+                color: AppColors.foreground,
+                letterSpacing: -0.5,
+              ),
+            ),
             const SizedBox(height: 8),
             RichText(
               text: TextSpan(
-                style: const TextStyle(color: AppColors.mutedForeground, fontSize: 14, height: 1.5),
+                style: GoogleFonts.inter(
+                  color: AppColors.mutedForeground,
+                  fontSize: 14,
+                  height: 1.5,
+                ),
                 children: [
                   const TextSpan(text: 'We sent a 6-digit OTP to\n'),
                   TextSpan(
                     text: widget.email,
-                    style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w600),
+                    style: GoogleFonts.inter(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
@@ -164,7 +184,7 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
                     keyboardType: TextInputType.number,
                     textAlign: TextAlign.center,
                     maxLength: 1,
-                    style: const TextStyle(
+                    style: GoogleFonts.outfit(
                         fontSize: 22, fontWeight: FontWeight.bold, color: AppColors.foreground),
                     decoration: InputDecoration(
                       counterText: '',
@@ -207,8 +227,13 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
                         height: 20,
                         width: 20,
                         child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                    : const Text('Verify & Continue',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                    : Text(
+                        'Verify & Continue',
+                        style: GoogleFonts.inter(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
               ),
             ),
             const SizedBox(height: 24),
@@ -216,7 +241,7 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
               child: _resendSeconds > 0
                   ? Text(
                       'Resend OTP in $_resendSeconds seconds',
-                      style: const TextStyle(color: AppColors.mutedForeground),
+                      style: GoogleFonts.inter(color: AppColors.mutedForeground, fontSize: 13),
                     )
                   : TextButton(
                       onPressed: _isResending ? null : _resend,
@@ -226,9 +251,13 @@ class _OtpVerifyScreenState extends State<OtpVerifyScreen> {
                               width: 16,
                               child: CircularProgressIndicator(
                                   color: AppColors.primary, strokeWidth: 2))
-                          : const Text('Resend OTP',
-                              style: TextStyle(
-                                  color: AppColors.primary, fontWeight: FontWeight.w600)),
+                          : Text(
+                              'Resend OTP',
+                              style: GoogleFonts.inter(
+                                color: AppColors.primary,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                     ),
             ),
           ],

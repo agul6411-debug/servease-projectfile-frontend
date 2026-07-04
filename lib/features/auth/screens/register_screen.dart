@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontfile_servease/core/theme/app_theme.dart';
+import 'package:frontfile_servease/routes.dart';
 import 'package:get/get.dart';
 
 class RegisterScreen extends StatelessWidget {
@@ -8,13 +9,12 @@ class RegisterScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F3EF),
+      backgroundColor: const Color(0xFFF9FBF8),
       body: SingleChildScrollView(
         child: Column(
           children: const [
             _HeroSection(),
-            _FeaturesGrid(),
-            _CTASection(),
+            _ChoiceSection(),
             _Footer(),
           ],
         ),
@@ -23,7 +23,7 @@ class RegisterScreen extends StatelessWidget {
   }
 }
 
-// ── HERO ─────────────────────────────────────────────────────────
+// ── HERO SECTION ─────────────────────────────────────────────────
 class _HeroSection extends StatelessWidget {
   const _HeroSection();
 
@@ -33,99 +33,76 @@ class _HeroSection extends StatelessWidget {
       children: [
         Container(
           width: double.infinity,
-          color: const Color(0xFF1A5E33),
-          padding: const EdgeInsets.fromLTRB(24, 60, 24, 80),
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Color(0xFF0F5A34),
+                Color(0xFF1B8B4B),
+              ],
+            ),
+          ),
+          padding: const EdgeInsets.fromLTRB(20, 56, 20, 68),
           child: Column(
             children: [
-              // Back button row
+              // Back Button Row
               Align(
                 alignment: Alignment.centerLeft,
                 child: GestureDetector(
                   onTap: () => Get.back(),
                   child: Container(
-                    width: 38,
-                    height: 38,
+                    width: 36,
+                    height: 36,
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.15),
-                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.white.withOpacity(0.12),
+                      shape: BoxShape.circle,
                     ),
                     child: const Icon(
                       Icons.arrow_back_rounded,
                       color: Colors.white,
-                      size: 20,
+                      size: 18,
                     ),
                   ),
                 ),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 16),
 
-              // Badge
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.12),
-                  borderRadius: BorderRadius.circular(100),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: const [
-                    Icon(
-                      Icons.location_on_rounded,
-                      size: 13,
-                      color: Color(0xFFF59E0B),
-                    ),
-                    SizedBox(width: 5),
-                    Text(
-                      "Pakistan's Home Services",
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
-
+              // Title
               const Text(
-                'Your Trusted Home\nService Platform',
+                'Join ServEase',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.w800,
+                  fontSize: 28,
+                  fontWeight: FontWeight.w900,
                   color: Colors.white,
-                  height: 1.2,
                   letterSpacing: -0.5,
                 ),
               ),
-              const SizedBox(height: 14),
+              const SizedBox(height: 8),
               Text(
-                'Connect with verified professionals\nfor all your home service needs.',
+                'Choose your role to get started with Pakistan\'s leading home service network.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  fontSize: 13,
-                  color: Colors.white.withOpacity(0.7),
-                  height: 1.7,
+                  fontSize: 12,
+                  color: Colors.white.withOpacity(0.85),
+                  height: 1.5,
                 ),
               ),
             ],
           ),
         ),
 
-        // Curved bottom overlap
+        // Curve bottom overlap
         Positioned(
           bottom: 0,
           left: 0,
           right: 0,
           child: Container(
-            height: 32,
+            height: 24,
             decoration: const BoxDecoration(
-              color: Color(0xFFF5F3EF),
-              borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+              color: Color(0xFFF9FBF8),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
             ),
           ),
         ),
@@ -134,286 +111,255 @@ class _HeroSection extends StatelessWidget {
   }
 }
 
-// ── FEATURES GRID ────────────────────────────────────────────────
-class _FeaturesGrid extends StatelessWidget {
-  const _FeaturesGrid();
-
-  static const _features = [
-    {
-      'icon': Icons.bolt_rounded,
-      'label': 'Fast Booking',
-      'sub': 'One tap confirm',
-      'bg': Color(0xFFFEF3E2),
-      'ic': Color(0xFFF59E0B),
-    },
-    {
-      'icon': Icons.shield_rounded,
-      'label': 'Verified Pros',
-      'sub': 'CNIC checked',
-      'bg': Color(0xFFE8F5E9),
-      'ic': Color(0xFF2E7D32),
-    },
-    {
-      'icon': Icons.star_rounded,
-      'label': 'Top Rated',
-      'sub': 'Community reviews',
-      'bg': Color(0xFFFEF3E2),
-      'ic': Color(0xFFF59E0B),
-    },
-    {
-      'icon': Icons.lock_rounded,
-      'label': 'Secure & Safe',
-      'sub': 'Private & trusted',
-      'bg': Color(0xFFE8F5E9),
-      'ic': Color(0xFF2E7D32),
-    },
-  ];
+// ── CHOICE SECTION (WOW Cards) ──────────────────────────────────
+class _ChoiceSection extends StatelessWidget {
+  const _ChoiceSection();
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
-      child: GridView.builder(
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        itemCount: _features.length,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
-          childAspectRatio: 1.85,
-        ),
-        itemBuilder: (_, i) {
-          final f = _features[i];
-          return Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: const Color(0xFFE5E0D8)),
-            ),
-            padding: const EdgeInsets.all(14),
-            child: Row(
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: f['bg'] as Color,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Icon(
-                    f['icon'] as IconData,
-                    color: f['ic'] as Color,
-                    size: 20,
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Column(
+        children: [
+          // 1. CUSTOMER CARD
+          _ChoiceCard(
+            title: 'Book a Service',
+            subtitle: 'I want to hire verified partners',
+            desc: 'Find and book skilled female professionals for tailoring, beauty, mehndi, cleaning & tutoring.',
+            bullets: const [
+              '100% CNIC-verified local partners',
+              'Fair upfront pricing & ratings check',
+              'Doorstep services with safety first',
+            ],
+            icon: Icons.person_rounded,
+            iconBg: const Color(0xFFEBF6EE),
+            iconColor: AppColors.primary,
+            borderColor: AppColors.primary.withOpacity(0.2),
+            btnText: 'Register as Customer',
+            btnColor: AppColors.primary,
+            onTap: () => Get.toNamed('/customer_page'),
+          ),
+          
+          const SizedBox(height: 20),
+
+          // 2. PROVIDER CARD
+          _ChoiceCard(
+            title: 'Become a Partner',
+            subtitle: 'I want to offer my services & earn',
+            desc: 'Earn income by offering your skills. Work on your own terms and manage bookings easily.',
+            bullets: const [
+              'Zero hidden fees — keep what you earn',
+              'Set your own prices and hours',
+              'Easy digital commission system',
+            ],
+            icon: Icons.work_rounded,
+            iconBg: const Color(0xFFFFF9E6),
+            iconColor: AppColors.accent,
+            borderColor: AppColors.accent.withOpacity(0.2),
+            btnText: 'Register as Service Partner',
+            btnColor: AppColors.accent,
+            onTap: () => Get.toNamed('/providerPagereg'),
+          ),
+
+          const SizedBox(height: 28),
+
+          // Login Link
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'Already have an account? ',
+                style: TextStyle(
+                  fontSize: 13,
+                  color: AppColors.mutedForeground,
+                ),
+              ),
+              GestureDetector(
+                onTap: () => Get.toNamed(AppRoutes.loginScreen),
+                child: const Text(
+                  'Login here',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primary,
+                    decoration: TextDecoration.underline,
                   ),
                 ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        f['label'] as String,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                          color: Color(0xFF1C1B1F),
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        f['sub'] as String,
-                        style: const TextStyle(
-                          fontSize: 10,
-                          color: Color(0xFF9A8878),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+        ],
       ),
     );
   }
 }
 
-// ── CTA SECTION ──────────────────────────────────────────────────
-class _CTASection extends StatelessWidget {
-  const _CTASection();
+// ── CUSTOM CHOICE CARD COMPONENT ─────────────────────────────────
+class _ChoiceCard extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final String desc;
+  final List<String> bullets;
+  final IconData icon;
+  final Color iconBg;
+  final Color iconColor;
+  final Color borderColor;
+  final String btnText;
+  final Color btnColor;
+  final VoidCallback onTap;
+
+  const _ChoiceCard({
+    required this.title,
+    required this.subtitle,
+    required this.desc,
+    required this.bullets,
+    required this.icon,
+    required this.iconBg,
+    required this.iconColor,
+    required this.borderColor,
+    required this.btnText,
+    required this.btnColor,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.fromLTRB(16, 0, 16, 20),
-      padding: const EdgeInsets.all(24),
+      width: double.infinity,
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFE5E0D8)),
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: borderColor, width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: iconColor.withOpacity(0.04),
+            blurRadius: 16,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
+      padding: const EdgeInsets.all(20),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            "Let's get you started!",
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w800,
-              color: Color(0xFF1C1B1F),
-            ),
-          ),
-          const SizedBox(height: 6),
-          const Text(
-            'Join thousands of customers and providers',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 12, color: Color(0xFF9A8878)),
-          ),
-          const Padding(
-            padding: EdgeInsets.symmetric(vertical: 20),
-            child: Divider(color: Color(0xFFF0ECE6), height: 1),
-          ),
-
-          // Customer Button
-          GestureDetector(
-            onTap: () => Get.toNamed('/customer_page'),
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: const Color(0xFF1A5E33),
-                borderRadius: BorderRadius.circular(14),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.15),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: const Icon(
-                      Icons.person_rounded,
-                      color: Colors.white,
-                      size: 20,
-                    ),
-                  ),
-                  const SizedBox(width: 14),
-                  const Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Signup as Customer',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                          ),
-                        ),
-                        Text(
-                          'Book home services',
-                          style: TextStyle(fontSize: 11, color: Colors.white60),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Icon(
-                    Icons.arrow_forward_rounded,
-                    color: Colors.white38,
-                    size: 18,
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 12),
-
-          // Provider Button
-          GestureDetector(
-            onTap: () => Get.toNamed('/providerPagereg'),
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: const Color(0xFFFEF3E2),
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                  color: const Color(0xFFF59E0B).withOpacity(0.35),
+          // Header Row
+          Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: iconBg,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  icon,
+                  color: iconColor,
+                  size: 22,
                 ),
               ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF59E0B).withOpacity(0.18),
-                      borderRadius: BorderRadius.circular(10),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w900,
+                        color: AppColors.foreground,
+                      ),
                     ),
-                    child: const Icon(
-                      Icons.work_rounded,
-                      color: Color(0xFFB45309),
-                      size: 20,
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: iconColor,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          
+          // Description
+          Text(
+            desc,
+            style: const TextStyle(
+              fontSize: 12,
+              color: AppColors.mutedForeground,
+              height: 1.5,
+            ),
+          ),
+          const SizedBox(height: 16),
+          
+          // Bullet points
+          ...bullets.map((b) => Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  Icons.check_circle_outline_rounded,
+                  color: iconColor,
+                  size: 15,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    b,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppColors.foreground,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
-                  const SizedBox(width: 14),
-                  const Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Signup as Provider',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xFF633806),
-                          ),
-                        ),
-                        Text(
-                          'Offer skills, earn income',
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: Color(0xFFA16207),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Icon(
-                    Icons.arrow_forward_rounded,
-                    color: Color(0xFFB45309),
-                    size: 18,
+                ),
+              ],
+            ),
+          )).toList(),
+          
+          const SizedBox(height: 18),
+          
+          // CTA button
+          GestureDetector(
+            onTap: onTap,
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              decoration: BoxDecoration(
+                color: btnColor,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: btnColor.withOpacity(0.2),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
                   ),
                 ],
               ),
-            ),
-          ),
-
-          const SizedBox(height: 20),
-
-          // Login link
-          GestureDetector(
-            onTap: () => Get.toNamed('/login_screen'),
-            child: RichText(
-              textAlign: TextAlign.center,
-              text: const TextSpan(
-                style: TextStyle(fontSize: 13, color: Color(0xFF9A8878)),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  TextSpan(text: 'Already have an account? '),
-                  TextSpan(
-                    text: 'Log in',
-                    style: TextStyle(
-                      color: Color(0xFFF59E0B),
-                      fontWeight: FontWeight.w700,
-                      decoration: TextDecoration.underline,
-                      decorationColor: Color(0xFFF59E0B),
+                  Text(
+                    btnText,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
                     ),
+                  ),
+                  const SizedBox(width: 6),
+                  const Icon(
+                    Icons.arrow_forward_rounded,
+                    color: Colors.white,
+                    size: 15,
                   ),
                 ],
               ),
@@ -432,39 +378,17 @@ class _Footer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: const Color(0xFF1A5E33),
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 22),
-      child: Row(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),
+      child: Column(
         children: [
-          Container(
-            width: 32,
-            height: 32,
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.12),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: const Icon(
-              Icons.home_rounded,
-              color: Color(0xFFF59E0B),
-              size: 18,
-            ),
-          ),
-          const SizedBox(width: 10),
-          const Text(
-            'ServEase',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 15,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const Spacer(),
+          const Divider(color: Color(0xFFEBF2EC), height: 1),
+          const SizedBox(height: 16),
           Text(
-            '© 2026 ServEase',
+            'Secure & CNIC-Verified Home Service Portal',
             style: TextStyle(
-              color: Colors.white.withOpacity(0.4),
               fontSize: 11,
+              color: Colors.grey[500],
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],
