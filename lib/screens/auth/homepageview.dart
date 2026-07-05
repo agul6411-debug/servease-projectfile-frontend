@@ -358,7 +358,7 @@ class _ServicesRow extends StatelessWidget {
   const _ServicesRow();
 
   static const services = [
-    {'e': '🧵', 'n': 'Tailoring', 'c': 0xFFFCE4EC},
+    {'e': '🧵', 'n': 'Stitching', 'c': 0xFFFCE4EC},
     {'e': '🪡', 'n': 'Embroidery', 'c': 0xFFE8EAF6},
     {'e': '🧹', 'n': 'Cleaning', 'c': 0xFFE8F5E9},
     {'e': '📚', 'n': 'Tutoring', 'c': 0xFFE3F2FD},
