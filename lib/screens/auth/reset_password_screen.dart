@@ -47,26 +47,35 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     final confirm = _confirmController.text.trim();
 
     if (password.isEmpty || confirm.isEmpty) {
-      Get.snackbar('Error', 'Please fill all fields',
-          backgroundColor: AppColors.destructive,
-          colorText: Colors.white,
-          snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar(
+        'Error',
+        'Please fill all fields',
+        backgroundColor: AppColors.destructive,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
       return;
     }
 
     if (password.length < 6) {
-      Get.snackbar('Error', 'Password must be at least 6 characters',
-          backgroundColor: AppColors.destructive,
-          colorText: Colors.white,
-          snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar(
+        'Error',
+        'Password must be at least 6 characters',
+        backgroundColor: AppColors.destructive,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
       return;
     }
 
     if (password != confirm) {
-      Get.snackbar('Error', 'Passwords do not match',
-          backgroundColor: AppColors.destructive,
-          colorText: Colors.white,
-          snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar(
+        'Error',
+        'Passwords do not match',
+        backgroundColor: AppColors.destructive,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
       return;
     }
 
@@ -78,17 +87,23 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     setState(() => _isLoading = false);
 
     if (result['success'] == true) {
-      Get.snackbar('Success', 'Password reset successfully!',
-          backgroundColor: AppColors.secondary,
-          colorText: Colors.white,
-          snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar(
+        'Success',
+        'Password reset successfully!',
+        backgroundColor: AppColors.secondary,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
       await Future.delayed(const Duration(seconds: 1));
       Get.offAllNamed('/login_screen');
     } else {
-      Get.snackbar('Error', result['message'] ?? 'Something went wrong',
-          backgroundColor: AppColors.destructive,
-          colorText: Colors.white,
-          snackPosition: SnackPosition.BOTTOM);
+      Get.snackbar(
+        'Error',
+        result['message'] ?? 'Server unavailable',
+        backgroundColor: AppColors.destructive,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+      );
     }
   }
 
@@ -103,14 +118,21 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
           icon: const Icon(Icons.arrow_back_ios, color: AppColors.foreground),
           onPressed: () => Get.offAllNamed('/login_screen'),
         ),
-        title: const Text('Reset Password',
-            style: TextStyle(color: AppColors.foreground, fontWeight: FontWeight.w600)),
+        title: const Text(
+          'Reset Password',
+          style: TextStyle(
+            color: AppColors.foreground,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ),
       body: _isVerifying
-          ? const Center(child: CircularProgressIndicator(color: AppColors.primary))
+          ? const Center(
+              child: CircularProgressIndicator(color: AppColors.primary),
+            )
           : !_tokenValid
-              ? _buildInvalidToken()
-              : _buildForm(),
+          ? _buildInvalidToken()
+          : _buildForm(),
     );
   }
 
@@ -128,12 +150,21 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 color: AppColors.destructive.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.link_off, size: 40, color: AppColors.destructive),
+              child: const Icon(
+                Icons.link_off,
+                size: 40,
+                color: AppColors.destructive,
+              ),
             ),
             const SizedBox(height: 24),
-            const Text('Link Expired',
-                style: TextStyle(
-                    fontSize: 22, fontWeight: FontWeight.bold, color: AppColors.foreground)),
+            const Text(
+              'Link Expired',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: AppColors.foreground,
+              ),
+            ),
             const SizedBox(height: 12),
             const Text(
               'This reset link is invalid or has expired.\nPlease request a new one.',
@@ -149,10 +180,14 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
-                child: const Text('Request New Link',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                child: const Text(
+                  'Request New Link',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                ),
               ),
             ),
           ],
@@ -176,21 +211,37 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 color: AppColors.primary.withOpacity(0.1),
                 shape: BoxShape.circle,
               ),
-              child: const Icon(Icons.lock_open_rounded, size: 40, color: AppColors.primary),
+              child: const Icon(
+                Icons.lock_open_rounded,
+                size: 40,
+                color: AppColors.primary,
+              ),
             ),
           ),
           const SizedBox(height: 32),
-          const Text('Set New Password',
-              style: TextStyle(
-                  fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.foreground)),
+          const Text(
+            'Set New Password',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: AppColors.foreground,
+            ),
+          ),
           const SizedBox(height: 8),
-          const Text('Enter your new password below.',
-              style: TextStyle(color: AppColors.mutedForeground, fontSize: 14)),
+          const Text(
+            'Enter your new password below.',
+            style: TextStyle(color: AppColors.mutedForeground, fontSize: 14),
+          ),
           const SizedBox(height: 32),
 
           // New Password
-          const Text('New Password',
-              style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.foreground)),
+          const Text(
+            'New Password',
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              color: AppColors.foreground,
+            ),
+          ),
           const SizedBox(height: 8),
           Container(
             decoration: BoxDecoration(
@@ -204,24 +255,36 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               decoration: InputDecoration(
                 hintText: 'Min 6 characters',
                 hintStyle: const TextStyle(color: AppColors.mutedForeground),
-                prefixIcon: const Icon(Icons.lock_outline, color: AppColors.primary),
+                prefixIcon: const Icon(
+                  Icons.lock_outline,
+                  color: AppColors.primary,
+                ),
                 suffixIcon: IconButton(
                   icon: Icon(
                     _showPassword ? Icons.visibility_off : Icons.visibility,
                     color: AppColors.mutedForeground,
                   ),
-                  onPressed: () => setState(() => _showPassword = !_showPassword),
+                  onPressed: () =>
+                      setState(() => _showPassword = !_showPassword),
                 ),
                 border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
               ),
             ),
           ),
           const SizedBox(height: 20),
 
           // Confirm Password
-          const Text('Confirm Password',
-              style: TextStyle(fontWeight: FontWeight.w600, color: AppColors.foreground)),
+          const Text(
+            'Confirm Password',
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              color: AppColors.foreground,
+            ),
+          ),
           const SizedBox(height: 8),
           Container(
             decoration: BoxDecoration(
@@ -235,7 +298,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               decoration: InputDecoration(
                 hintText: 'Re-enter password',
                 hintStyle: const TextStyle(color: AppColors.mutedForeground),
-                prefixIcon: const Icon(Icons.lock_outline, color: AppColors.primary),
+                prefixIcon: const Icon(
+                  Icons.lock_outline,
+                  color: AppColors.primary,
+                ),
                 suffixIcon: IconButton(
                   icon: Icon(
                     _showConfirm ? Icons.visibility_off : Icons.visibility,
@@ -244,7 +310,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   onPressed: () => setState(() => _showConfirm = !_showConfirm),
                 ),
                 border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
               ),
             ),
           ),
@@ -258,15 +327,26 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
                 padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
               child: _isLoading
                   ? const SizedBox(
                       height: 20,
                       width: 20,
-                      child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
-                  : const Text('Reset Password',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2,
+                      ),
+                    )
+                  : const Text(
+                      'Reset Password',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
             ),
           ),
         ],
