@@ -69,7 +69,9 @@ class _BookServiceScreenState extends State<BookServiceScreen> {
     final result = await CustomerApiService.createBooking(
       customerId: _customerId,
       providerId: widget.provider.id,
-      serviceId: 0, // will be updated
+      serviceId: 0,
+      
+       // will be updated
       scheduledDate:
           '${_selectedDate.year}-${_selectedDate.month.toString().padLeft(2, '0')}-${_selectedDate.day.toString().padLeft(2, '0')}',
       scheduledTime: timeMap[_selectedTime] ?? '09:00:00',
@@ -92,7 +94,7 @@ class _BookServiceScreenState extends State<BookServiceScreen> {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Booking failed. Please try again.'),
+          content: Text('Booking failed, Please try again.'),
           backgroundColor: Colors.red,
         ),
       );
@@ -301,7 +303,7 @@ class _BookServiceScreenState extends State<BookServiceScreen> {
                   const SizedBox(height: 14),
 
                   // Notes
-                  _label('Notes (optional)'),
+                  _label('Notes (Optional)'),
                   const SizedBox(height: 6),
                   TextField(
                     controller: _notesCtrl,
