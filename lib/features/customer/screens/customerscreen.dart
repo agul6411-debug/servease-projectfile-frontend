@@ -37,13 +37,6 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
   void initState() {
     super.initState();
     _loadData();
-    Future.delayed(const Duration(seconds: 4), () {
-      try {
-        NotificationPollingService.showTestNotification();
-      } catch (e) {
-        debugPrint("Failed to show test notification: $e");
-      }
-    });
   }
 
   Future<void> _loadData() async {

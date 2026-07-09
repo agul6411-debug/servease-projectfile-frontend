@@ -39,13 +39,6 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
     super.initState();
     _loadDashboardData();
     _startSecurityDepositTimer();
-    Future.delayed(const Duration(seconds: 4), () {
-      try {
-        NotificationPollingService.showTestNotification();
-      } catch (e) {
-        debugPrint("Failed to show test notification: $e");
-      }
-    });
   }
 
   void _startSecurityDepositTimer() {
