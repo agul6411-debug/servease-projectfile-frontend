@@ -82,6 +82,7 @@ class BookingConfirmedScreen extends StatelessWidget {
             const SizedBox(height: 24),
 
             // What happens next
+            //what happens next after booking confirmation
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(16),
