@@ -34,7 +34,7 @@ class _CustomerSecurityScreenState extends State<CustomerSecurityScreen> {
       return;
     }
     if (_newCtrl.text.length < 6) {
-      _showSnack('Password must be at least 6 characters', Colors.red);
+      _showSnack('Password must be at least 8 characters', Colors.red);
       return;
     }
     setState(() => _isSaving = true);
@@ -43,8 +43,8 @@ class _CustomerSecurityScreenState extends State<CustomerSecurityScreen> {
         Uri.parse("$_base/change-password?user_id=${widget.userId}"),
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({
-          "current_password": _currentCtrl.text,
-          "new_password": _newCtrl.text,
+          "Current_password": _currentCtrl.text,
+          "New_password": _newCtrl.text,
         }),
       );
       final data = jsonDecode(res.body);
