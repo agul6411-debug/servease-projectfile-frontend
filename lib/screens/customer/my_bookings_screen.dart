@@ -19,7 +19,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
 
   int get _customerId => box.read('user_id') ?? 0;
 
-  final _filters = ['All', 'Active users', 'Completed Bookings'];
+  final _filters = ['All users', 'Active users', 'Completed Bookings'];
 
   @override
   void initState() {
@@ -48,10 +48,10 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
         return _bookings
             .where(
               (b) => [
-                'pending',
-                'accepted',
-                'in_progress',
-                'on_the_way',
+                'Pending',
+                'Accepted',
+                'In_progress',
+                'On_the_way',
               ].contains(b.status),
             )
             .toList();
@@ -122,7 +122,7 @@ class _MyBookingsScreenState extends State<MyBookingsScreen> {
                     ),
                   )
                 : RefreshIndicator(
-                    color: AppColors.primaryGreen,
+                    color: const Color.fromARGB(255, 83, 247, 154),
                     onRefresh: _load,
                     child: _filtered.isEmpty
                         ? const Center(
@@ -161,15 +161,15 @@ class _BookingCardState extends State<_BookingCard> {
 
   Color get _statusColor {
     switch (booking.status) {
-      case 'pending':
+      case 'Pending':
         return Colors.orange;
-      case 'accepted':
+      case 'Accepted':
         return const Color(0xFF1565C0);
-      case 'completed':
+      case 'Completed':
         return AppColors.primaryGreen;
-      case 'declined':
+      case 'Declined':
         return AppColors.declineRed;
-      case 'in_progress':
+      case 'In Progress':
         return const Color(0xFFE65100);
       default:
         return AppColors.textMuted;
