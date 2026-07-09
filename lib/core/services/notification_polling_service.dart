@@ -19,7 +19,7 @@ class NotificationPollingService {
     if (kIsWeb) return;
 
     const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+        AndroidInitializationSettings('ic_launcher');
 
     const InitializationSettings initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
@@ -29,17 +29,33 @@ class NotificationPollingService {
       initializationSettings,
     );
 
-    // Request notifications permission on Android 13+
+    // Request notifications permission and register the high-importance channel on Android
     final androidImplementation = _notificationsPlugin.resolvePlatformSpecificImplementation<
         AndroidFlutterLocalNotificationsPlugin>();
     if (androidImplementation != null) {
-      await androidImplementation.requestNotificationsPermission();
+      try {
+        await androidImplementation.requestNotificationsPermission();
+        await androidImplementation.createNotificationChannel(
+          const AndroidNotificationChannel(
+            'servease_alerts_channel_v3', // Match with the channel used in show()
+            'ServEase Alerts',
+            description: 'Alerts for ServEase bookings and requests',
+            importance: Importance.max,
+            playSound: true,
+            enableVibration: true,
+          ),
+        );
+      } catch (e) {
+        debugPrint("[NotificationPolling] Error registering Android implementation: $e");
+      }
     }
   }
 
   static void startPolling() {
-    debugPrint("[NotificationPolling] Service started polling every 15s");
+    debugPrint("[NotificationPolling] Service started polling (immediate check + 15s interval)");
     _timer?.cancel();
+    // Run an immediate check first
+    _checkNotifications();
     _timer = Timer.periodic(const Duration(seconds: 15), (timer) async {
       await _checkNotifications();
     });
@@ -48,6 +64,15 @@ class NotificationPollingService {
   static void stopPolling() {
     debugPrint("[NotificationPolling] Service stopped polling");
     _timer?.cancel();
+  }
+
+  static Future<void> showTestNotification() async {
+    debugPrint("[NotificationPolling] Triggering a manual test notification");
+    await _showSystemNotification(
+      999999,
+      "ServEase Notification Test",
+      "Congratulations! The notification system is working perfectly on your phone!",
+    );
   }
 
   static Future<void> _checkNotifications() async {
@@ -102,13 +127,14 @@ class NotificationPollingService {
         bool triggeredAny = false;
         for (var notif in notificationsList) {
           final int notifId = notif['id'] ?? 0;
-          final int isRead = notif['is_read'] ?? (notif['isRead'] == true ? 1 : 0);
+          final dynamic rawIsRead = notif['is_read'] ?? notif['isRead'];
+          final bool isUnread = (rawIsRead == 0 || rawIsRead == false || rawIsRead == null);
           final String title = notif['title'] ?? 'New Alert';
           final String message = notif['message'] ?? '';
 
-          debugPrint("[NotificationPolling] Evaluating notifId=$notifId, isRead=$isRead, isCached=${shownIds.contains(notifId)}");
+          debugPrint("[NotificationPolling] Evaluating notifId=$notifId, isUnread=$isUnread, isCached=${shownIds.contains(notifId)}");
 
-          if (isRead == 0 && !shownIds.contains(notifId) && notifId != 0) {
+          if (isUnread && !shownIds.contains(notifId) && notifId != 0) {
             debugPrint("[NotificationPolling] Triggering notification display for notifId=$notifId ('$title')");
             await _showSystemNotification(notifId, title, message);
             shownIds.add(notifId);
@@ -133,50 +159,53 @@ class NotificationPollingService {
   }
 
   static Future<void> _showSystemNotification(int id, String title, String body) async {
-    // If testing on Web browser, use elegant Get.snackbar fallback
-    if (kIsWeb) {
-      debugPrint("[NotificationPolling] Web Browser: Rendering Get.snackbar for '$title'");
-      Get.snackbar(
-        title,
-        body,
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: AppColors.primary,
-        colorText: Colors.white,
-        margin: const EdgeInsets.all(16),
-        duration: const Duration(seconds: 5),
-        icon: const Icon(Icons.notifications_active_rounded, color: Colors.white, size: 22),
-        boxShadows: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.12),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      );
-      return;
-    }
-
-    const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
-      'servease_channel_id',
-      'ServEase Notifications',
-      channelDescription: 'Alerts for ServEase bookings and requests',
-      importance: Importance.max,
-      priority: Priority.high,
-      showWhen: true,
-      playSound: true,
-      enableVibration: true,
-    );
-
-    const NotificationDetails platformChannelSpecifics = NotificationDetails(
-      android: androidPlatformChannelSpecifics,
-    );
-
-    await _notificationsPlugin.show(
-      id,
+    // Show beautiful in-app snackbar alert on both Mobile and Web
+    Get.snackbar(
       title,
       body,
-      platformChannelSpecifics,
+      snackPosition: SnackPosition.TOP,
+      backgroundColor: AppColors.primary,
+      colorText: Colors.white,
+      margin: const EdgeInsets.all(16),
+      duration: const Duration(seconds: 5),
+      icon: const Icon(Icons.notifications_active_rounded, color: Colors.white, size: 22),
+      boxShadows: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.12),
+          blurRadius: 10,
+          offset: const Offset(0, 4),
+        ),
+      ],
     );
+
+    // For mobile platforms, trigger native system notification with sound/vibration
+    if (!kIsWeb) {
+      const AndroidNotificationDetails androidPlatformChannelSpecifics =
+          AndroidNotificationDetails(
+        'servease_alerts_channel_v3', // Fresh channel ID to force high importance, sound, and vibration settings on the device
+        'ServEase Alerts',
+        channelDescription: 'Alerts for ServEase bookings and requests',
+        importance: Importance.max,
+        priority: Priority.high,
+        showWhen: true,
+        playSound: true,
+        enableVibration: true,
+      );
+
+      const NotificationDetails platformChannelSpecifics = NotificationDetails(
+        android: androidPlatformChannelSpecifics,
+      );
+
+      try {
+        await _notificationsPlugin.show(
+          id,
+          title,
+          body,
+          platformChannelSpecifics,
+        );
+      } catch (e) {
+        debugPrint("[NotificationPolling] Native notification show error: $e");
+      }
+    }
   }
 }

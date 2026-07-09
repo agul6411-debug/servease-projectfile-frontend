@@ -13,6 +13,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'dart:async';
 import 'package:frontfile_servease/features/provider/screens/security_deposit_screen.dart';
+import 'package:frontfile_servease/core/services/notification_polling_service.dart';
 
 class ProviderHomeScreen extends StatefulWidget {
   final int providerId;
@@ -31,12 +32,20 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
   String? _error;
   int _currentNavIndex = 0;
   int _securityDepositAmount = 500;
+  int _unreadCount = 0;
 
   @override
   void initState() {
     super.initState();
     _loadDashboardData();
     _startSecurityDepositTimer();
+    Future.delayed(const Duration(seconds: 4), () {
+      try {
+        NotificationPollingService.showTestNotification();
+      } catch (e) {
+        debugPrint("Failed to show test notification: $e");
+      }
+    });
   }
 
   void _startSecurityDepositTimer() {
@@ -104,10 +113,16 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
       final results = await Future.wait([
         ProviderApiService.fetchDashboardStats(widget.providerId),
         ProviderApiService.fetchNewJobRequests(widget.providerId),
+        ProviderApiService.fetchNotifications(widget.providerId),
       ]);
+      
+      final notifsList = results[2] as List<dynamic>;
+      final unread = notifsList.where((n) => n['is_read'] == 0 || n['is_read'] == false || n['is_read'] == null).length;
+
       setState(() {
         _stats = results[0] as DashboardStats;
         _jobRequests = results[1] as List<JobRequest>;
+        _unreadCount = unread;
         _isLoading = false;
       });
     } catch (e) {
@@ -315,22 +330,52 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
         elevation: 0,
         automaticallyImplyLeading: false,
         actions: [
-          IconButton(
-            icon: Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.15),
-                shape: BoxShape.circle,
+          Stack(
+            children: [
+              IconButton(
+                icon: Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.15),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.notifications_outlined, color: Colors.white, size: 20),
+                ),
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) =>
+                        ProviderNotificationsScreen(providerId: widget.providerId),
+                  ),
+                ).then((_) => _loadDashboardData()), // Reload stats and count on return
               ),
-              child: const Icon(Icons.notifications_outlined, color: Colors.white, size: 20),
-            ),
-            onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) =>
-                    ProviderNotificationsScreen(providerId: widget.providerId),
-              ),
-            ),
+              if (_unreadCount > 0)
+                Positioned(
+                  right: 4,
+                  top: 4,
+                  child: Container(
+                    padding: const EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: AppColors.primaryGreen, width: 1.5),
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 14,
+                      minHeight: 14,
+                    ),
+                    child: Text(
+                      '$_unreadCount',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 8,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+            ],
           ),
           const SizedBox(width: 12),
         ],

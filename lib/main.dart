@@ -9,9 +9,21 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await GetStorage.init();
   
-  // Local Notifications initialize aur polling run karein
-  await NotificationPollingService.init();
-  NotificationPollingService.startPolling();
+  // Local Notifications initialize
+  try {
+    await NotificationPollingService.init();
+  } catch (e) {
+    debugPrint("NotificationPollingService initialization error: $e");
+  }
+
+  // Start polling safely after the widget tree is fully rendered
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    try {
+      NotificationPollingService.startPolling();
+    } catch (e) {
+      debugPrint("NotificationPollingService start error: $e");
+    }
+  });
   
   runApp(const MyApp());
 }

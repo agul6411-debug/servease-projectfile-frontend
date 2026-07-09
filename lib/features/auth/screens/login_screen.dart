@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:frontfile_servease/routes.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:frontfile_servease/core/services/notification_polling_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -98,6 +99,11 @@ class _LoginScreenState extends State<LoginScreen>
         final userRole = result['user']['role'];
         box.write('user_id', userId);
         box.write('user_role', userRole);
+
+        // Start notifications polling instantly
+        try {
+          NotificationPollingService.startPolling();
+        } catch (_) {}
 
         if (role == 'admin') {
           Get.offAllNamed(AppRoutes.adminDashboard);

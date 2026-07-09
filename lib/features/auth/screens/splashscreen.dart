@@ -98,10 +98,10 @@ class _SplashScreenState extends State<SplashScreen>
 
     Future.delayed(const Duration(seconds: 3), () {
       if (!mounted) return;
-      
+
       final token = GetStorage().read('auth_token') ?? '';
       final role = GetStorage().read('user_role') ?? '';
-      
+
       if (token.isNotEmpty && role.isNotEmpty) {
         if (role == 'admin') {
           Get.offAllNamed('/admin_dashboard');
@@ -479,11 +479,11 @@ class _SplashScreenState extends State<SplashScreen>
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'Get Started',
+                    'Welcome',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: isMobile ? 16 : 18,
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                   const SizedBox(width: 8),

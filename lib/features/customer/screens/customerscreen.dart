@@ -10,6 +10,7 @@ import 'package:frontfile_servease/features/customer/screens/notification_screen
 import 'package:frontfile_servease/features/customer/services/customerserviceali.dart';
 import 'package:frontfile_servease/core/theme/app_theme.dart';
 import 'package:frontfile_servease/core/services/app_config.dart';
+import 'package:frontfile_servease/core/services/notification_polling_service.dart';
 
 class CustomerHomeScreen extends StatefulWidget {
   const CustomerHomeScreen({super.key});
@@ -23,6 +24,7 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
   CustomerHomeData? _homeData;
   bool _isLoading = true;
   String? _errorMsg;
+  int _unreadNotificationCount = 0;
 
   int get _userId => box.read('user_id') ?? 0;
 
@@ -35,6 +37,13 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
   void initState() {
     super.initState();
     _loadData();
+    Future.delayed(const Duration(seconds: 4), () {
+      try {
+        NotificationPollingService.showTestNotification();
+      } catch (e) {
+        debugPrint("Failed to show test notification: $e");
+      }
+    });
   }
 
   Future<void> _loadData() async {
@@ -45,8 +54,16 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
     try {
       final data = await CustomerApiService.fetchHomeData(_userId);
       if (data != null) {
+        // Fetch notifications to compute unread count
+        int unread = 0;
+        try {
+          final notifs = await CustomerApiService.fetchNotifications(_userId);
+          unread = notifs.where((n) => !n.isRead).length;
+        } catch (_) {}
+
         setState(() {
           _homeData = data;
+          _unreadNotificationCount = unread;
         });
       } else {
         setState(() {
@@ -166,14 +183,44 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
               ),
               Row(
                 children: [
-                  IconButton(
-                    icon: const Icon(Icons.notifications_none_rounded, color: Colors.white, size: 26),
-                    onPressed: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (_) => NotificationScreen(customerId: _userId),
+                  Stack(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.notifications_none_rounded, color: Colors.white, size: 26),
+                        onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => NotificationScreen(customerId: _userId),
+                          ),
+                        ).then((_) => _loadData()), // Reload data to clear/refresh count when returning
                       ),
-                    ),
+                      if (_unreadNotificationCount > 0)
+                        Positioned(
+                          right: 4,
+                          top: 4,
+                          child: Container(
+                            padding: const EdgeInsets.all(2),
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: Colors.white, width: 1.5),
+                            ),
+                            constraints: const BoxConstraints(
+                              minWidth: 16,
+                              minHeight: 16,
+                            ),
+                            child: Text(
+                              '$_unreadNotificationCount',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 9,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                   const SizedBox(width: 8),
                   GestureDetector(

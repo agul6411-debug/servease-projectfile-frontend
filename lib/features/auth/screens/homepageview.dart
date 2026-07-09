@@ -30,7 +30,7 @@ class _HomePageState extends State<HomePage> {
   final _scroll = ScrollController();
   final _howKey = GlobalKey();
   bool _elevated = false;
-  
+
   List<dynamic> _realProviders = [];
   bool _loadingProviders = true;
 
@@ -49,7 +49,9 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _fetchPublicProviders() async {
     try {
-      final response = await http.get(Uri.parse('${AppConfig.baseUrl}/api/auth/public-providers'));
+      final response = await http.get(
+        Uri.parse('${AppConfig.baseUrl}/api/auth/public-providers'),
+      );
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         if (data['success'] == true) {
@@ -261,10 +263,7 @@ class _Hero extends StatelessWidget {
             child: const Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  '🇵🇰 ',
-                  style: TextStyle(fontSize: 12),
-                ),
+                Text('🇵🇰 ', style: TextStyle(fontSize: 12)),
                 Text(
                   'Pakistan\'s Home Services for Women',
                   style: TextStyle(
@@ -298,7 +297,7 @@ class _Hero extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
-          
+
           // SEARCH BAR
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 2),
@@ -367,7 +366,7 @@ class _Hero extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
-          
+
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -508,10 +507,7 @@ class _ServicesGrid extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Color(s['c'] as int),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: Color(s['b'] as int),
-                      width: 1.2,
-                    ),
+                    border: Border.all(color: Color(s['b'] as int), width: 1.2),
                   ),
                   padding: const EdgeInsets.all(10),
                   child: Column(
@@ -557,40 +553,7 @@ class _FeaturedProviders extends StatelessWidget {
   final List<dynamic> providers;
   final bool isLoading;
 
-  const _FeaturedProviders({
-    required this.providers,
-    required this.isLoading,
-  });
-
-  static const fallbackProviders = [
-    {
-      'name': 'Ayesha Khan',
-      'service': 'Master Tailor',
-      'rating': 4.9,
-      'jobs_done': 42,
-      'bg': 0xFFFFF2F4,
-      'char': 'A',
-      'color': 0xFFE91E63
-    },
-    {
-      'name': 'Sobia Bibi',
-      'service': 'Home Cleaner',
-      'rating': 4.8,
-      'jobs_done': 29,
-      'bg': 0xFFEBF6EE,
-      'char': 'S',
-      'color': 0xFF2E7D32
-    },
-    {
-      'name': 'Kiran Shahzadi',
-      'service': 'Mehndi Artist',
-      'rating': 5.0,
-      'jobs_done': 18,
-      'bg': 0xFFFFF9E6,
-      'char': 'K',
-      'color': 0xFFF59E0B
-    },
-  ];
+  const _FeaturedProviders({required this.providers, required this.isLoading});
 
   @override
   Widget build(BuildContext context) {
@@ -604,17 +567,38 @@ class _FeaturedProviders extends StatelessWidget {
       );
     }
 
-    final hasRealData = providers.isNotEmpty;
-    final displayList = hasRealData ? providers : fallbackProviders;
+    // If no real providers found in DB, show empty state message (no mock data)
+    if (providers.isEmpty) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 32, horizontal: 20),
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.people_outline_rounded, size: 40, color: Colors.grey),
+              SizedBox(height: 12),
+              Text(
+                'No active providers available yet',
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            hasRealData ? 'Meet Our Top-Rated Providers' : 'Sample Verified Partners',
-            style: const TextStyle(
+          const Text(
+            'Meet Our Top-Rated Providers',
+            style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w900,
               color: AppColors.foreground,
@@ -622,11 +606,9 @@ class _FeaturedProviders extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 2),
-          Text(
-            hasRealData
-                ? 'Directly active and verified professionals ready to serve you'
-                : 'Verified professionals who offer their services on the platform',
-            style: const TextStyle(
+          const Text(
+            'Directly active and verified professionals ready to serve you',
+            style: TextStyle(
               fontSize: 11,
               color: AppColors.mutedForeground,
             ),
@@ -635,18 +617,22 @@ class _FeaturedProviders extends StatelessWidget {
           ListView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            itemCount: displayList.length,
+            itemCount: providers.length,
             itemBuilder: (_, i) {
-              final p = displayList[i];
+              final p = providers[i];
               final name = p['name'] ?? 'Provider';
               final service = p['service'] ?? 'Home Specialist';
               final rating = double.tryParse(p['rating'].toString()) ?? 4.8;
               final jobs = p['jobs_done'] ?? 10;
-              
+
               // Visual styling fallback
               final char = name.isNotEmpty ? name[0].toUpperCase() : 'P';
-              final bg = i == 0 ? 0xFFFFF2F4 : (i == 1 ? 0xFFEBF6EE : 0xFFFFF9E6);
-              final color = i == 0 ? 0xFFE91E63 : (i == 1 ? 0xFF2E7D32 : 0xFFF59E0B);
+              final bg = i == 0
+                  ? 0xFFFFF2F4
+                  : (i == 1 ? 0xFFEBF6EE : 0xFFFFF9E6);
+              final color = i == 0
+                  ? 0xFFE91E63
+                  : (i == 1 ? 0xFF2E7D32 : 0xFFF59E0B);
 
               return GestureDetector(
                 onTap: () {
@@ -654,9 +640,8 @@ class _FeaturedProviders extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ProviderDetailScreen(
-                        providerId: providerId,
-                      ),
+                      builder: (context) =>
+                          ProviderDetailScreen(providerId: providerId),
                     ),
                   );
                 },
@@ -665,7 +650,10 @@ class _FeaturedProviders extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: const Color(0xFFEBF2EC), width: 1.2),
+                    border: Border.all(
+                      color: const Color(0xFFEBF2EC),
+                      width: 1.2,
+                    ),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.02),
@@ -696,7 +684,7 @@ class _FeaturedProviders extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 14),
-                      
+
                       // Info
                       Expanded(
                         child: Column(
@@ -724,9 +712,9 @@ class _FeaturedProviders extends StatelessWidget {
                             Text(
                               service,
                               style: const TextStyle(
-                                  fontSize: 11,
-                                  color: AppColors.mutedForeground,
-                                  fontWeight: FontWeight.w500
+                                fontSize: 11,
+                                color: AppColors.mutedForeground,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                             const SizedBox(height: 6),
@@ -759,10 +747,13 @@ class _FeaturedProviders extends StatelessWidget {
                           ],
                         ),
                       ),
-                      
+
                       // Action Button
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 8,
+                        ),
                         decoration: BoxDecoration(
                           color: AppColors.primary,
                           borderRadius: BorderRadius.circular(10),
@@ -868,13 +859,17 @@ class _HowSection extends StatelessWidget {
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: i == 0 ? AppColors.primary : const Color(0xFFF3F5F3),
+                        color: i == 0
+                            ? AppColors.primary
+                            : const Color(0xFFF3F5F3),
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
                         s['icon'] as IconData,
                         size: 18,
-                        color: i == 0 ? Colors.white : AppColors.mutedForeground,
+                        color: i == 0
+                            ? Colors.white
+                            : AppColors.mutedForeground,
                       ),
                     ),
                     if (!isLast)
@@ -968,6 +963,7 @@ class _StatItem extends StatelessWidget {
             fontSize: 9,
             color: Colors.white.withOpacity(0.75),
             letterSpacing: 0.2,
+            fontWeight: FontWeight.w500,
           ),
         ),
       ],
@@ -1015,6 +1011,7 @@ class _Footer extends StatelessWidget {
             style: TextStyle(
               fontSize: 11,
               color: Colors.white.withOpacity(0.5),
+              fontWeight: FontWeight.w500,
             ),
           ),
           const SizedBox(height: 16),
@@ -1028,14 +1025,23 @@ class _Footer extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 10,
                   color: Colors.white.withOpacity(0.4),
+                  fontWeight: FontWeight.w500,
                 ),
               ),
               Text(
-                'Women Empowerment Initiative',
+                'Made with ❤️ by ServEase Team',
                 style: TextStyle(
                   fontSize: 10,
                   color: Colors.white.withOpacity(0.4),
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              Text(
+                'powered by sandboxed.pk',
+                style: TextStyle(
+                  fontSize: 10,
+                  color: Colors.white.withOpacity(0.4),
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ],

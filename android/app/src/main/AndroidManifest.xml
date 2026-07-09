@@ -9,6 +9,13 @@
     <!-- Image Picker — Media Images (Android 13+) -->
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
 
+    <!-- Post Notifications (Android 13+) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <!-- Vibration -->
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <!-- Boot completed for notifications initialization -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
     <application
         android:label="ServEase"
         android:name="${applicationName}"
