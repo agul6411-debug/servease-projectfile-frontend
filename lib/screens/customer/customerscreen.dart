@@ -99,7 +99,7 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
     final name = _data?.customerName ?? 'Customer';
     final city = _data?.city ?? '';
     return Container(
-      color: AppColors.primaryGreen,
+      color: const Color.fromARGB(255, 14, 156, 76),
       padding: const EdgeInsets.fromLTRB(16, 52, 16, 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -133,7 +133,7 @@ class _CustomerHomeScreenState extends State<CustomerHomeScreen> {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    'Hello, $name 👋  $city',
+                    'salaam, $name 👋  $city',
                     style: const TextStyle(color: Colors.white70, fontSize: 12),
                   ),
                 ],
