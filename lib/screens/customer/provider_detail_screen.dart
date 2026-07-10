@@ -44,7 +44,7 @@ class _ProviderDetailScreenState extends State<ProviderDetailScreen> {
               child: CircularProgressIndicator(color: AppColors.primaryGreen),
             )
           : _provider == null
-          ? const Center(child: Text('Provider not found'))
+          ? const Center(child: Text('Provider not found here'))
           : Stack(
               children: [
                 CustomScrollView(
@@ -260,7 +260,7 @@ class _ProviderDetailScreenState extends State<ProviderDetailScreen> {
 
   Widget _buildServicesSection() {
     return _card(
-      title: 'Services Offered',
+      title: 'Services Offered by provider',
       child: Wrap(
         spacing: 8,
         runSpacing: 8,

@@ -58,7 +58,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Clear All', style: TextStyle(color: Colors.red)),
+            child: const Text('Clear All notifications', style: TextStyle(color: Colors.red)),
           ),
         ],
       ),
