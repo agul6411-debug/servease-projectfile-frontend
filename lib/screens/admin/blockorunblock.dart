@@ -3,7 +3,7 @@ import 'package:frontfile_servease/models/all_user_model.dart';
 import 'package:frontfile_servease/screens/admin/admindrawer.dart';
 import 'package:frontfile_servease/screens/admin/admin_navbar.dart';
 import 'package:frontfile_servease/services/all_users_service.dart';
-import 'package:frontfile_servease/theme/app_theme.dart';
+import 'package:frontfile_servease/core/theme/app_theme.dart';
 import 'package:get/get.dart';
 
 class BlockOrUnblock extends StatefulWidget {

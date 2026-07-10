@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontfile_servease/services/service_request_service.dart';
-import 'package:frontfile_servease/theme/app_theme.dart';
+import 'package:frontfile_servease/core/theme/app_theme.dart';
 import 'package:frontfile_servease/screens/admin/admin_navbar.dart';
 
 class AdminServiceRequestsScreen extends StatefulWidget {
@@ -11,8 +11,7 @@ class AdminServiceRequestsScreen extends StatefulWidget {
       _AdminServiceRequestsScreenState();
 }
 
-class _AdminServiceRequestsScreenState
-    extends State<AdminServiceRequestsScreen>
+class _AdminServiceRequestsScreenState extends State<AdminServiceRequestsScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
   List<Map<String, dynamic>> _pending = [];
@@ -53,26 +52,39 @@ class _AdminServiceRequestsScreenState
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Row(children: [
-          const Icon(Icons.check_circle_outline, color: Colors.green),
-          const SizedBox(width: 8),
-          const Text('Approve Service', style: TextStyle(fontSize: 16)),
-        ]),
+        title: Row(
+          children: [
+            const Icon(Icons.check_circle_outline, color: Colors.green),
+            const SizedBox(width: 8),
+            const Text('Approve Service', style: TextStyle(fontSize: 16)),
+          ],
+        ),
         content: SingleChildScrollView(
-          child: Column(mainAxisSize: MainAxisSize.min, children: [
-            Text('Service: ${request['service_name']}',
-                style: const TextStyle(fontWeight: FontWeight.bold)),
-            const SizedBox(height: 4),
-            Text('By: ${request['provider_name'] ?? 'Unknown'}',
-                style: const TextStyle(color: Colors.grey, fontSize: 13)),
-            const SizedBox(height: 16),
-            _dialogField('Price (Rs.)', priceCtrl,
-                keyboardType: TextInputType.number, hint: 'e.g. 500'),
-            const SizedBox(height: 10),
-            _dialogField('Icon (Emoji)', iconCtrl, hint: '🔧'),
-            const SizedBox(height: 10),
-            _dialogField('Admin Note', noteCtrl, hint: 'Approved'),
-          ]),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Service: ${request['service_name']}',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'By: ${request['provider_name'] ?? 'Unknown'}',
+                style: const TextStyle(color: Colors.grey, fontSize: 13),
+              ),
+              const SizedBox(height: 16),
+              _dialogField(
+                'Price (Rs.)',
+                priceCtrl,
+                keyboardType: TextInputType.number,
+                hint: 'e.g. 500',
+              ),
+              const SizedBox(height: 10),
+              _dialogField('Icon (Emoji)', iconCtrl, hint: '🔧'),
+              const SizedBox(height: 10),
+              _dialogField('Admin Note', noteCtrl, hint: 'Approved'),
+            ],
+          ),
         ),
         actions: [
           TextButton(
@@ -85,7 +97,9 @@ class _AdminServiceRequestsScreenState
               final result = await ServiceRequestService.approveRequest(
                 requestId: request['id'],
                 price: double.tryParse(priceCtrl.text) ?? 0,
-                icon: iconCtrl.text.trim().isEmpty ? '🔧' : iconCtrl.text.trim(),
+                icon: iconCtrl.text.trim().isEmpty
+                    ? '🔧'
+                    : iconCtrl.text.trim(),
                 adminNote: noteCtrl.text.trim(),
               );
               _showSnack(
@@ -99,7 +113,9 @@ class _AdminServiceRequestsScreenState
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.green,
               foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
             child: const Text('Approve'),
           ),
@@ -115,18 +131,28 @@ class _AdminServiceRequestsScreenState
       context: context,
       builder: (ctx) => AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Row(children: [
-          const Icon(Icons.cancel_outlined, color: Colors.red),
-          const SizedBox(width: 8),
-          const Text('Reject Service', style: TextStyle(fontSize: 16)),
-        ]),
-        content: Column(mainAxisSize: MainAxisSize.min, children: [
-          Text('Service: ${request['service_name']}',
-              style: const TextStyle(fontWeight: FontWeight.bold)),
-          const SizedBox(height: 16),
-          _dialogField('Reason for rejection', noteCtrl,
-              hint: 'e.g. Service already exists...'),
-        ]),
+        title: Row(
+          children: [
+            const Icon(Icons.cancel_outlined, color: Colors.red),
+            const SizedBox(width: 8),
+            const Text('Reject Service', style: TextStyle(fontSize: 16)),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Service: ${request['service_name']}',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16),
+            _dialogField(
+              'Reason for rejection',
+              noteCtrl,
+              hint: 'e.g. Service already exists...',
+            ),
+          ],
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
@@ -150,7 +176,9 @@ class _AdminServiceRequestsScreenState
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.red,
               foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
             child: const Text('Reject'),
           ),
@@ -170,31 +198,44 @@ class _AdminServiceRequestsScreenState
     );
   }
 
-  Widget _dialogField(String label, TextEditingController ctrl,
-      {String? hint, TextInputType? keyboardType}) {
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(label,
-          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
-      const SizedBox(height: 4),
-      TextField(
-        controller: ctrl,
-        keyboardType: keyboardType,
-        decoration: InputDecoration(
-          hintText: hint,
-          hintStyle: const TextStyle(color: Colors.grey, fontSize: 13),
-          filled: true,
-          fillColor: const Color(0xFFFFF8EF),
-          border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.grey.shade300)),
-          enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.grey.shade300)),
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+  Widget _dialogField(
+    String label,
+    TextEditingController ctrl, {
+    String? hint,
+    TextInputType? keyboardType,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
         ),
-      ),
-    ]);
+        const SizedBox(height: 4),
+        TextField(
+          controller: ctrl,
+          keyboardType: keyboardType,
+          decoration: InputDecoration(
+            hintText: hint,
+            hintStyle: const TextStyle(color: Colors.grey, fontSize: 13),
+            filled: true,
+            fillColor: const Color(0xFFFFF8EF),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: Colors.grey.shade300),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: Colors.grey.shade300),
+            ),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 12,
+              vertical: 10,
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
   @override
@@ -203,24 +244,35 @@ class _AdminServiceRequestsScreenState
       backgroundColor: const Color(0xFFF5F0E8),
       appBar: AppBar(
         backgroundColor: AppColors.primary,
-        title: Row(children: [
-          const Text('Service Requests',
-              style:
-                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-          if (_pending.isNotEmpty) ...[
-            const SizedBox(width: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-              decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(12)),
-              child: Text('${_pending.length}',
-                  style: const TextStyle(
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12)),
+        title: Row(
+          children: [
+            const Text(
+              'Service Requests',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
             ),
+            if (_pending.isNotEmpty) ...[
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '${_pending.length}',
+                  style: const TextStyle(
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                  ),
+                ),
+              ),
+            ],
           ],
-        ]),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh, color: Colors.white),
@@ -241,7 +293,8 @@ class _AdminServiceRequestsScreenState
       ),
       body: _isLoading
           ? const Center(
-              child: CircularProgressIndicator(color: AppColors.primary))
+              child: CircularProgressIndicator(color: AppColors.primary),
+            )
           : TabBarView(
               controller: _tabController,
               children: [
@@ -254,16 +307,23 @@ class _AdminServiceRequestsScreenState
     );
   }
 
-  Widget _buildList(List<Map<String, dynamic>> list,
-      {bool showActions = false}) {
+  Widget _buildList(
+    List<Map<String, dynamic>> list, {
+    bool showActions = false,
+  }) {
     if (list.isEmpty) {
       return Center(
-        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Icon(Icons.inbox_outlined, size: 60, color: Colors.grey.shade300),
-          const SizedBox(height: 12),
-          Text('No requests found',
-              style: TextStyle(color: Colors.grey.shade500, fontSize: 15)),
-        ]),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.inbox_outlined, size: 60, color: Colors.grey.shade300),
+            const SizedBox(height: 12),
+            Text(
+              'No requests found',
+              style: TextStyle(color: Colors.grey.shade500, fontSize: 15),
+            ),
+          ],
+        ),
       );
     }
 
@@ -278,14 +338,13 @@ class _AdminServiceRequestsScreenState
     );
   }
 
-  Widget _buildCard(Map<String, dynamic> request,
-      {bool showActions = false}) {
+  Widget _buildCard(Map<String, dynamic> request, {bool showActions = false}) {
     final status = request['status'] as String;
     final statusColor = status == 'approved'
         ? Colors.green
         : status == 'rejected'
-            ? Colors.red
-            : Colors.orange;
+        ? Colors.red
+        : Colors.orange;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -293,138 +352,185 @@ class _AdminServiceRequestsScreenState
         color: Colors.white,
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 6)
+          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 6),
         ],
       ),
       child: Padding(
         padding: const EdgeInsets.all(16),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          // Header
-          Row(children: [
-            Container(
-              width: 44,
-              height: 44,
-              decoration: BoxDecoration(
-                color: AppColors.primary.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: const Center(
-                  child: Text('🔧', style: TextStyle(fontSize: 22))),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                Text(request['service_name'] ?? '',
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, fontSize: 15)),
-                Text(request['custom_category'] ?? request['category'] ?? '',
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header
+            Row(
+              children: [
+                Container(
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Center(
+                    child: Text('🔧', style: TextStyle(fontSize: 22)),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        request['service_name'] ?? '',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                        ),
+                      ),
+                      Text(
+                        request['custom_category'] ?? request['category'] ?? '',
+                        style: TextStyle(
+                          color: Colors.grey.shade600,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: statusColor.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Text(
+                    status.toUpperCase(),
                     style: TextStyle(
-                        color: Colors.grey.shade600, fontSize: 12)),
-              ]),
-            ),
-            Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(
-                color: statusColor.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Text(status.toUpperCase(),
-                  style: TextStyle(
                       color: statusColor,
                       fontSize: 11,
-                      fontWeight: FontWeight.bold)),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ]),
-          const SizedBox(height: 12),
-          const Divider(height: 1),
-          const SizedBox(height: 12),
+            const SizedBox(height: 12),
+            const Divider(height: 1),
+            const SizedBox(height: 12),
 
-          // Provider Info
-          _infoRow(Icons.person_outline, 'Provider',
-              request['provider_name'] ?? 'Unknown'),
-          const SizedBox(height: 6),
-          _infoRow(Icons.email_outlined, 'Email',
-              request['provider_email'] ?? '-'),
-          const SizedBox(height: 6),
-          _infoRow(Icons.access_time_outlined, 'Experience',
-              '${request['years_of_experience'] ?? 0} years'),
-
-          if (request['description'] != null &&
-              request['description'].toString().isNotEmpty) ...[
+            // Provider Info
+            _infoRow(
+              Icons.person_outline,
+              'Provider',
+              request['provider_name'] ?? 'Unknown',
+            ),
             const SizedBox(height: 6),
-            _infoRow(Icons.notes_outlined, 'Description',
-                request['description']),
-          ],
-
-          if (request['admin_note'] != null &&
-              request['admin_note'].toString().isNotEmpty) ...[
+            _infoRow(
+              Icons.email_outlined,
+              'Email',
+              request['provider_email'] ?? '-',
+            ),
             const SizedBox(height: 6),
-            _infoRow(Icons.admin_panel_settings_outlined, 'Admin Note',
+            _infoRow(
+              Icons.access_time_outlined,
+              'Experience',
+              '${request['years_of_experience'] ?? 0} years',
+            ),
+
+            if (request['description'] != null &&
+                request['description'].toString().isNotEmpty) ...[
+              const SizedBox(height: 6),
+              _infoRow(
+                Icons.notes_outlined,
+                'Description',
+                request['description'],
+              ),
+            ],
+
+            if (request['admin_note'] != null &&
+                request['admin_note'].toString().isNotEmpty) ...[
+              const SizedBox(height: 6),
+              _infoRow(
+                Icons.admin_panel_settings_outlined,
+                'Admin Note',
                 request['admin_note'],
-                color: statusColor),
-          ],
+                color: statusColor,
+              ),
+            ],
 
-          // Action buttons
-          if (showActions) ...[
-            const SizedBox(height: 14),
-            Row(children: [
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: () => _showRejectDialog(request),
-                  icon: const Icon(Icons.close, size: 16),
-                  label: const Text('Reject'),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.red,
-                    side: const BorderSide(color: Colors.red),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8)),
-                    padding: const EdgeInsets.symmetric(vertical: 10),
+            // Action buttons
+            if (showActions) ...[
+              const SizedBox(height: 14),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () => _showRejectDialog(request),
+                      icon: const Icon(Icons.close, size: 16),
+                      label: const Text('Reject'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.red,
+                        side: const BorderSide(color: Colors.red),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: ElevatedButton.icon(
-                  onPressed: () => _showApproveDialog(request),
-                  icon: const Icon(Icons.check, size: 16),
-                  label: const Text('Approve'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8)),
-                    padding: const EdgeInsets.symmetric(vertical: 10),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () => _showApproveDialog(request),
+                      icon: const Icon(Icons.check, size: 16),
+                      label: const Text('Approve'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
-            ]),
+            ],
           ],
-        ]),
+        ),
       ),
     );
   }
 
-  Widget _infoRow(IconData icon, String label, String value,
-      {Color? color}) {
-    return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Icon(icon, size: 15, color: color ?? Colors.grey.shade500),
-      const SizedBox(width: 6),
-      Text('$label: ',
+  Widget _infoRow(IconData icon, String label, String value, {Color? color}) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 15, color: color ?? Colors.grey.shade500),
+        const SizedBox(width: 6),
+        Text(
+          '$label: ',
           style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey.shade500,
-              fontWeight: FontWeight.w500)),
-      Expanded(
-        child: Text(value,
+            fontSize: 12,
+            color: Colors.grey.shade500,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        Expanded(
+          child: Text(
+            value,
             style: TextStyle(
-                fontSize: 12,
-                color: color ?? const Color(0xFF2D2A24),
-                fontWeight: FontWeight.w500)),
-      ),
-    ]);
+              fontSize: 12,
+              color: color ?? const Color(0xFF2D2A24),
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }

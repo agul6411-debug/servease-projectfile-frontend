@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:frontfile_servease/screens/admin/admindrawer.dart';
 import 'package:frontfile_servease/screens/admin/admin_navbar.dart';
 import 'package:frontfile_servease/services/admin_commission_service.dart';
-import 'package:frontfile_servease/theme/app_theme.dart';
+import 'package:frontfile_servease/core/theme/app_theme.dart';
 
 class AdminCommissionScreen extends StatefulWidget {
   const AdminCommissionScreen({super.key});

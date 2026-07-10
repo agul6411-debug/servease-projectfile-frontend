@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:frontfile_servease/screens/admin/admindrawer.dart';
 import 'package:frontfile_servease/screens/admin/admin_navbar.dart';
-import 'package:frontfile_servease/theme/app_theme.dart';
+import 'package:frontfile_servease/core/theme/app_theme.dart';
 
 class AdminNotification extends StatefulWidget {
   const AdminNotification({super.key});

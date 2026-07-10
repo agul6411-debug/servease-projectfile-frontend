@@ -3,7 +3,7 @@ import 'package:frontfile_servease/models/admin_dashboard_model.dart';
 import 'package:frontfile_servease/screens/admin/admin_navbar.dart';
 import 'package:frontfile_servease/screens/admin/admindrawer.dart';
 import 'package:frontfile_servease/services/adminservice.dart';
-import 'package:frontfile_servease/theme/app_theme.dart';
+import 'package:frontfile_servease/core/theme/app_theme.dart';
 import 'package:frontfile_servease/services/service_request_service.dart';
 import 'package:frontfile_servease/routes.dart';
 import 'package:get/get.dart';
