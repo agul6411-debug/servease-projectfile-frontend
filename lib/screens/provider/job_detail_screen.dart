@@ -6,7 +6,7 @@ import 'package:frontfile_servease/screens/provider/provider_home_screen.dart';
 import 'package:frontfile_servease/screens/provider/provider_profile_screen.dart';
 import 'package:frontfile_servease/screens/provider/earningscreen.dart';
 import 'package:frontfile_servease/screens/provider/providernavbar.dart';
-import 'package:frontfile_servease/theme/app_theme.dart';
+import 'package:frontfile_servease/core/theme/app_theme.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class JobDetailScreen extends StatefulWidget {

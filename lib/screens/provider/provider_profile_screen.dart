@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:frontfile_servease/routes.dart';
-import 'package:frontfile_servease/theme/app_theme.dart';
+import 'package:frontfile_servease/core/theme/app_theme.dart';
 import 'package:frontfile_servease/screens/provider/provider_home_screen.dart';
 import 'package:frontfile_servease/screens/provider/providernavbar.dart';
 import 'package:frontfile_servease/screens/provider/my_jobs_screen.dart';

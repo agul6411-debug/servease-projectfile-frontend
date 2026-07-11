@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontfile_servease/services/customer/customerserviceali.dart';
-import 'package:frontfile_servease/theme/app_theme.dart';
+import 'package:frontfile_servease/core/theme/app_theme.dart';
 
 class CustomerSecurityScreen extends StatefulWidget {
   final int userId;

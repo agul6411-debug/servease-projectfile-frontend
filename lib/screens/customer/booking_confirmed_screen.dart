@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:frontfile_servease/routes.dart';
 import 'package:frontfile_servease/screens/customer/my_bookings_screen.dart';
-import 'package:frontfile_servease/theme/app_theme.dart';
+import 'package:frontfile_servease/core/theme/app_theme.dart';
 
 class BookingConfirmedScreen extends StatelessWidget {
   final String bookingId;

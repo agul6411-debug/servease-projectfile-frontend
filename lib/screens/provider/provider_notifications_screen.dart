@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:frontfile_servease/services/providerapiservices/providerapiservice.dart';
-import 'package:frontfile_servease/theme/app_theme.dart';
+import 'package:frontfile_servease/core/theme/app_theme.dart';
 
 class ProviderNotificationsScreen extends StatefulWidget {
   final int providerId;

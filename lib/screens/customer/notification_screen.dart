@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:frontfile_servease/models/customer/customer_model.dart';
 import 'package:frontfile_servease/services/customer/customerserviceali.dart';
-import 'package:frontfile_servease/theme/app_theme.dart';
+import 'package:frontfile_servease/core/theme/app_theme.dart';
 
 class NotificationScreen extends StatefulWidget {
   final int customerId;

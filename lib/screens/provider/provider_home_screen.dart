@@ -8,7 +8,7 @@ import 'package:frontfile_servease/screens/provider/provider_notifications_scree
 import 'package:frontfile_servease/screens/provider/providernavbar.dart';
 import 'package:frontfile_servease/screens/provider/my_jobs_screen.dart';
 import 'package:frontfile_servease/services/providerapiservices/providerapiservice.dart';
-import 'package:frontfile_servease/theme/app_theme.dart';
+import 'package:frontfile_servease/core/theme/app_theme.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'dart:async';

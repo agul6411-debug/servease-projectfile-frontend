@@ -7,7 +7,7 @@ import 'package:frontfile_servease/screens/customer/provider_list_screen.dart';
 import 'package:frontfile_servease/screens/customer/navbar.dart';
 import 'package:frontfile_servease/services/customer/customerserviceali.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:frontfile_servease/theme/app_theme.dart';
+import 'package:frontfile_servease/core/theme/app_theme.dart';
 
 class CustomerHomeScreen extends StatefulWidget {
   const CustomerHomeScreen({super.key});

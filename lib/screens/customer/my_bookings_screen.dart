@@ -3,7 +3,7 @@ import 'package:frontfile_servease/screens/customer/navbar.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:frontfile_servease/models/customer/customer_model.dart';
 import 'package:frontfile_servease/services/customer/customerserviceali.dart';
-import 'package:frontfile_servease/theme/app_theme.dart';
+import 'package:frontfile_servease/core/theme/app_theme.dart';
 
 class MyBookingsScreen extends StatefulWidget {
   const MyBookingsScreen({super.key});
