@@ -4,7 +4,7 @@ import 'package:frontfile_servease/services/providerpagereg_service.dart';
 import 'package:frontfile_servease/services/service_request_service.dart';
 import 'package:frontfile_servease/services/auth/auth_service.dart';
 import 'package:frontfile_servease/screens/auth/otp_verify_screen.dart';
-import 'package:frontfile_servease/theme/app_theme.dart';
+import 'package:frontfile_servease/core/theme/app_theme.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 

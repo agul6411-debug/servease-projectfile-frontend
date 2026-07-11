@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:frontfile_servease/theme/app_theme.dart';
+import 'package:frontfile_servease/core/theme/app_theme.dart';
 import 'package:get/get.dart';
 
 class RegisterScreen extends StatelessWidget {
