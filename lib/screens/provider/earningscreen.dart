@@ -202,7 +202,7 @@ class _EarningsScreenState extends State<EarningsScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Monthly earnings (RS)',
+            'Monthly Earnings (RS)',
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
