@@ -26,7 +26,7 @@ class CustomerApiService {
     }
   }
 
-  // GET all providers
+  // GET All Providers
   static Future<List<TopProvider>> fetchAllProviders() async {
     try {
       final res = await http.get(
@@ -43,7 +43,7 @@ class CustomerApiService {
     }
   }
 
-  // GET providers by category
+  // GET All Providers by category
   static Future<List<TopProvider>> fetchProvidersByCategory(
     String category,
   ) async {
