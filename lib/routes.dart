@@ -1,4 +1,4 @@
-// App routes
+// App routes of all pages in the app. This file is used to define the routes and their corresponding pages for navigation within the application.
 
 import 'package:frontfile_servease/screens/admin/admin_commission_screen.dart';
 import 'package:frontfile_servease/screens/admin/adminbookingscreen.dart';
