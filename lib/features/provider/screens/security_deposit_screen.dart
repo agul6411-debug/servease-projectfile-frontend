@@ -19,7 +19,7 @@ class _SecurityDepositScreenState extends State<SecurityDepositScreen> {
   String? _screenshotName;
   bool _isSubmitting = false;
 
-  static const String _accountNumber = '0325-7199904';
+  String get _accountNumber => _selectedMethod == 'EasyPaisa' ? '0314-7549904' : '0300-1009904';
 
   final _methods = ['JazzCash', 'EasyPaisa'];
 
@@ -169,9 +169,9 @@ class _SecurityDepositScreenState extends State<SecurityDepositScreen> {
                     style: TextStyle(fontSize: 13, color: AppColors.textMuted),
                   ),
                   const SizedBox(height: 6),
-                  const Text(
+                  Text(
                     _accountNumber,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 22,
                       fontWeight: FontWeight.bold,
                       color: AppColors.primaryGreen,

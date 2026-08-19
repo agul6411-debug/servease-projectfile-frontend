@@ -52,7 +52,7 @@ class _AdminSettingsPageState extends State<AdminSettingsPage> {
       _commissionController.text =
           settings['commission_rate']?.toString() ?? '10';
       _depositAmountController.text =
-          settings['security_deposit_amount']?.toString() ?? '2000';
+          settings['security_deposit_amount']?.toString() ?? '500';
       _appNameController.text = settings['app_name'] ?? 'ServEase';
       _supportEmailController.text = settings['support_email'] ?? '';
       _supportPhoneController.text = settings['support_phone'] ?? '';
@@ -116,7 +116,7 @@ class _AdminSettingsPageState extends State<AdminSettingsPage> {
     final success = await AdminSettingsService.updateSettings({
       'commission_rate': double.tryParse(_commissionController.text) ?? 10,
       'security_deposit_amount':
-          double.tryParse(_depositAmountController.text) ?? 2000,
+          double.tryParse(_depositAmountController.text) ?? 500,
       'security_deposit_required': _depositRequired,
       'app_name': _appNameController.text.trim(),
       'support_email': _supportEmailController.text.trim(),

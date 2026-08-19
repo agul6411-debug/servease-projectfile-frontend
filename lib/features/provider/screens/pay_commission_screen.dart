@@ -29,8 +29,8 @@ class _PayCommissionScreenState extends State<PayCommissionScreen> {
   bool _isSubmitting = false;
 
   final _methods = [
-    {'name': 'JazzCash', 'number': '0325-7199904'},
-    {'name': 'EasyPaisa', 'number': '0325-7199904'},
+    {'name': 'JazzCash', 'number': '0300-1009904'},
+    {'name': 'EasyPaisa', 'number': '0314-7549904'},
   ];
 
   Future<void> _pickScreenshot() async {

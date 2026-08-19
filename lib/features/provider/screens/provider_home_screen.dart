@@ -69,7 +69,7 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
         title: const Text('Security Deposit Required'),
         content: Text(
           'To start offering your services to customers, you need to send RS $amount as a security deposit to the admin. '
-          'JazzCash/EasyPaisa number: 0325-7199904. Upload a screenshot after payment.',
+          'JazzCash: 0300-1009904 / EasyPaisa: 0314-7549904. Upload a screenshot after payment.',
         ),
         actions: [
           TextButton(
