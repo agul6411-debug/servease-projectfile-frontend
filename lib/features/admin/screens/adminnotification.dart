@@ -162,7 +162,14 @@ class _AdminNotificationState extends State<AdminNotification> {
 
     if (confirm == true) {
       try {
-        final res = await http.delete(Uri.parse("$_base/clear-all"));
+        final token = GetStorage().read('auth_token') ?? '';
+        final res = await http.delete(
+          Uri.parse("$_base/clear-all"),
+          headers: {
+            'Content-Type': 'application/json',
+            if (token.isNotEmpty) 'Authorization': 'Bearer $token',
+          },
+        );
         if (res.statusCode == 200) {
           setState(() => _notifications.clear());
           ScaffoldMessenger.of(context).showSnackBar(

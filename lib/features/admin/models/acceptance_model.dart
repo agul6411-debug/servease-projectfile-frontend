@@ -15,10 +15,10 @@ class AcceptanceModel {
 
   factory AcceptanceModel.fromJson(Map<String, dynamic> json) {
     return AcceptanceModel(
-      id: json['id'],
+      id: json['id'] ?? 0,
       fullName: json['full_name'] ?? "",
       email: json['email'] ?? "",
-      cnicImage: json['cnic_image'] ?? "",
+      cnicImage: json['cnic_front_image'] ?? json['cnic_image'] ?? "",
       status: json['approval_status'] ?? "",
     );
   }

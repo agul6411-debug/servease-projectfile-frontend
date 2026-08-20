@@ -4,6 +4,7 @@ import 'package:frontfile_servease/features/admin/models/acceptance_model.dart';
 import 'package:frontfile_servease/features/admin/services/acceptance_service.dart';
 import 'package:frontfile_servease/features/admin/screens/admindrawer.dart';
 import 'package:frontfile_servease/features/admin/screens/admin_navbar.dart';
+import 'package:frontfile_servease/core/services/app_config.dart';
 import 'package:get/get.dart';
 
 class Acceptance extends StatefulWidget {
@@ -185,7 +186,11 @@ class _AcceptanceState extends State<Acceptance> {
                           radius: 28,
                           backgroundColor: Colors.orange.shade100,
                           backgroundImage: item.cnicImage.isNotEmpty
-                              ? NetworkImage(item.cnicImage)
+                              ? NetworkImage(
+                                  item.cnicImage.startsWith('http')
+                                      ? item.cnicImage
+                                      : "${AppConfig.baseUrl}${item.cnicImage.startsWith('/') ? item.cnicImage : '/${item.cnicImage}'}",
+                                )
                               : null,
                           child: item.cnicImage.isEmpty
                               ? const Icon(Icons.person, color: Colors.orange)
