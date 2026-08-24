@@ -406,6 +406,13 @@ class _AdminDashboardState extends State<AdminDashboard> {
         'color': const Color(0xFF00897B),
         'route': AppRoutes.adminServiceRequests,
       },
+      {
+        'title': 'Block / Unblock',
+        'sub': 'Manage user access',
+        'icon': Icons.block_outlined,
+        'color': const Color(0xFFC62828),
+        'route': AppRoutes.blockorunblock,
+      },
     ];
 
     return Padding(

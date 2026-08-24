@@ -331,36 +331,6 @@ class _BookServiceScreenState extends State<BookServiceScreen> {
                 ],
               ),
             ),
-            const SizedBox(height: 14),
-
-            // Price summary
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 4,
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  _priceRow('Service fee', 'RS ${widget.provider.rate}'),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 10),
-                    child: Divider(),
-                  ),
-                  _priceRow(
-                    'Total',
-                    'RS ${widget.provider.rate}',
-                    isBold: true,
-                  ),
-                ],
-              ),
-            ),
             const SizedBox(height: 20),
 
             // Confirm button
@@ -420,33 +390,4 @@ class _BookServiceScreenState extends State<BookServiceScreen> {
     ),
     contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
   );
-
-  Widget _priceRow(
-    String label,
-    String value, {
-    Color? valueColor,
-    bool isBold = false,
-  }) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 13,
-            color: isBold ? AppColors.textDark : AppColors.textMuted,
-            fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-          ),
-        ),
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 13,
-            color: valueColor ?? AppColors.textDark,
-            fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
-          ),
-        ),
-      ],
-    );
-  }
 }

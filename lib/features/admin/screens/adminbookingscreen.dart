@@ -119,7 +119,7 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen>
       margin: const EdgeInsets.fromLTRB(12, 12, 12, 0),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
-          colors: [Color(0xFF1565C0), Color(0xFF42A5F5)],
+          colors: [Color(0xFF0F5A34), Color(0xFF1B8B4B)],
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
         ),
@@ -242,11 +242,11 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen>
               margin: const EdgeInsets.only(right: 8),
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
               decoration: BoxDecoration(
-                color: isSelected ? const Color(0xFF1565C0) : Colors.white,
+                color: isSelected ? const Color(0xFF1B8B4B) : Colors.white,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
                   color: isSelected
-                      ? const Color(0xFF1565C0)
+                      ? const Color(0xFF1B8B4B)
                       : Colors.grey.shade300,
                 ),
               ),
@@ -277,7 +277,7 @@ class _AdminBookingsScreenState extends State<AdminBookingsScreen>
         children: [
           _miniStat('$pending', 'Pending', Colors.orange),
           const SizedBox(width: 8),
-          _miniStat('$active', 'Active', const Color(0xFF1565C0)),
+          _miniStat('$active', 'Active', const Color(0xFF1B8B4B)),
           const SizedBox(width: 8),
           _miniStat('$completed', 'Completed', AppColors.success),
           const SizedBox(width: 8),
@@ -346,7 +346,7 @@ class _BookingCard extends StatelessWidget {
       case 'pending':
         return Colors.orange;
       case 'accepted':
-        return const Color(0xFF1565C0);
+        return const Color(0xFF1B8B4B);
       case 'completed':
         return AppColors.success;
       case 'declined':
@@ -405,15 +405,15 @@ class _BookingCard extends StatelessWidget {
                     Container(
                       width: 40,
                       height: 40,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFE3F2FD),
+                      decoration: const BoxDecoration(
+                        color: Color(0xFFEBF6EE),
                         shape: BoxShape.circle,
                       ),
                       child: Center(
                         child: Text(
                           (data['customer_name'] ?? '?')[0].toUpperCase(),
                           style: const TextStyle(
-                            color: Color(0xFF1565C0),
+                            color: Color(0xFF1B8B4B),
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
                           ),

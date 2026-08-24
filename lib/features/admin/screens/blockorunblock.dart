@@ -14,10 +14,10 @@ class BlockOrUnblock extends StatefulWidget {
 }
 
 class _BlockOrUnblockState extends State<BlockOrUnblock> {
-  static const Color primaryGreen = AppColors.success;
-  static const Color darkGreen = AppColors.mediumRed;
-  static const Color accentOrange = AppColors.softPink;
-  static const Color bgColor = AppColors.cream;
+  static const Color primaryGreen = Color(0xFF1B8B4B);
+  static const Color darkGreen = Color(0xFF0F5A34);
+  static const Color accentOrange = Color(0xFFE8845A);
+  static const Color bgColor = AppColors.bgGrey;
 
   List<UserModel> _blockedUsers = [];
   bool _isLoading = true;
@@ -146,7 +146,7 @@ class _BlockOrUnblockState extends State<BlockOrUnblock> {
       drawer: const AdminDrawer(),
       bottomNavigationBar: const AdminBottomNavBar(),
       appBar: AppBar(
-        backgroundColor: Colors.red.shade600,
+        backgroundColor: primaryGreen,
         foregroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
