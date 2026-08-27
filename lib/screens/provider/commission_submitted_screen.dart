@@ -47,7 +47,7 @@ class CommissionSubmittedScreen extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               const Text(
-                'Admin will verify your payment within 24 hours. You\'ll be unlocked to connect with your next customer.',
+                'Admin will verify your payment within 24 hours. You will be unlocked to connect with your next customer.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 13,

@@ -24,7 +24,7 @@ class CustomerService {
       );
 }
 
-// ── Top Provider Model ────────────────────────────────────────────
+// ── Top Provider Model for customer ────────────────────────────────────────────
 class TopProvider {
   final int id;
   final String name;
@@ -67,7 +67,7 @@ class TopProvider {
   );
 }
 
-// ── Home Data Model ───────────────────────────────────────────────
+// ── Home Data Model for customer ───────────────────────────────────────────────
 class CustomerHomeData {
   final String customerName;
   final String city;
@@ -94,7 +94,7 @@ class CustomerHomeData {
       );
 }
 
-// ── Provider Detail Model ─────────────────────────────────────────
+// ── Provider Detail Model for customer ─────────────────────────────────────────
 class ProviderDetail {
   final int id;
   final String name;
@@ -148,7 +148,7 @@ class ProviderDetail {
   );
 }
 
-// ── Review Model ──────────────────────────────────────────────────
+// ── Review Model for customer ──────────────────────────────────────────────────
 class ReviewModel {
   final String reviewerName;
   final double rating;
@@ -178,7 +178,7 @@ class ReviewModel {
   );
 }
 
-// ── Booking Model ─────────────────────────────────────────────────
+// ── Booking Model for customer ──────────────────────────────────────────────────
 class CustomerBooking {
   final int id;
   final int providerId; // ← ADD
@@ -232,7 +232,7 @@ class CustomerBooking {
   }
 }
 
-// ── Notification Model ────────────────────────────────────────────
+// ── Notification Model for customer ────────────────────────────────────────────
 class CustomerNotification {
   final int id;
   final String title;

@@ -14,7 +14,7 @@ class CustomerNavBar extends StatelessWidget {
     return BottomNavigationBar(
       type: BottomNavigationBarType.fixed,
       selectedItemColor: green,
-      unselectedItemColor: Colors.grey,
+      unselectedItemColor: const Color.fromARGB(255, 161, 153, 153),
       currentIndex: currentIndex,
       selectedLabelStyle: const TextStyle(
         fontWeight: FontWeight.w600,

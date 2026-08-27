@@ -81,7 +81,7 @@ class BookingConfirmedScreen extends StatelessWidget {
             ),
             const SizedBox(height: 24),
 
-            // What happens next
+            // What happens next after booking
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(16),
@@ -158,7 +158,7 @@ class BookingConfirmedScreen extends StatelessWidget {
                 ),
               ),
               child: const Text(
-                'Back to Home',
+                'Back to Home page',
                 style: TextStyle(
                   color: AppColors.primaryGreen,
                   fontWeight: FontWeight.w600,

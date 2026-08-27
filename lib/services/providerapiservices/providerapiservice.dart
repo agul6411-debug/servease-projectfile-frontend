@@ -121,7 +121,7 @@ class ProviderApiService {
       request.fields['amount'] = amount.toString();
       request.fields['payment_method'] = paymentMethod;
       request.files.add(
-        await http.MultipartFile.fromPath('screenshot', screenshotFile.path),
+        await http.MultipartFile.fromPath('screenshot image', screenshotFile.path),
       );
       final response = await request.send();
       return response.statusCode == 200;
@@ -166,7 +166,7 @@ class ProviderApiService {
       request.fields['payment_method'] = paymentMethod;
       request.files.add(
         http.MultipartFile.fromBytes(
-          'screenshot',
+          'screenshot image',
           screenshotBytes,
           filename: screenshotName,
         ),
