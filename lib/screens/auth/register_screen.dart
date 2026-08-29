@@ -1,49 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:frontfile_servease/screens/auth/login_screen.dart';
 import 'package:frontfile_servease/theme/app_theme.dart';
+import 'package:frontfile_servease/routes.dart';
 import 'package:get/get.dart';
 
-// ─────────────────────────────────────────────
-// Full Page
-// ─────────────────────────────────────────────
 class RegisterScreen extends StatelessWidget {
   const RegisterScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final isMobile = MediaQuery.of(context).size.width < 600;
-    final horizontalPadding = isMobile ? 16.0 : 32.0;
-    final verticalPadding = isMobile ? 20.0 : 32.0;
-
     return Scaffold(
-      backgroundColor: AppColors.cream,
-      appBar: AppBar(
-        title: const Text('Register'),
-        leading: Navigator.canPop(context)
-            ? IconButton(
-                icon: const Icon(Icons.arrow_back),
-                onPressed: () => Navigator.of(context).pop(),
-              )
-            : null,
-        backgroundColor: Colors.white,
-        elevation: 0,
-        foregroundColor: Colors.black,
-      ),
+      backgroundColor: const Color(0xFFF9FBF8),
       body: SingleChildScrollView(
         child: Column(
-          children: [
-            const _HeroSection(),
-            const _FeaturesStrip(),
-
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: horizontalPadding,
-                vertical: verticalPadding,
-              ),
-              child: const _CTABanner(),
-            ),
-
-            const _Footer(),
+          children: const [
+            _HeroSection(),
+            _ChoiceSection(),
+            _Footer(),
           ],
         ),
       ),
@@ -51,342 +23,347 @@ class RegisterScreen extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────
-// Hero Section
-// ─────────────────────────────────────────────
+// ── HERO SECTION ─────────────────────────────────────────────────
 class _HeroSection extends StatelessWidget {
   const _HeroSection();
 
   @override
   Widget build(BuildContext context) {
-    final isMobile = MediaQuery.of(context).size.width < 600;
-    final horizontalPadding = isMobile ? 24.0 : 40.0;
-    final verticalPadding = isMobile ? 40.0 : 56.0;
-    final fontSize = isMobile ? 28.0 : 42.0;
-    final descFontSize = isMobile ? 14.0 : 16.0;
+    return Stack(
+      children: [
+        Container(
+          width: double.infinity,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Color(0xFF0F5A34),
+                Color(0xFF1B8B4B),
+              ],
+            ),
+          ),
+          padding: const EdgeInsets.fromLTRB(20, 56, 20, 68),
+          child: Column(
+            children: [
+              // Back Button Row
+              Align(
+                alignment: Alignment.centerLeft,
+                child: GestureDetector(
+                  onTap: () => Get.back(),
+                  child: Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.12),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.arrow_back_rounded,
+                      color: Colors.white,
+                      size: 18,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
 
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(
-        horizontal: horizontalPadding,
-        vertical: verticalPadding,
-      ),
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Color(0xFFFFE0B2), Color(0xFFE8F5E9)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+              // Title
+              const Text(
+                'Join ServEase',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w900,
+                  color: Colors.white,
+                  letterSpacing: -0.5,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Choose your role to get started with Pakistan\'s leading home service network.',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.white.withOpacity(0.85),
+                  height: 1.5,
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
+
+        // Curve bottom overlap
+        Positioned(
+          bottom: 0,
+          left: 0,
+          right: 0,
+          child: Container(
+            height: 24,
+            decoration: const BoxDecoration(
+              color: Color(0xFFF9FBF8),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// ── CHOICE SECTION (WOW Cards) ──────────────────────────────────
+class _ChoiceSection extends StatelessWidget {
+  const _ChoiceSection();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Column(
         children: [
-          Text(
-            'Your Trusted Home\nService Platform',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Color(0xFF1B1B1B),
-              fontSize: fontSize,
-              fontWeight: FontWeight.bold,
-              height: 1.2,
-            ),
+          // 1. CUSTOMER CARD
+          _ChoiceCard(
+            title: 'Book a Service',
+            subtitle: 'I want to hire verified partners',
+            desc: 'Find and book skilled female professionals for tailoring, beauty, mehndi, cleaning & tutoring.',
+            bullets: const [
+              '100% CNIC-verified local partners',
+              'Fair upfront pricing & ratings check',
+              'Doorstep services with safety first',
+            ],
+            icon: Icons.person_rounded,
+            iconBg: const Color(0xFFEBF6EE),
+            iconColor: AppColors.primary,
+            borderColor: AppColors.primary.withOpacity(0.2),
+            btnText: 'Register as Customer',
+            btnColor: AppColors.primary,
+            onTap: () => Get.toNamed('/customer_page'),
           ),
-          SizedBox(height: isMobile ? 12 : 16),
-          Text(
-            'Connect with verified professionals for all your home service needs.\nFast, reliable, and transparent.',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Color(0xFF424242),
-              fontSize: descFontSize,
-              height: 1.6,
-            ),
+          
+          const SizedBox(height: 20),
+
+          // 2. PROVIDER CARD
+          _ChoiceCard(
+            title: 'Become a Partner',
+            subtitle: 'I want to offer my services & earn',
+            desc: 'Earn income by offering your skills. Work on your own terms and manage bookings easily.',
+            bullets: const [
+              'Zero hidden fees — keep what you earn',
+              'Set your own prices and hours',
+              'Easy digital commission system',
+            ],
+            icon: Icons.work_rounded,
+            iconBg: const Color.fromARGB(255, 155, 123, 55),
+            iconColor: AppColors.accent,
+            borderColor: AppColors.accent.withOpacity(0.2),
+            btnText: 'Register as provider',
+            btnColor: AppColors.accent,
+            onTap: () => Get.toNamed('/providerPagereg'),
           ),
+
+          const SizedBox(height: 28),
+
+          // Login Link
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'Already have an account? ',
+                style: TextStyle(
+                  fontSize: 13,
+                  color: AppColors.mutedForeground,
+                ),
+              ),
+              GestureDetector(
+                onTap: () => Get.toNamed(AppRoutes.loginScreen),
+                child: const Text(
+                  'Login here',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primary,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
         ],
       ),
     );
   }
 }
 
-// ─────────────────────────────────────────────
-// Features Strip
-// ─────────────────────────────────────────────
-class _FeaturesStrip extends StatelessWidget {
-  const _FeaturesStrip();
+// ── CUSTOM CHOICE CARD COMPONENT ─────────────────────────────────
+class _ChoiceCard extends StatelessWidget {
+  final String title;
+  final String subtitle;
+  final String desc;
+  final List<String> bullets;
+  final IconData icon;
+  final Color iconBg;
+  final Color iconColor;
+  final Color borderColor;
+  final String btnText;
+  final Color btnColor;
+  final VoidCallback onTap;
 
-  static const _features = [
-    {'icon': Icons.bolt_rounded, 'label': 'Fast Booking'},
-    {'icon': Icons.verified_rounded, 'label': 'Verified Pros'},
-    {'icon': Icons.star_rounded, 'label': 'Top Rated'},
-    {'icon': Icons.shield_rounded, 'label': 'Secure & Safe'},
-  ];
+  const _ChoiceCard({
+    required this.title,
+    required this.subtitle,
+    required this.desc,
+    required this.bullets,
+    required this.icon,
+    required this.iconBg,
+    required this.iconColor,
+    required this.borderColor,
+    required this.btnText,
+    required this.btnColor,
+    required this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final isMobile = MediaQuery.of(context).size.width < 600;
-    final horizontalPadding = isMobile ? 16.0 : 40.0;
-    final verticalPadding = isMobile ? 16.0 : 24.0;
-    final itemSpacing = isMobile ? 8.0 : 10.0;
-    final fontSize = isMobile ? 12.0 : 14.0;
-    final iconSize = isMobile ? 18.0 : 22.0;
-    final containerSize = isMobile ? 32.0 : 40.0;
-
     return Container(
-      color: const Color(0xFF1B5E20),
-      padding: EdgeInsets.symmetric(
-        vertical: verticalPadding,
-        horizontal: horizontalPadding,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(24),
+        border: Border.all(color: borderColor, width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: iconColor.withOpacity(0.04),
+            blurRadius: 16,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
-      child: isMobile
-          ? Column(
-              children: _features.map((f) {
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: containerSize,
-                        height: containerSize,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFFF9800).withAlpha(35),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Icon(
-                          f['icon'] as IconData,
-                          color: const Color(0xFFFF9800),
-                          size: iconSize,
-                        ),
-                      ),
-                      SizedBox(width: itemSpacing),
-                      Text(
-                        f['label'] as String,
-                        style: TextStyle(
-                          fontSize: fontSize,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                );
-              }).toList(),
-            )
-          : Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: _features.map((f) {
-                return Row(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header Row
+          Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: iconBg,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  icon,
+                  color: iconColor,
+                  size: 22,
+                ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      width: containerSize,
-                      height: containerSize,
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFF9800).withAlpha(35),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Icon(
-                        f['icon'] as IconData,
-                        color: const Color(0xFFFF9800),
-                        size: iconSize,
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w900,
+                        color: AppColors.foreground,
                       ),
                     ),
-                    SizedBox(width: itemSpacing),
+                    const SizedBox(height: 2),
                     Text(
-                      f['label'] as String,
+                      subtitle,
                       style: TextStyle(
-                        fontSize: fontSize,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
+                        fontSize: 11,
+                        color: iconColor,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                   ],
-                );
-              }).toList(),
-            ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────
-// CTA Banner
-// ─────────────────────────────────────────────
-class _CTABanner extends StatefulWidget {
-  const _CTABanner();
-
-  @override
-  State<_CTABanner> createState() => _CTABannerState();
-}
-
-class _CTABannerState extends State<_CTABanner>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 6),
-    )..repeat();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  void _navigate(String type) {
-    if (type == 'customer') {
-      Get.toNamed('/customer_page');
-    } else if (type == 'provider') {
-      Get.toNamed('/providerPagereg');
-    } else if (type == 'login') {
-      Get.toNamed('/login_screen');
-    }
-  }
-
-  void LoginScreen() {
-    Get.toNamed('/login_screen');
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final isMobile = MediaQuery.of(context).size.width < 600;
-
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(24),
-      child: Stack(
-        children: [
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.symmetric(
-              vertical: isMobile ? 40 : 56,
-              horizontal: isMobile ? 24 : 40,
-            ),
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFFFFE0B2), Color(0xFFE8F5E9)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+                ),
               ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          
+          // Description
+          Text(
+            desc,
+            style: const TextStyle(
+              fontSize: 12,
+              color: AppColors.mutedForeground,
+              height: 1.5,
             ),
           ),
-
-          Positioned.fill(
-            child: AnimatedBuilder(
-              animation: _controller,
-              builder: (_, _) {
-                return CustomPaint(
-                  painter: _CrossPatternPainter(offset: _controller.value * 60),
-                );
-              },
-            ),
-          ),
-
-          Padding(
-            padding: EdgeInsets.symmetric(
-              vertical: isMobile ? 36 : 52,
-              horizontal: isMobile ? 24 : 40,
-            ),
-            child: Column(
+          const SizedBox(height: 16),
+          
+          // Bullet points
+          ...bullets.map((b) => Padding(
+            padding: const EdgeInsets.only(bottom: 8),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  "Let's Get You Started!",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Color(0xFF1B1B1B),
-                    fontSize: isMobile ? 24 : 32,
-                    fontWeight: FontWeight.bold,
-                  ),
+                Icon(
+                  Icons.check_circle_outline_rounded,
+                  color: iconColor,
+                  size: 15,
                 ),
-
-                SizedBox(height: isMobile ? 10 : 14),
-
-                Text(
-                  'Join thousands of satisfied customers and service providers on our platform',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Color(0xFF424242),
-                    fontSize: isMobile ? 13 : 15,
-                  ),
-                ),
-
-                SizedBox(height: isMobile ? 24 : 36),
-
-                isMobile
-                    ? Column(
-                        children: [
-                          _CTAButton(
-                            label: 'Signup as Customer',
-                            filled: false,
-                            onTap: () => _navigate('customer'),
-                            isMobile: true,
-                          ),
-
-                          const SizedBox(height: 12),
-
-                          _CTAButton(
-                            label: 'Signup as Service Provider',
-                            filled: true,
-                            onTap: () => _navigate('provider'),
-                            isMobile: true,
-                          ),
-                        ],
-                      )
-                    : Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          _CTAButton(
-                            label: 'Signup as Customer',
-                            filled: false,
-                            onTap: () => _navigate('customer'),
-                            isMobile: true,
-                          ),
-
-                          const SizedBox(width: 20),
-
-                          _CTAButton(
-                            label: 'Signup as Service Provider',
-                            filled: true,
-                            onTap: () => _navigate('provider'),
-                            isMobile: true,
-                          ),
-                        ],
-                      ),
-
-                SizedBox(height: isMobile ? 20 : 28),
-
-                GestureDetector(
-                  onTap: () => _navigate('login'),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: isMobile ? 16 : 24,
-                      vertical: isMobile ? 10 : 12,
-                    ),
-                    child: RichText(
-                      textAlign: TextAlign.center,
-                      text: TextSpan(
-                        style: TextStyle(
-                          color: Color(0xFF424242),
-                          fontSize: isMobile ? 12 : 14,
-                        ),
-                        children: [
-                          const TextSpan(text: 'Already have an account? '),
-                          TextSpan(
-                            text: 'log in',
-                            style: TextStyle(
-                              color: Color(0xFFFF9800),
-                              fontWeight: FontWeight.bold,
-                              decoration: TextDecoration.underline,
-                              decorationColor: Color(0xFFFF9800),
-                            ),
-                          ),
-                        ],
-                      ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    b,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppColors.foreground,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),
               ],
             ),
+          )).toList(),
+          
+          const SizedBox(height: 18),
+          
+          // CTA button
+          GestureDetector(
+            onTap: onTap,
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              decoration: BoxDecoration(
+                color: btnColor,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: btnColor.withOpacity(0.2),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    btnText,
+                    style: const TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  const Icon(
+                    Icons.arrow_forward_rounded,
+                    color: Colors.white,
+                    size: 15,
+                  ),
+                ],
+              ),
+            ),
           ),
         ],
       ),
@@ -394,144 +371,25 @@ class _CTABannerState extends State<_CTABanner>
   }
 }
 
-// ─────────────────────────────────────────────
-// CTA BUTTON
-// ─────────────────────────────────────────────
-class _CTAButton extends StatefulWidget {
-  final String label;
-  final bool filled;
-  final VoidCallback onTap;
-  final bool isMobile;
-
-  const _CTAButton({
-    required this.label,
-    required this.filled,
-    required this.onTap,
-    this.isMobile = false,
-  });
-
-  @override
-  State<_CTAButton> createState() => _CTAButtonState();
-}
-
-class _CTAButtonState extends State<_CTAButton> {
-  bool _hovered = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return MouseRegion(
-      onEnter: (_) => setState(() => _hovered = true),
-      onExit: (_) => setState(() => _hovered = false),
-      child: GestureDetector(
-        onTap: widget.onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
-          padding: EdgeInsets.symmetric(
-            horizontal: widget.isMobile ? 20 : 28,
-            vertical: widget.isMobile ? 12 : 15,
-          ),
-          decoration: BoxDecoration(
-            color: widget.filled
-                ? (_hovered ? const Color(0xFF388E3C) : const Color(0xFF2E7D32))
-                : Colors.white,
-            borderRadius: BorderRadius.circular(30),
-            border: widget.filled
-                ? null
-                : Border.all(color: const Color(0xFF2E7D32), width: 1.5),
-          ),
-          child: Text(
-            widget.label,
-            style: TextStyle(
-              color: widget.filled ? Colors.white : const Color(0xFF2E7D32),
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────
-// PATTERN PAINTER
-// ─────────────────────────────────────────────
-class _CrossPatternPainter extends CustomPainter {
-  final double offset;
-
-  _CrossPatternPainter({required this.offset});
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.white.withAlpha(18)
-      ..strokeWidth = 1.2;
-
-    const spacing = 36.0;
-    const armLen = 8.0;
-
-    final cols = (size.width / spacing).ceil() + 2;
-    final rows = (size.height / spacing).ceil() + 2;
-
-    final dx = offset % spacing;
-
-    for (int r = -1; r < rows; r++) {
-      for (int c = -1; c < cols; c++) {
-        final cx = c * spacing + dx;
-        final cy = r * spacing;
-
-        canvas.drawLine(
-          Offset(cx - armLen, cy),
-          Offset(cx + armLen, cy),
-          paint,
-        );
-
-        canvas.drawLine(
-          Offset(cx, cy - armLen),
-          Offset(cx, cy + armLen),
-          paint,
-        );
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(_CrossPatternPainter old) {
-    return old.offset != offset;
-  }
-}
-
-// ─────────────────────────────────────────────
-// FOOTER
-// ─────────────────────────────────────────────
+// ── FOOTER ───────────────────────────────────────────────────────
 class _Footer extends StatelessWidget {
   const _Footer();
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: const Color(0xFF1B5E20),
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 28),
-      child: Row(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),
+      child: Column(
         children: [
-          const Icon(Icons.home_rounded, color: Color(0xFFFF9800), size: 20),
-
-          const SizedBox(width: 8),
-
-          const Text(
-            'ServEase',
+          const Divider(color: Color(0xFFEBF2EC), height: 1),
+          const SizedBox(height: 16),
+          Text(
+            'Secure & CNIC-Verified Home Service Portal',
             style: TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
+              fontSize: 11,
+              color: Colors.grey[500],
+              fontWeight: FontWeight.w500,
             ),
-          ),
-
-          const Spacer(),
-
-          const Text(
-            '© 2026 ServEase. All rights reserved.',
-            style: TextStyle(color: Colors.white70, fontSize: 12),
           ),
         ],
       ),
