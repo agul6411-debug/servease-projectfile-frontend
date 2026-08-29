@@ -20,6 +20,8 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
   List<JobRequest> _allJobs = [];
   String _filter = 'All';
   bool _isLoading = true;
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
 
   final _filters = [
     'All',
@@ -42,6 +44,14 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
     _loadJobs();
   }
 
+  @override
+void dispose() {
+  _searchController.dispose();
+  super.dispose();
+  }
+
+
+
   Future<void> _loadJobs() async {
     setState(() => _isLoading = true);
     final jobs = await ProviderApiService.fetchAllJobs(widget.providerId);
@@ -51,9 +61,59 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
     });
   }
 
-  List<JobRequest> get _filteredJobs => _filter == 'All'
-      ? _allJobs
-      : _allJobs.where((j) => j.status == _filter).toList();
+  List<JobRequest> get _filteredJobs {
+  return _allJobs.where((job) {
+    final matchesFilter =
+        _filter == 'All' || job.status == _filter;
+
+    final query = _searchQuery.toLowerCase().trim();
+
+    final matchesSearch =
+        job.customerName.toLowerCase().contains(query) ||
+        job.serviceType.toLowerCase().contains(query);
+
+    return matchesFilter && matchesSearch;
+  }).toList();
+}
+Widget _buildSearchBar() {
+  return Container(
+    color: Colors.white,
+    padding: const EdgeInsets.fromLTRB(12, 10, 12, 5),
+    child: TextField(
+      controller: _searchController,
+      onChanged: (value) {
+        setState(() {
+          _searchQuery = value;
+        });
+      },
+      decoration: InputDecoration(
+        hintText: 'Search jobs...',
+        prefixIcon: const Icon(
+          Icons.search,
+          color: AppColors.primaryGreen,
+        ),
+        suffixIcon: _searchQuery.isNotEmpty
+            ? IconButton(
+                icon: const Icon(Icons.clear),
+                onPressed: () {
+                  _searchController.clear();
+                  setState(() {
+                    _searchQuery = '';
+                  });
+                },
+              )
+            : null,
+        filled: true,
+        fillColor: AppColors.bgGrey,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide.none,
+        ),
+        contentPadding: const EdgeInsets.symmetric(vertical: 12),
+      ),
+    ),
+  );
+}
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +129,7 @@ class _MyJobsScreenState extends State<MyJobsScreen> {
       ),
       body: Column(
         children: [
+          _buildSearchBar(),
           _buildFilterRow(),
           Expanded(
             child: _isLoading
