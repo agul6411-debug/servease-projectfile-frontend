@@ -4,6 +4,7 @@ import 'package:frontfile_servease/features/provider/screens/provider_home_scree
 import 'package:frontfile_servease/features/provider/screens/my_jobs_screen.dart';
 import 'package:frontfile_servease/features/provider/screens/earningscreen.dart';
 import 'package:frontfile_servease/features/provider/screens/provider_profile_screen.dart';
+import 'package:frontfile_servease/features/provider/screens/provider_messages_screen.dart';
 
 class ProviderBottomNavBar extends StatelessWidget {
   final int currentIndex;
@@ -22,6 +23,7 @@ class ProviderBottomNavBar extends StatelessWidget {
     {'icon': Icons.work_outline, 'label': 'My Jobs'},
     {'icon': Icons.account_balance_wallet_outlined, 'label': 'Earnings'},
     {'icon': Icons.person_outline, 'label': 'Profile'},
+    {'icon': Icons.message_outlined, 'label': 'Messages'},
   ];
 
   @override
@@ -63,6 +65,9 @@ class ProviderBottomNavBar extends StatelessWidget {
                         break;
                       case 3:
                         screen = ProviderProfileScreen(providerId: providerId);
+                        break;
+                      case 4:
+                        screen = ProviderMessagesScreen(providerId: providerId);
                         break;
                       default:
                         return;

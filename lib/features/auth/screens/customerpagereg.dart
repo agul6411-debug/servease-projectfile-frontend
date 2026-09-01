@@ -19,6 +19,7 @@ class _CustomerPageregState extends State<CustomerPagereg> {
   final _phoneController = TextEditingController();
   final _cnicController = TextEditingController();
   final _addressController = TextEditingController();
+  final _ageController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPassController = TextEditingController();
 
@@ -34,6 +35,7 @@ class _CustomerPageregState extends State<CustomerPagereg> {
     _phoneController.dispose();
     _cnicController.dispose();
     _addressController.dispose();
+    _ageController.dispose();
     _passwordController.dispose();
     _confirmPassController.dispose();
     super.dispose();
@@ -73,7 +75,10 @@ class _CustomerPageregState extends State<CustomerPagereg> {
   Future<void> _handleCreateAccount() async {
     if (!_formKey.currentState!.validate()) return;
     if (!_agreeToTerms) {
-      _showSnack('Please agree to Terms and Conditions and Privacy Policy.', isError: true);
+      _showSnack(
+        'Please agree to Terms and Conditions and Privacy Policy.',
+        isError: true,
+      );
       return;
     }
 
@@ -93,38 +98,43 @@ class _CustomerPageregState extends State<CustomerPagereg> {
     if (!mounted) return;
 
     // Step 2: OTP verify screen
-    Get.to(() => OtpVerifyScreen(
-      email: _emailController.text.trim(),
-      fullName: _fullNameController.text.trim(),
-      onVerified: () async {
-        Get.back();
-        setState(() => _isLoading = true);
-        try {
-          final result = await CustomerService().registerCustomer(
-            _fullNameController.text.trim(),
-            _emailController.text.trim(),
-            _phoneController.text.trim(),
-            _cnicController.text.trim(),
-            _addressController.text.trim(),
-            _passwordController.text,
-          );
-          if (!mounted) return;
-          setState(() => _isLoading = false);
-          if (result == 'Registration successful') {
-            _showSnack('Account created successfully! Please login.');
-            await Future.delayed(const Duration(seconds: 1));
+    Get.to(
+      () => OtpVerifyScreen(
+        email: _emailController.text.trim(),
+        fullName: _fullNameController.text.trim(),
+        onVerified: () async {
+          Get.back();
+          setState(() => _isLoading = true);
+          try {
+            final result = await CustomerService().registerCustomer(
+              _fullNameController.text.trim(),
+              _emailController.text.trim(),
+              _phoneController.text.trim(),
+              _cnicController.text.trim(),
+              _addressController.text.trim(),
+              _ageController.text.trim(),
+              _passwordController.text.trim(),
+              _confirmPassController.text.trim(),
+            );
+
             if (!mounted) return;
-            Get.offAllNamed('/login_screen');
-          } else {
-            _showSnack(result, isError: true);
+            setState(() => _isLoading = false);
+            if (result == 'Registration successful') {
+              _showSnack('Account created successfully! Please login.');
+              await Future.delayed(const Duration(seconds: 1));
+              if (!mounted) return;
+              Get.offAllNamed('/login_screen');
+            } else {
+              _showSnack(result, isError: true);
+            }
+          } catch (e) {
+            if (!mounted) return;
+            setState(() => _isLoading = false);
+            _showSnack('An error occurred. Please try again.', isError: true);
           }
-        } catch (e) {
-          if (!mounted) return;
-          setState(() => _isLoading = false);
-          _showSnack('An error occurred. Please try again.', isError: true);
-        }
-      },
-    ));
+        },
+      ),
+    );
   }
 
   void _showSnack(String msg, {bool isError = false}) {
@@ -264,16 +274,16 @@ class _CustomerPageregState extends State<CustomerPagereg> {
     );
   }
 
-  Widget _buildResponsiveRow(BuildContext context, Widget child1, Widget child2) {
+  Widget _buildResponsiveRow(
+    BuildContext context,
+    Widget child1,
+    Widget child2,
+  ) {
     final isMobile = MediaQuery.of(context).size.width < 600;
     if (isMobile) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          child1,
-          const SizedBox(height: 14),
-          child2,
-        ],
+        children: [child1, const SizedBox(height: 14), child2],
       );
     } else {
       return Row(
@@ -431,8 +441,7 @@ class _CustomerPageregState extends State<CustomerPagereg> {
                                     controller: _emailController,
                                     hint: 'your@email.com',
                                     icon: Icons.mail_outline_rounded,
-                                    keyboardType:
-                                        TextInputType.emailAddress,
+                                    keyboardType: TextInputType.emailAddress,
                                     validator: _emailValidator,
                                   ),
                                 ),
@@ -445,10 +454,8 @@ class _CustomerPageregState extends State<CustomerPagereg> {
                                     hint: '03001234567',
                                     icon: Icons.phone_outlined,
                                     keyboardType: TextInputType.phone,
-                                    validator: (v) => _requiredValidator(
-                                      v,
-                                      'Phone number',
-                                    ),
+                                    validator: (v) =>
+                                        _requiredValidator(v, 'Phone number'),
                                   ),
                                   _buildField(
                                     label: 'CNIC Number',
@@ -467,6 +474,15 @@ class _CustomerPageregState extends State<CustomerPagereg> {
                                   maxLength: 150,
                                   validator: (v) =>
                                       _requiredValidator(v, 'Address'),
+                                ),
+                                _buildField(
+                                  label: 'Age',
+                                  controller: _ageController,
+                                  hint: 'Enter your age',
+                                  icon: Icons.person_outline_rounded,
+                                  keyboardType: TextInputType.number,
+                                  validator: (v) =>
+                                      _requiredValidator(v, 'Age'),
                                 ),
                               ],
                             ),

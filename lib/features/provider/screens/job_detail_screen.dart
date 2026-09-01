@@ -72,7 +72,8 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
     if (result['success'] == true && mounted) {
       setState(() => _currentStatus = newStatus);
       if (newStatus == 'completed' && result['commission_triggered'] == true) {
-        final amount = (result['commission_amount'] as num?)?.toDouble() ?? 
+        final amount =
+            (result['commission_amount'] as num?)?.toDouble() ??
             widget.job.price * (widget.commissionRate ?? 0.10);
         Navigator.push(
           context,
@@ -104,7 +105,9 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Could not open WhatsApp. Make sure it is installed.'),
+            content: Text(
+              'Could not open WhatsApp. Make sure it is installed.',
+            ),
             backgroundColor: Colors.red,
           ),
         );
@@ -140,10 +143,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
         children: [
           _buildMessageButton(),
           _buildReportButton(),
-          ProviderBottomNavBar(
-            currentIndex: 1,
-            providerId: widget.providerId,
-          ),
+          ProviderBottomNavBar(currentIndex: 1, providerId: widget.providerId),
         ],
       ),
     );

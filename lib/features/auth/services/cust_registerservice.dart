@@ -11,7 +11,9 @@ class CustomerService {
     String phone,
     String cnic,
     String address,
+    String age,
     String password,
+    String trim,
   ) async {
     final url = Uri.parse('$baseUrl/api/auth/register/customer');
 
@@ -24,6 +26,7 @@ class CustomerService {
         "phone": phone,
         "cnic": cnic,
         "address": address,
+        "age": age,
         "password": password,
       }),
     );

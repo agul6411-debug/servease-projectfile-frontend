@@ -48,7 +48,8 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
         widget.providerId,
       );
       final status = data['status'] ?? 'pending';
-      final amount = double.tryParse(data['amount']?.toString() ?? '500')?.toInt() ?? 500;
+      final amount =
+          double.tryParse(data['amount']?.toString() ?? '500')?.toInt() ?? 500;
       final required = data['required'] ?? 1;
 
       setState(() {
@@ -85,8 +86,10 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) =>
-                      SecurityDepositScreen(providerId: widget.providerId, amount: amount),
+                  builder: (_) => SecurityDepositScreen(
+                    providerId: widget.providerId,
+                    amount: amount,
+                  ),
                 ),
               );
             },
@@ -108,14 +111,23 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
         ProviderApiService.fetchNewJobRequests(widget.providerId),
         ProviderApiService.fetchNotifications(widget.providerId),
       ]);
-      
+
       final notifsList = results[2] as List<dynamic>;
-      final unread = notifsList.where((n) => n['is_read'] == 0 || n['is_read'] == false || n['is_read'] == null).length;
+      final unread = notifsList
+          .where(
+            (n) =>
+                n['is_read'] == 0 ||
+                n['is_read'] == false ||
+                n['is_read'] == null,
+          )
+          .length;
 
       setState(() {
         _stats = results[0] as DashboardStats;
         _jobRequests = results[1] as List<JobRequest>;
         _unreadCount = unread;
+        String _searchQuery = '';
+        final TextEditingController _searchController = TextEditingController();
         _isLoading = false;
       });
     } catch (e) {
@@ -209,8 +221,10 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) =>
-                        SecurityDepositScreen(providerId: widget.providerId, amount: _securityDepositAmount),
+                    builder: (_) => SecurityDepositScreen(
+                      providerId: widget.providerId,
+                      amount: _securityDepositAmount,
+                    ),
                   ),
                 );
               },
@@ -332,15 +346,23 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
                     color: Colors.white.withValues(alpha: 0.15),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.notifications_outlined, color: Colors.white, size: 20),
-                ),
-                onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) =>
-                        ProviderNotificationsScreen(providerId: widget.providerId),
+                  child: const Icon(
+                    Icons.notifications_outlined,
+                    color: Colors.white,
+                    size: 20,
                   ),
-                ).then((_) => _loadDashboardData()), // Reload stats and count on return
+                ),
+                onPressed: () =>
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ProviderNotificationsScreen(
+                          providerId: widget.providerId,
+                        ),
+                      ),
+                    ).then(
+                      (_) => _loadDashboardData(),
+                    ), // Reload stats and count on return
               ),
               if (_unreadCount > 0)
                 Positioned(
@@ -351,7 +373,10 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
                     decoration: BoxDecoration(
                       color: Colors.red,
                       borderRadius: BorderRadius.circular(10),
-                      border: Border.all(color: AppColors.primaryGreen, width: 1.5),
+                      border: Border.all(
+                        color: AppColors.primaryGreen,
+                        width: 1.5,
+                      ),
                     ),
                     constraints: const BoxConstraints(
                       minWidth: 14,
@@ -378,25 +403,25 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
               child: CircularProgressIndicator(color: AppColors.primaryGreen),
             )
           : _error != null
-              ? _buildError()
-              : RefreshIndicator(
-                  color: AppColors.primaryGreen,
-                  onRefresh: _loadDashboardData,
-                  child: SingleChildScrollView(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _buildGradientHeader(),
-                        const SizedBox(height: 16),
-                        _buildCommissionBanner(),
-                        const SizedBox(height: 16),
-                        _buildJobRequestsSection(),
-                        const SizedBox(height: 24),
-                      ],
-                    ),
-                  ),
+          ? _buildError()
+          : RefreshIndicator(
+              color: AppColors.primaryGreen,
+              onRefresh: _loadDashboardData,
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildGradientHeader(),
+                    const SizedBox(height: 16),
+                    _buildCommissionBanner(),
+                    const SizedBox(height: 16),
+                    _buildJobRequestsSection(),
+                    const SizedBox(height: 24),
+                  ],
                 ),
+              ),
+            ),
       bottomNavigationBar: _buildBottomNav(),
     );
   }
@@ -450,11 +475,16 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
               ),
               const Spacer(),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.08),
+                  ),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -593,7 +623,10 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
                   const SizedBox(height: 1),
                   Text(
                     label,
-                    style: const TextStyle(fontSize: 9, color: AppColors.textMuted),
+                    style: const TextStyle(
+                      fontSize: 9,
+                      color: AppColors.textMuted,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -657,7 +690,7 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
     if (_stats == null) return const SizedBox();
     final pending = _stats!.pendingCommission;
     final hasPending = pending > 0;
-    
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Container(
@@ -671,7 +704,9 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
               offset: const Offset(0, 3),
             ),
           ],
-          border: Border.all(color: hasPending ? const Color(0xFFFFE0B2) : Colors.grey.shade100),
+          border: Border.all(
+            color: hasPending ? const Color(0xFFFFE0B2) : Colors.grey.shade100,
+          ),
         ),
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -682,12 +717,18 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
                 Container(
                   padding: const EdgeInsets.all(6),
                   decoration: BoxDecoration(
-                    color: hasPending ? const Color(0xFFFFF3E0) : const Color(0xFFE8F5E9),
+                    color: hasPending
+                        ? const Color(0xFFFFF3E0)
+                        : const Color(0xFFE8F5E9),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
-                    hasPending ? Icons.warning_amber_rounded : Icons.verified_user_outlined,
-                    color: hasPending ? const Color(0xFFEF6C00) : AppColors.primaryGreen,
+                    hasPending
+                        ? Icons.warning_amber_rounded
+                        : Icons.verified_user_outlined,
+                    color: hasPending
+                        ? const Color(0xFFEF6C00)
+                        : AppColors.primaryGreen,
                     size: 16,
                   ),
                 ),
@@ -718,7 +759,10 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
                       backgroundColor: const Color(0xFFEF6C00),
                       foregroundColor: Colors.white,
                       elevation: 0,
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
                       minimumSize: Size.zero,
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       shape: RoundedRectangleBorder(
@@ -727,7 +771,10 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
                     ),
                     child: const Text(
                       'Pay Now',
-                      style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
               ],
@@ -737,16 +784,24 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
               hasPending
                   ? 'You have a pending commission of RS ${pending.toStringAsFixed(0)}. Please pay this to continue accepting new job requests.'
                   : 'Great job! You have completed ${_stats!.totalJobsCompleted} jobs. Your commission rate is ${_stats!.commissionRate.toStringAsFixed(0)}% (applies from the 3rd job onwards).',
-              style: const TextStyle(fontSize: 11, color: AppColors.textMuted, height: 1.4),
+              style: const TextStyle(
+                fontSize: 11,
+                color: AppColors.textMuted,
+                height: 1.4,
+              ),
             ),
             if (!hasPending) ...[
               const SizedBox(height: 10),
               ClipRRect(
                 borderRadius: BorderRadius.circular(4),
                 child: LinearProgressIndicator(
-                  value: (_stats!.totalJobsCompleted >= 2) ? 1.0 : (_stats!.totalJobsCompleted / 2.0),
+                  value: (_stats!.totalJobsCompleted >= 2)
+                      ? 1.0
+                      : (_stats!.totalJobsCompleted / 2.0),
                   backgroundColor: Colors.grey.shade100,
-                  valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF00E676)),
+                  valueColor: const AlwaysStoppedAnimation<Color>(
+                    Color(0xFF00E676),
+                  ),
                   minHeight: 4,
                 ),
               ),
@@ -756,13 +811,21 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
                 children: [
                   Text(
                     '${_stats!.totalJobsCompleted}/2 Free Jobs Completed',
-                    style: const TextStyle(fontSize: 9, color: AppColors.textMuted, fontWeight: FontWeight.w500),
+                    style: const TextStyle(
+                      fontSize: 9,
+                      color: AppColors.textMuted,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
                   Text(
-                    _stats!.totalJobsCompleted >= 2 ? 'Commission Active' : 'Free Trial',
+                    _stats!.totalJobsCompleted >= 2
+                        ? 'Commission Active'
+                        : 'Free Trial',
                     style: TextStyle(
                       fontSize: 9,
-                      color: _stats!.totalJobsCompleted >= 2 ? const Color(0xFFEF6C00) : AppColors.primaryGreen,
+                      color: _stats!.totalJobsCompleted >= 2
+                          ? const Color(0xFFEF6C00)
+                          : AppColors.primaryGreen,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -783,7 +846,11 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
         children: [
           const Row(
             children: [
-              Icon(Icons.pending_actions_rounded, color: AppColors.primaryGreen, size: 18),
+              Icon(
+                Icons.pending_actions_rounded,
+                color: AppColors.primaryGreen,
+                size: 18,
+              ),
               SizedBox(width: 6),
               Text(
                 'Active Job Requests',
@@ -838,10 +905,7 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
                   const SizedBox(height: 2),
                   Text(
                     'You are all caught up! New requests will appear here.',
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: Colors.grey.shade400,
-                    ),
+                    style: TextStyle(fontSize: 10, color: Colors.grey.shade400),
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -892,7 +956,10 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
                       ),
                       const SizedBox(height: 2),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 3,
+                        ),
                         decoration: BoxDecoration(
                           color: AppColors.primaryGreen.withValues(alpha: 0.08),
                           borderRadius: BorderRadius.circular(6),
@@ -923,7 +990,10 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
                     if (job.isNew) ...[
                       const SizedBox(height: 4),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           color: const Color(0xFFFFEBEE),
                           borderRadius: BorderRadius.circular(4),
@@ -990,7 +1060,10 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
                   child: ElevatedButton.icon(
                     onPressed: () => _handleAccept(job.id),
                     icon: const Icon(Icons.check_rounded, size: 14),
-                    label: const Text('Accept', style: TextStyle(fontWeight: FontWeight.bold)),
+                    label: const Text(
+                      'Accept',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primaryGreen,
                       foregroundColor: Colors.white,
@@ -1007,7 +1080,10 @@ class _ProviderHomeScreenState extends State<ProviderHomeScreen> {
                   child: ElevatedButton.icon(
                     onPressed: () => _handleDecline(job.id),
                     icon: const Icon(Icons.close_rounded, size: 14),
-                    label: const Text('Decline', style: TextStyle(fontWeight: FontWeight.bold)),
+                    label: const Text(
+                      'Decline',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.grey.shade100,
                       foregroundColor: AppColors.declineRed,

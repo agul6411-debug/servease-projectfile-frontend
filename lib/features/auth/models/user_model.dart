@@ -5,6 +5,7 @@ class UserModel {
   final String? phone;
   final String? cnic;
   final String? address;
+  final String? age;
   final String role;
   final bool isBlocked;
   final String? profileImage;
@@ -17,6 +18,7 @@ class UserModel {
     this.phone,
     this.cnic,
     this.address,
+    this.age,
     required this.role,
     required this.isBlocked,
     this.profileImage,
@@ -31,6 +33,7 @@ class UserModel {
       phone: json['phone'],
       cnic: json['cnic'],
       address: json['address'],
+      age: json['age'],
       role: json['role'] ?? '',
       isBlocked: json['is_blocked'] == 1 || json['is_blocked'] == true,
       profileImage: json['profile_image'] ?? json['profileImage'],
@@ -46,6 +49,7 @@ class UserModel {
       'phone': phone,
       'cnic': cnic,
       'address': address,
+      'age': age,
       'role': role,
       'is_blocked': isBlocked ? 1 : 0,
       'profile_image': profileImage,
